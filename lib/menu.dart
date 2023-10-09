@@ -18,85 +18,29 @@ class Menu extends StatelessWidget {
       page: MaterialPageRoute(builder: (context) => Menu(child: Container())),
     ),
     menuItem.MenuItem(
-        text: 'Activiteiten',
-        icon: Icons.event,
+        text: 'Voorraad',
+        icon: Icons.add_chart,
         page: MaterialPageRoute(builder: (context) => Menu(child: Container())),
         roles: [Roles.Admin, Roles.Subadmin]),
     menuItem.MenuItem(
-        text: 'Gebruikers',
-        icon: Icons.people,
-        page: MaterialPageRoute(builder: (context) => Menu(child: Container())),
-        roles: [Roles.Admin, Roles.Subadmin]),
+        text: 'Foto\'s',
+        icon: Icons.photo,
+        page: MaterialPageRoute(builder: (context) => Menu(child: Container()))),
     menuItem.MenuItem(
-        text: 'Berichten',
+        text: 'Declaraties',
         icon: Icons.message,
         page: MaterialPageRoute(builder: (context) => Menu(child: Container())),
         roles: [Roles.Admin, Roles.Subadmin]),
     menuItem.MenuItem(
-      text: 'KlantenService',
-      icon: Icons.contact_page,
+      text: 'Agenda',
+      icon: Icons.calendar_month,
       page: MaterialPageRoute(builder: (context) => Menu(child: Container())),
     ),
     menuItem.MenuItem(
-      text: 'Locaties',
-      icon: Icons.location_on,
+      text: 'Google Maps',
+      icon: Icons.map_outlined,
       page: MaterialPageRoute(builder: (context) => Menu(child: Container())),
     ),
-    menuItem.MenuItem(
-      text: 'Organisatoren',
-      icon: Icons.person,
-      page: MaterialPageRoute(builder: (context) => Menu(child: Container())),
-    ),
-    menuItem.MenuItem(
-      text: 'Gastvrouw/heer',
-      icon: Icons.person_add,
-      page: MaterialPageRoute(builder: (context) => Menu(child: Container())),
-    ),
-    menuItem.MenuItem(
-      text: 'Categorieën',
-      icon: Icons.category,
-      page: MaterialPageRoute(builder: (context) => Menu(child: Container())),
-    ),
-    menuItem.MenuItem(
-      text: 'Abonnementen',
-      icon: Icons.military_tech,
-      page: MaterialPageRoute(builder: (context) => Menu(child: Container())),
-    ),
-    menuItem.MenuItem(
-      text: 'Betalingen',
-      icon: Icons.payment,
-      page: MaterialPageRoute(builder: (context) => Menu(child: Container())),
-    ),
-    menuItem.MenuItem(
-        text: 'Email Dashboard',
-        icon: Icons.mail,
-        page: MaterialPageRoute(builder: (context) => Menu(child: Container())),
-        roles: [Roles.Admin, Roles.Subadmin]),
-    menuItem.MenuItem(
-      text: 'Kortingscodes',
-      icon: Icons.redeem,
-      page: MaterialPageRoute(builder: (context) => Menu(child: Container())),
-    ),
-    menuItem.MenuItem(
-      text: 'Gebruikte Kortingscodes',
-      icon: Icons.credit_score,
-      page: MaterialPageRoute(builder: (context) => Menu(child: Container())),
-    ),
-    menuItem.MenuItem(
-      text: 'Gebeurtenissen',
-      icon: Icons.history,
-      page: MaterialPageRoute(builder: (context) => Menu(child: Container())),
-    ),
-    menuItem.MenuItem(
-        text: 'Profiel',
-        icon: Icons.settings,
-        page: MaterialPageRoute(builder: (context) => Menu(child: Container())),
-        roles: [Roles.Admin, Roles.Subadmin]),
-    menuItem.MenuItem(
-        text: 'Uitloggen',
-        icon: Icons.logout,
-        page: MaterialPageRoute(builder: (context) => Menu(child: Container())),
-        roles: [Roles.Admin, Roles.Subadmin]),
   ];
 
   Menu({required this.child, this.title});
@@ -112,7 +56,7 @@ class Menu extends StatelessWidget {
         Padding(
           padding: EdgeInsets.symmetric(vertical: 20),
           child: Image.asset(
-            fullLogo,
+            "",
             height: 60,
             width: 200,
           ),
@@ -139,7 +83,7 @@ class Menu extends StatelessWidget {
         Padding(
           padding: EdgeInsets.symmetric(vertical: 20),
           child: Image.asset(
-            smallLogo,
+            "",
             height: 30,
             width: 30,
           ),
