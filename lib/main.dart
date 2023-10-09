@@ -17,7 +17,7 @@ class Maasgroep18App extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrangeAccent),
         useMaterial3: true,
       ),
-      home: Menu(),
+      home: Menu(child: Container()),
     );
   }
 }

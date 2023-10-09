@@ -8,98 +8,98 @@ class MenuIndex {
 }
 
 class Menu extends StatelessWidget {
-  final Widget? child;
+  final Widget child;
   final Widget? title;
   //fil the list of custom InputField classes
   final List<menuItem.MenuItem> menuItems = [
     menuItem.MenuItem(
       text: 'Home',
       icon: Icons.home,
-      page: MaterialPageRoute(builder: (context) => Menu()),
+      page: MaterialPageRoute(builder: (context) => Menu(child: Container())),
     ),
     menuItem.MenuItem(
         text: 'Activiteiten',
         icon: Icons.event,
-        page: MaterialPageRoute(builder: (context) => Menu()),
+        page: MaterialPageRoute(builder: (context) => Menu(child: Container())),
         roles: [Roles.Admin, Roles.Subadmin]),
     menuItem.MenuItem(
         text: 'Gebruikers',
         icon: Icons.people,
-        page: MaterialPageRoute(builder: (context) => Menu()),
+        page: MaterialPageRoute(builder: (context) => Menu(child: Container())),
         roles: [Roles.Admin, Roles.Subadmin]),
     menuItem.MenuItem(
         text: 'Berichten',
         icon: Icons.message,
-        page: MaterialPageRoute(builder: (context) => Menu()),
+        page: MaterialPageRoute(builder: (context) => Menu(child: Container())),
         roles: [Roles.Admin, Roles.Subadmin]),
     menuItem.MenuItem(
       text: 'KlantenService',
       icon: Icons.contact_page,
-      page: MaterialPageRoute(builder: (context) => Menu()),
+      page: MaterialPageRoute(builder: (context) => Menu(child: Container())),
     ),
     menuItem.MenuItem(
       text: 'Locaties',
       icon: Icons.location_on,
-      page: MaterialPageRoute(builder: (context) => Menu()),
+      page: MaterialPageRoute(builder: (context) => Menu(child: Container())),
     ),
     menuItem.MenuItem(
       text: 'Organisatoren',
       icon: Icons.person,
-      page: MaterialPageRoute(builder: (context) => Menu()),
+      page: MaterialPageRoute(builder: (context) => Menu(child: Container())),
     ),
     menuItem.MenuItem(
       text: 'Gastvrouw/heer',
       icon: Icons.person_add,
-      page: MaterialPageRoute(builder: (context) => Menu()),
+      page: MaterialPageRoute(builder: (context) => Menu(child: Container())),
     ),
     menuItem.MenuItem(
       text: 'Categorieën',
       icon: Icons.category,
-      page: MaterialPageRoute(builder: (context) => Menu()),
+      page: MaterialPageRoute(builder: (context) => Menu(child: Container())),
     ),
     menuItem.MenuItem(
       text: 'Abonnementen',
       icon: Icons.military_tech,
-      page: MaterialPageRoute(builder: (context) => Menu()),
+      page: MaterialPageRoute(builder: (context) => Menu(child: Container())),
     ),
     menuItem.MenuItem(
       text: 'Betalingen',
       icon: Icons.payment,
-      page: MaterialPageRoute(builder: (context) => Menu()),
+      page: MaterialPageRoute(builder: (context) => Menu(child: Container())),
     ),
     menuItem.MenuItem(
         text: 'Email Dashboard',
         icon: Icons.mail,
-        page: MaterialPageRoute(builder: (context) => Menu()),
+        page: MaterialPageRoute(builder: (context) => Menu(child: Container())),
         roles: [Roles.Admin, Roles.Subadmin]),
     menuItem.MenuItem(
       text: 'Kortingscodes',
       icon: Icons.redeem,
-      page: MaterialPageRoute(builder: (context) => Menu()),
+      page: MaterialPageRoute(builder: (context) => Menu(child: Container())),
     ),
     menuItem.MenuItem(
       text: 'Gebruikte Kortingscodes',
       icon: Icons.credit_score,
-      page: MaterialPageRoute(builder: (context) => Menu()),
+      page: MaterialPageRoute(builder: (context) => Menu(child: Container())),
     ),
     menuItem.MenuItem(
       text: 'Gebeurtenissen',
       icon: Icons.history,
-      page: MaterialPageRoute(builder: (context) => Menu()),
+      page: MaterialPageRoute(builder: (context) => Menu(child: Container())),
     ),
     menuItem.MenuItem(
         text: 'Profiel',
         icon: Icons.settings,
-        page: MaterialPageRoute(builder: (context) => Menu()),
+        page: MaterialPageRoute(builder: (context) => Menu(child: Container())),
         roles: [Roles.Admin, Roles.Subadmin]),
     menuItem.MenuItem(
         text: 'Uitloggen',
         icon: Icons.logout,
-        page: MaterialPageRoute(builder: (context) => Menu()),
+        page: MaterialPageRoute(builder: (context) => Menu(child: Container())),
         roles: [Roles.Admin, Roles.Subadmin]),
   ];
 
-  Menu({this.child, this.title});
+  Menu({required this.child, this.title});
 
   //get and put the menu items from the list to the widgets for non mobile
   List<Widget> getMenuItems(BuildContext context) {
@@ -249,7 +249,7 @@ class Menu extends StatelessWidget {
 }
 
 class UserData {
-  static String? role;
+  static Roles? role = Roles.Admin;
 }
 
 class MenuItemDesktop extends StatelessWidget {
