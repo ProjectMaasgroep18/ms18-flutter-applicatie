@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ms18_applicatie/menu.dart';
 
 class StockReport extends StatefulWidget {
   const StockReport({Key? key}) : super(key: key);
@@ -10,6 +11,6 @@ class StockReport extends StatefulWidget {
 class StockReportState extends State<StockReport> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Menu(child: Text("TEst"));
   }
 }

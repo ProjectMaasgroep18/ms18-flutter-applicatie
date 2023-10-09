@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../menu.dart';
+
 class ListPictures extends StatefulWidget {
   const ListPictures({Key? key}) : super(key: key);
 
@@ -10,6 +12,6 @@ class ListPictures extends StatefulWidget {
 class ListPicturesState extends State<ListPictures> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Menu(child: Text("Ga vanaf hier verder"));
   }
 }

@@ -8,4 +8,6 @@ class MenuItem {
   final String text;
   final IconData icon;
   final Route page;
+
+
 }

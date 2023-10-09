@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ms18_applicatie/config.dart';
 import 'package:ms18_applicatie/menu.dart';
 
 void main() {
@@ -12,6 +13,7 @@ class Maasgroep18App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: navigatorKey,
       title: 'Maasgroep 18 Applicatie',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrangeAccent),
