@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:ms18_applicatie/Calendar/calendar.dart';
+import 'package:ms18_applicatie/Declarations/declarations.dart';
+import 'package:ms18_applicatie/Pictures/listPictures.dart';
+import 'package:ms18_applicatie/Stock/stockReport.dart';
 import 'package:ms18_applicatie/roles.dart';
 import 'config.dart';
 import 'menuItem.dart' as menuItem;
@@ -20,26 +24,26 @@ class Menu extends StatelessWidget {
     menuItem.MenuItem(
         text: 'Voorraad',
         icon: Icons.add_chart,
-        page: MaterialPageRoute(builder: (context) => Menu(child: Container())),
+        page: MaterialPageRoute(builder: (context) => const StockReport()),
         roles: [Roles.Admin, Roles.Subadmin]),
     menuItem.MenuItem(
         text: 'Foto\'s',
         icon: Icons.photo,
-        page: MaterialPageRoute(builder: (context) => Menu(child: Container()))),
+        page: MaterialPageRoute(builder: (context) => const ListPictures())),
     menuItem.MenuItem(
         text: 'Declaraties',
         icon: Icons.message,
-        page: MaterialPageRoute(builder: (context) => Menu(child: Container())),
+        page: MaterialPageRoute(builder: (context) => const Declarations()),
         roles: [Roles.Admin, Roles.Subadmin]),
     menuItem.MenuItem(
       text: 'Agenda',
       icon: Icons.calendar_month,
-      page: MaterialPageRoute(builder: (context) => Menu(child: Container())),
+      page: MaterialPageRoute(builder: (context) => const Calendar()),
     ),
     menuItem.MenuItem(
       text: 'Google Maps',
       icon: Icons.map_outlined,
-      page: MaterialPageRoute(builder: (context) => Menu(child: Container())),
+      page: MaterialPageRoute(builder: (context) => Menu(child: Container(),)),
     ),
   ];
 
