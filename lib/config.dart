@@ -17,8 +17,14 @@ const String smallLogo = 'images/Obladi favicon.png';
 */
 
 //Input styles
+const OutlineInputBorder inputBorder = OutlineInputBorder(
+  borderSide: BorderSide(color: mainColor),
+  borderRadius: BorderRadius.all(
+    Radius.circular(borderRadius),
+  ),
+);
 const TextStyle labelTextStyle =
-TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: textColor);
+    TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: textColor);
 const Icon dropdownIcon = Icon(
   Icons.arrow_downward,
   size: 20,
@@ -33,7 +39,7 @@ const InputDecoration inputFieldStyle = InputDecoration(
     fillColor: backgroundColor,
     isDense: true,
     contentPadding:
-    EdgeInsets.only(top: inputHeight, bottom: inputHeight, right: 10),
+        EdgeInsets.only(top: inputHeight, bottom: inputHeight, right: 10),
     border: OutlineInputBorder(
       borderSide: BorderSide(width: 2, color: Colors.red),
     ),
@@ -61,6 +67,9 @@ const double verticalButtonSpacing = 10;
 
 //Button height
 const double buttonHeight = 35;
+
+//Border Radius
+const double borderRadius = 10;
 
 //cosnt itemslist/recordlistitem height
 const double itemHeight = 11;
