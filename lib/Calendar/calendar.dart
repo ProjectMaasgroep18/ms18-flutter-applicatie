@@ -36,9 +36,9 @@ class CalendarState extends State<Calendar> {
     final DateTime today = DateTime.now();
     final DateTime startTime = DateTime(today.year, today.month, today.day, 9, 0, 0);
     final DateTime endTime = startTime.add(const Duration(hours: 2));
-    meetings.add(Meeting('Voorbeeld 1', startTime, endTime, const Color.fromARGB(255, 15, 47, 134), false));
-    meetings.add(Meeting('Voorbeeld 2', startTime.add(const Duration(hours: 2)), endTime.add(const Duration(hours: 2)) , Color.fromARGB(255, 255, 230, 0), false));
-    meetings.add(Meeting('Voorbeeld 3', startTime.add(const Duration(hours: 24)), endTime.add(const Duration(hours: 24)) , const Color.fromARGB(255, 15, 47, 134), false));
+    meetings.add(Meeting('Voorbeeld 1', startTime, endTime, const Color.fromARGB(255, 102, 140, 217), false));
+    meetings.add(Meeting('Voorbeeld 2', startTime.add(const Duration(hours: 2)), endTime.add(const Duration(hours: 2)), const Color.fromARGB(255, 102, 140, 217), false));
+    meetings.add(Meeting('Voorbeeld 3', startTime.add(const Duration(hours: 24)), endTime.add(const Duration(hours: 24)), const Color.fromARGB(255, 250, 209, 99), false));
 
     return meetings;
   }
