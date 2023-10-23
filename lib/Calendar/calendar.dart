@@ -68,7 +68,9 @@ class CalendarState extends State<Calendar> {
   Widget build(BuildContext context) {
     return Menu(
       child: SfCalendar(
-        view: CalendarView.month,
+        view: MediaQuery.of(context).size.width > 768
+            ? CalendarView.month
+            : CalendarView.schedule,
         monthViewSettings: MonthViewSettings(showAgenda: true),
         timeSlotViewSettings: const TimeSlotViewSettings(
           timeFormat: 'HH:mm',
