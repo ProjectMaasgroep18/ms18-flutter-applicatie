@@ -4,6 +4,7 @@ import 'package:ms18_applicatie/Declarations/declarations.dart';
 import 'package:ms18_applicatie/Pictures/listPictures.dart';
 import 'package:ms18_applicatie/Stock/stockReport.dart';
 import 'package:ms18_applicatie/roles.dart';
+import 'package:ms18_applicatie/team-c/Declarations/declarations.dart';
 import 'config.dart';
 import 'menuItem.dart' as menuItem;
 
