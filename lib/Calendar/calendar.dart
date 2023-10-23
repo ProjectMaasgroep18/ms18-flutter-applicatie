@@ -37,8 +37,8 @@ class CalendarState extends State<Calendar> {
     final client = HttpClient();
     final List<Event> events = [];
     try {
-      final request = await client
-          .getUrl(Uri.parse('https://localhost:7059/Calendar/stam'));
+      final request =
+          await client.getUrl(Uri.parse('https://localhost:7059/Calendar/all'));
       final response = await request.close();
 
       if (response.statusCode == HttpStatus.ok) {
@@ -60,18 +60,12 @@ class CalendarState extends State<Calendar> {
             );
             events.add(event);
           }
-        } else {
-          print('Ongeldige JSON-response.');
         }
-      } else {
-        print('Fout bij het ophalen van gegevens: ${response.statusCode}');
       }
     } catch (exception) {
-      print('Er is een fout opgetreden: $exception');
     } finally {
       client.close();
     }
-
     return events;
   }
 
