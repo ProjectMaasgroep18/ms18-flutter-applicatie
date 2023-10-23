@@ -52,7 +52,7 @@ class PageHeader extends StatelessWidget {
             height: 10,
           ),
           const Divider(
-            color: mainColor,
+            color: secondColor,
             height: 1,
           ),
         ],

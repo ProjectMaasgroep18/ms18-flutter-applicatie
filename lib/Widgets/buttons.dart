@@ -19,7 +19,7 @@ class Button extends StatelessWidget {
       onPressed: onTap,
       style: ElevatedButton.styleFrom(
         backgroundColor: mainColor,
-        minimumSize: const Size(10, 47),
+        minimumSize: const Size(10, 48),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(
             borderRadius,

@@ -23,7 +23,8 @@ class InputField extends StatelessWidget {
       controller: controller,
       textAlign: textAlign??TextAlign.start,
       decoration: InputDecoration(
-        contentPadding: const EdgeInsets.all(10),
+        contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+        isDense: true,
         hintText: hintText,
         labelText: labelText,
         hintStyle: const TextStyle(

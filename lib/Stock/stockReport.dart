@@ -1,8 +1,9 @@
-import 'dart:js';
-
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Models/stock.dart';
 import 'package:ms18_applicatie/Stock/widgets.dart';
+import 'package:ms18_applicatie/Widgets/buttons.dart';
+import 'package:ms18_applicatie/Widgets/inputFields.dart';
+import 'package:ms18_applicatie/Widgets/paddingSpacing.dart';
 import 'package:ms18_applicatie/Widgets/pageHeader.dart';
 import 'package:ms18_applicatie/config.dart';
 import 'package:ms18_applicatie/menu.dart';
@@ -86,55 +87,46 @@ class StockReportState extends State<StockReport> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: const Text(
-              "Item toevoegen",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: mainColor,
-                fontSize: 20,
-              ),
+            backgroundColor: Colors.white,
+            surfaceTintColor: Colors.white,
+            title: const Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Item toevoegen",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                    fontSize: 20,
+                  ),
+                ),
+                Divider(
+                  color: secondColor,
+                )
+              ],
             ),
             shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(3.0)),
+              borderRadius: BorderRadius.all(
+                Radius.circular(borderRadius),
+              ),
             ),
             content: Container(
                 width: double.maxFinite,
-                height: 250,
-                // Set a minimum width to avoid intrinsic dimension issues
-                child: Column(
+                height: 200,
+                color: Colors.white,
+                child: const Column(
                   children: [
-                    Container(
-                        child: TextFormField(
-                          decoration: InputDecoration(
-                              hintText: "Naam product", labelText: "Naam"),
-                          validator: (String? value) {
-                            if (value == null || value == "") {
-                              return "Graag een naam invoeren";
-                            }
-                          },
-                        )),
-                    Container(
-                        child: TextFormField(
-                          keyboardType: TextInputType.number,
-                          decoration: InputDecoration(
-                              hintText: "prijs", labelText: "prijs"),
-                          validator: (String? value) {
-                            if (value == null || value == "") {
-                              return "Graag prijs vermelden";
-                            }
-                          },
-                        )),
-                    Container(
-                        child: TextFormField(
-                          keyboardType: TextInputType.number,
-                          decoration: InputDecoration(
-                              hintText: "Aantal stuks", labelText: "Aantal"),
-                          validator: (String? value) {
-                            if (value == null || value == "") {
-                              return "Graag aantal vermelden";
-                            }
-                          },
-                        )),
+                    InputField(
+                      labelText: 'Product naam',
+                    ),
+                    PaddingSpacing(),
+                    InputField(
+                      labelText: 'Prijs',
+                    ),
+                    PaddingSpacing(),
+                    InputField(
+                      labelText: 'Aantal stuks',
+                    ),
                   ],
                 )),
             actions: <Widget>[
@@ -144,131 +136,33 @@ class StockReportState extends State<StockReport> {
                 },
                 child: Text('Terug'),
               ),
-              ElevatedButton(
-                onPressed: () {
-                  // Plaats hier de logica om de gegevens op te slaan
-                  // en sluit vervolgens het dialoogvenster
-                  Navigator.of(context).pop();
-                },
-                child: Text('Opslaan'),
-              ),
+              SizedBox(
+                width: 150,
+                child: Button(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  text: 'Opslaan',
+                ),
+              )
             ],
-            //       );
-            //     },
-            //   );
-            // }
-
-            // actions: [
-            //     Row(
-            //       children: [
-            //         Expanded(
-            //           child: Container(
-            //             child: ElevatedButton(
-            //               onPressed: () {
-            //                 // Close Dialog
-            //                 dbHelper.syncOrders(ordernumber: code);
-            //               },
-            //               style: ElevatedButton.styleFrom(
-            //                 backgroundColor: const Color(awlGreen),
-            //                 padding: const EdgeInsets.fromLTRB(16, 5, 16, 5),
-            //                 shadowColor: const Color(awlGreen),
-            //                 elevation: 0,
-            //               ),
-            //               child: const FittedBox(
-            //                 fit: BoxFit.fill,
-            //                 child: Text(
-            //                   "Nog een keer versturen",
-            //                   style: TextStyle(
-            //                     fontSize: 14,
-            //                   ),
-            //                   textAlign: TextAlign.center,
-            //                 ),
-            //               ),
-            //             ),
-            //           ),
-            //         ),
-            //         SizedBox(width: 2),
-            //         showOpen ? Expanded(
-            //           child: Container(
-            //             child: ElevatedButton(
-            //               onPressed: () {
-            //                 // Close Dialog
-            //                 ordernumber = code;
-            //                 Navigator.push(
-            //                     context,
-            //                     MaterialPageRoute(
-            //                         builder: (context) =>
-            //                         const CreateOrderPage()));
-            //               },
-            //               style: ElevatedButton.styleFrom(
-            //                 backgroundColor: const Color(awlGreen),
-            //                 padding: const EdgeInsets.fromLTRB(16, 5, 16, 5),
-            //                 shadowColor: const Color(awlGreen),
-            //                 elevation: 0,
-            //               ),
-            //               child: const FittedBox(
-            //                 fit: BoxFit.fill,
-            //                 child: Text(
-            //                   "Openen order",
-            //                   style: TextStyle(
-            //                     fontSize: 14,
-            //                   ),
-            //                   textAlign: TextAlign.center,
-            //                 ),
-            //               ),
-            //             ),
-            //           ),
-            //         ) : Container(),
-            //       ],
-            //     ),
-            //     Row(
-            //       children: [
-            //         Expanded(
-            //           child: Container(
-            //             child: ElevatedButton(
-            //               onPressed: () {
-            //                 orderlines = [];
-            //                 // Close Dialog
-            //                 Navigator.of(context, rootNavigator: true)
-            //                     .pop('dialog');
-            //               },
-            //               style: ElevatedButton.styleFrom(
-            //                 backgroundColor: const Color(awlGrey),
-            //                 padding: const EdgeInsets.fromLTRB(16, 5, 16, 5),
-            //                 shadowColor: const Color(awlGrey),
-            //                 elevation: 0,
-            //               ),
-            //               child: FittedBox(
-            //                 fit: BoxFit.fill,
-            //                 child: Text(
-            //                   "",
-            //                   style: const TextStyle(
-            //                     fontSize: 14,
-            //                   ),
-            //                   textAlign: TextAlign.center,
-            //                 ),
-            //               ),
-            //             ),
-            //           ),
-            //         )
-            //       ],
-            //     )
-            //   Container(),
-            // ],
           );
-        }).then((value) {
-
-    });
+        }).then((value) {});
   }
 
   @override
   Widget build(BuildContext context) {
     return Menu(
-      child: SafeArea(
+        child: SafeArea(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          PageHeader(title: "Voorraad beheer", onAdd: (){addItemsDialog(context);},),
+          PageHeader(
+            title: "Voorraad beheer",
+            onAdd: () {
+              addItemsDialog(context);
+            },
+          ),
           Flexible(
             child: ListView.separated(
               padding: const EdgeInsets.all(mobilePadding),
