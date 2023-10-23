@@ -1,3 +1,5 @@
+import 'dart:js';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ms18_applicatie/Models/stock.dart';
@@ -14,145 +16,6 @@ class StockReport extends StatefulWidget {
 }
 
 class StockReportState extends State<StockReport> {
-  // Future<void> openOrderlinesDialog(code) async {
-  //   SystemChrome.setPreferredOrientations([
-  //     DeviceOrientation.portraitUp,
-  //     DeviceOrientation.portraitDown,
-  //   ]);
-  //   return showDialog(
-  //       context: context,
-  //       builder: (context) {
-  //         return AlertDialog(
-  //           title: const Text(
-  //             "Pop-up",
-  //             style:  TextStyle(
-  //               fontWeight: FontWeight.bold,
-  //               color:mainColor,
-  //               fontSize: 20,
-  //             ),
-  //           ),
-  //           shape: const RoundedRectangleBorder(
-  //             borderRadius: BorderRadius.all(Radius.circular(3.0)),
-  //           ),
-  //           content: Container(
-  //             width: double.minPositive,
-  //             // Set a minimum width to avoid intrinsic dimension issues
-  //             child: Row(
-  //               children: [
-  //                 Expanded(child: Container( child: TextFormField())
-  //                 )
-  //               ],
-  //             )
-  //
-  //           ),
-  //           actions: [
-  //             Row(
-  //               children: [
-  //                 Expanded(
-  //                   child: Container(
-  //                     child: ElevatedButton(
-  //                       onPressed: () {
-  //                         // Close Dialog
-  //                         dbHelper.syncOrders(ordernumber: code);
-  //                       },
-  //                       style: ElevatedButton.styleFrom(
-  //                         backgroundColor: const Color(awlGreen),
-  //                         padding: const EdgeInsets.fromLTRB(16, 5, 16, 5),
-  //                         shadowColor: const Color(awlGreen),
-  //                         elevation: 0,
-  //                       ),
-  //                       child: const FittedBox(
-  //                         fit: BoxFit.fill,
-  //                         child: Text(
-  //                           "Nog een keer versturen",
-  //                           style: TextStyle(
-  //                             fontSize: 14,
-  //                           ),
-  //                           textAlign: TextAlign.center,
-  //                         ),
-  //                       ),
-  //                     ),
-  //                   ),
-  //                 ),
-  //                 SizedBox(width: 2),
-  //                 showOpen ? Expanded(
-  //                   child: Container(
-  //                     child: ElevatedButton(
-  //                       onPressed: () {
-  //                         // Close Dialog
-  //                         ordernumber = code;
-  //                         Navigator.push(
-  //                             context,
-  //                             MaterialPageRoute(
-  //                                 builder: (context) =>
-  //                                 const CreateOrderPage()));
-  //                       },
-  //                       style: ElevatedButton.styleFrom(
-  //                         backgroundColor: const Color(awlGreen),
-  //                         padding: const EdgeInsets.fromLTRB(16, 5, 16, 5),
-  //                         shadowColor: const Color(awlGreen),
-  //                         elevation: 0,
-  //                       ),
-  //                       child: const FittedBox(
-  //                         fit: BoxFit.fill,
-  //                         child: Text(
-  //                           "Openen order",
-  //                           style: TextStyle(
-  //                             fontSize: 14,
-  //                           ),
-  //                           textAlign: TextAlign.center,
-  //                         ),
-  //                       ),
-  //                     ),
-  //                   ),
-  //                 ) : Container(),
-  //               ],
-  //             ),
-  //             Row(
-  //               children: [
-  //                 Expanded(
-  //                   child: Container(
-  //                     child: ElevatedButton(
-  //                       onPressed: () {
-  //                         orderlines = [];
-  //                         // Close Dialog
-  //                         Navigator.of(context, rootNavigator: true)
-  //                             .pop('dialog');
-  //                       },
-  //                       style: ElevatedButton.styleFrom(
-  //                         backgroundColor: const Color(awlGrey),
-  //                         padding: const EdgeInsets.fromLTRB(16, 5, 16, 5),
-  //                         shadowColor: const Color(awlGrey),
-  //                         elevation: 0,
-  //                       ),
-  //                       child: FittedBox(
-  //                         fit: BoxFit.fill,
-  //                         child: Text(
-  //                           closebtntxt,
-  //                           style: const TextStyle(
-  //                             fontSize: 14,
-  //                           ),
-  //                           textAlign: TextAlign.center,
-  //                         ),
-  //                       ),
-  //                     ),
-  //                   ),
-  //                 )
-  //               ],
-  //             )
-  //           ],
-  //         );
-  //       }).then((value) {
-  //     Future.delayed(const Duration(milliseconds: 250), () {
-  //       SystemChrome.setPreferredOrientations([
-  //         DeviceOrientation.landscapeRight,
-  //         DeviceOrientation.landscapeLeft,
-  //         DeviceOrientation.portraitUp,
-  //         DeviceOrientation.portraitDown,
-  //       ]);
-  //     });
-  //   });
-  // }
   final List<StockProduct> stockProducts = [
     StockProduct(
       product: Product(
@@ -248,6 +111,194 @@ class StockReportState extends State<StockReport> {
 
 class StockHeader extends StatelessWidget {
   final TextEditingController searchController = TextEditingController();
+
+  Future<void> addItemsDialog(context) async {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text(
+              "Item toevoegen",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: mainColor,
+                fontSize: 20,
+              ),
+            ),
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(3.0)),
+            ),
+            content: Container(
+                width: double.maxFinite,
+                height: 250,
+                // Set a minimum width to avoid intrinsic dimension issues
+                child: Column(
+                  children: [
+                    Container(
+                        child: TextFormField(
+                      decoration: InputDecoration(
+                          hintText: "Naam product", labelText: "Naam"),
+                      validator: (String? value) {
+                        if (value == null || value == "") {
+                          return "Graag een naam invoeren";
+                        }
+                      },
+                    )),
+                    Container(
+                        child: TextFormField(
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                          hintText: "prijs", labelText: "prijs"),
+                      validator: (String? value) {
+                        if (value == null || value == "") {
+                          return "Graag prijs vermelden";
+                        }
+                      },
+                    )),
+                    Container(
+                        child: TextFormField(
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                          hintText: "Aantal stuks", labelText: "Aantal"),
+                      validator: (String? value) {
+                        if (value == null || value == "") {
+                          return "Graag aantal vermelden";
+                        }
+                      },
+                    )),
+                  ],
+                )),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(); // Sluit het dialoogvenster
+                },
+                child: Text('Terug'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  // Plaats hier de logica om de gegevens op te slaan
+                  // en sluit vervolgens het dialoogvenster
+                  Navigator.of(context).pop();
+                },
+                child: Text('Opslaan'),
+              ),
+            ],
+            //       );
+            //     },
+            //   );
+            // }
+
+            // actions: [
+            //     Row(
+            //       children: [
+            //         Expanded(
+            //           child: Container(
+            //             child: ElevatedButton(
+            //               onPressed: () {
+            //                 // Close Dialog
+            //                 dbHelper.syncOrders(ordernumber: code);
+            //               },
+            //               style: ElevatedButton.styleFrom(
+            //                 backgroundColor: const Color(awlGreen),
+            //                 padding: const EdgeInsets.fromLTRB(16, 5, 16, 5),
+            //                 shadowColor: const Color(awlGreen),
+            //                 elevation: 0,
+            //               ),
+            //               child: const FittedBox(
+            //                 fit: BoxFit.fill,
+            //                 child: Text(
+            //                   "Nog een keer versturen",
+            //                   style: TextStyle(
+            //                     fontSize: 14,
+            //                   ),
+            //                   textAlign: TextAlign.center,
+            //                 ),
+            //               ),
+            //             ),
+            //           ),
+            //         ),
+            //         SizedBox(width: 2),
+            //         showOpen ? Expanded(
+            //           child: Container(
+            //             child: ElevatedButton(
+            //               onPressed: () {
+            //                 // Close Dialog
+            //                 ordernumber = code;
+            //                 Navigator.push(
+            //                     context,
+            //                     MaterialPageRoute(
+            //                         builder: (context) =>
+            //                         const CreateOrderPage()));
+            //               },
+            //               style: ElevatedButton.styleFrom(
+            //                 backgroundColor: const Color(awlGreen),
+            //                 padding: const EdgeInsets.fromLTRB(16, 5, 16, 5),
+            //                 shadowColor: const Color(awlGreen),
+            //                 elevation: 0,
+            //               ),
+            //               child: const FittedBox(
+            //                 fit: BoxFit.fill,
+            //                 child: Text(
+            //                   "Openen order",
+            //                   style: TextStyle(
+            //                     fontSize: 14,
+            //                   ),
+            //                   textAlign: TextAlign.center,
+            //                 ),
+            //               ),
+            //             ),
+            //           ),
+            //         ) : Container(),
+            //       ],
+            //     ),
+            //     Row(
+            //       children: [
+            //         Expanded(
+            //           child: Container(
+            //             child: ElevatedButton(
+            //               onPressed: () {
+            //                 orderlines = [];
+            //                 // Close Dialog
+            //                 Navigator.of(context, rootNavigator: true)
+            //                     .pop('dialog');
+            //               },
+            //               style: ElevatedButton.styleFrom(
+            //                 backgroundColor: const Color(awlGrey),
+            //                 padding: const EdgeInsets.fromLTRB(16, 5, 16, 5),
+            //                 shadowColor: const Color(awlGrey),
+            //                 elevation: 0,
+            //               ),
+            //               child: FittedBox(
+            //                 fit: BoxFit.fill,
+            //                 child: Text(
+            //                   "",
+            //                   style: const TextStyle(
+            //                     fontSize: 14,
+            //                   ),
+            //                   textAlign: TextAlign.center,
+            //                 ),
+            //               ),
+            //             ),
+            //           ),
+            //         )
+            //       ],
+            //     )
+            //   Container(),
+            // ],
+          );
+        }).then((value) {
+      Future.delayed(const Duration(milliseconds: 250), () {
+        SystemChrome.setPreferredOrientations([
+          DeviceOrientation.landscapeRight,
+          DeviceOrientation.landscapeLeft,
+          DeviceOrientation.portraitUp,
+          DeviceOrientation.portraitDown,
+        ]);
+      });
+    });
+  }
+
   StockHeader({super.key});
 
   @override
@@ -289,7 +340,9 @@ class StockHeader extends StatelessWidget {
               Expanded(
                 flex: 3,
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    addItemsDialog(context);
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: mainColor,
                     minimumSize: const Size(10, 47),
