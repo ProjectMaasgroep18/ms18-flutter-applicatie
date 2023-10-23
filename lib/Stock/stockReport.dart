@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:ms18_applicatie/Models/stock.dart';
 import 'package:ms18_applicatie/Stock/widgets.dart';
-import 'package:ms18_applicatie/Widgets/paddingSpacing.dart';
+import 'package:ms18_applicatie/Widgets/pageHeader.dart';
 import 'package:ms18_applicatie/config.dart';
 import 'package:ms18_applicatie/menu.dart';
 
@@ -222,11 +221,11 @@ class StockReportState extends State<StockReport> {
   @override
   Widget build(BuildContext context) {
     return Menu(
-        child: SafeArea(
+      child: SafeArea(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          StockHeader(),
+          PageHeader(title: "Voorraad beheer"),
           Flexible(
             child: ListView.separated(
               padding: const EdgeInsets.all(mobilePadding),
@@ -246,91 +245,4 @@ class StockReportState extends State<StockReport> {
   }
 }
 
-class StockHeader extends StatelessWidget {
-  final TextEditingController searchController = TextEditingController();
-  StockHeader({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return PagePadding(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                flex: 7,
-                child: TextField(
-                  controller: searchController,
-                  decoration: const InputDecoration(
-                    contentPadding: EdgeInsets.all(10),
-                    hintText: 'Search',
-                    hintStyle: TextStyle(
-                      color: mainColor,
-                      fontWeight: FontWeight.w300,
-                    ),
-                    enabledBorder: inputBorder,
-                    focusedBorder: inputBorder,
-                    border: inputBorder,
-                    prefixIcon: Align(
-                      widthFactor: 1.0,
-                      heightFactor: 1.0,
-                      child: Icon(
-                        Icons.search,
-                        color: mainColor,
-                        size: 20,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              const PaddingSpacing(),
-              Expanded(
-                flex: 3,
-                child: ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: mainColor,
-                    minimumSize: const Size(10, 47),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(
-                        borderRadius,
-                      ),
-                    ),
-                  ),
-                  child: const Icon(
-                    Icons.add,
-                    color: Colors.white,
-                  ),
-                ),
-              )
-            ],
-          ),
-          const PaddingSpacing(),
-          const Row(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text(
-                'Voorraad beheer',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          const Divider(
-            color: mainColor,
-            height: 1,
-          ),
-        ],
-      ),
-    );
-  }
-}
