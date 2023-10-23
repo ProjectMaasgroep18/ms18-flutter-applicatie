@@ -9,9 +9,9 @@ class Calendar extends StatefulWidget {
   State<Calendar> createState() => CalendarState();
 }
 const scheduleViewSettings = ScheduleViewSettings(
-  dayHeaderSettings: DayHeaderSettings(
-
-  )
+  monthHeaderSettings: MonthHeaderSettings(
+    backgroundColor: Color.fromARGB(255, 227, 233, 255)
+  ),
 );
 
 class CalendarState extends State<Calendar> {
