@@ -8,6 +8,11 @@ class Calendar extends StatefulWidget {
   @override
   State<Calendar> createState() => CalendarState();
 }
+const scheduleViewSettings = ScheduleViewSettings(
+  dayHeaderSettings: DayHeaderSettings(
+
+  )
+);
 
 class CalendarState extends State<Calendar> {
   @override
@@ -15,23 +20,25 @@ class CalendarState extends State<Calendar> {
     return Menu(
       child: SfCalendar(
         view: CalendarView.schedule,
-        dataSource: MeetingDataSource(_getDataSource()),
-        monthViewSettings: MonthViewSettings(
-          appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
-          showAgenda: true,
+        timeSlotViewSettings: const TimeSlotViewSettings(
+          timeFormat: 'HH:mm',
         ),
+        dataSource: MeetingDataSource(_getDataSource()),
+        scheduleViewSettings: scheduleViewSettings,
+
       ),
     );
   }
 
   List<Meeting> _getDataSource() {
+    // sample data
     final List<Meeting> meetings = <Meeting>[];
     final DateTime today = DateTime.now();
     final DateTime startTime = DateTime(today.year, today.month, today.day, 9, 0, 0);
     final DateTime endTime = startTime.add(const Duration(hours: 2));
-    meetings.add(Meeting('Voorbeeld 1', startTime, endTime, const Color(0xFF0F8644), false));
-    meetings.add(Meeting('Voorbeeld 2', startTime.add(const Duration(hours: 2)), endTime.add(const Duration(hours: 2)) , const Color(0xFF0F8644), false));
-    meetings.add(Meeting('Voorbeeld 3', startTime.add(const Duration(hours: 24)), endTime.add(const Duration(hours: 24)) , const Color(0xFF0F8644), false));
+    meetings.add(Meeting('Voorbeeld 1', startTime, endTime, const Color.fromARGB(255, 15, 47, 134), false));
+    meetings.add(Meeting('Voorbeeld 2', startTime.add(const Duration(hours: 2)), endTime.add(const Duration(hours: 2)) , Color.fromARGB(255, 255, 230, 0), false));
+    meetings.add(Meeting('Voorbeeld 3', startTime.add(const Duration(hours: 24)), endTime.add(const Duration(hours: 24)) , const Color.fromARGB(255, 15, 47, 134), false));
 
     return meetings;
   }
