@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Models/stock.dart';
+import 'package:ms18_applicatie/Widgets/inputFields.dart';
+import 'package:ms18_applicatie/Widgets/statusIndicator.dart';
 import '../config.dart';
 
 class StockElement extends StatelessWidget {
@@ -34,20 +36,10 @@ class StockElement extends StatelessWidget {
               ],
             ),
           ),
-          Positioned(
+          const Positioned(
             bottom: 0,
             right: -3,
-            child: Container(
-              width: 10,
-              height: 10,
-              decoration: BoxDecoration(
-                color: successColor,
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: Colors.white,
-                ),
-              ),
-            ),
+            child: StatusIndicator(color: successColor)
           ),
         ]),
       ),
@@ -56,18 +48,10 @@ class StockElement extends StatelessWidget {
           '${stockProduct.product.priceQuantity}: €${stockProduct.product.price}'),
       trailing: SizedBox(
         width: 75,
-        child: TextField(
+        child: InputField(
+          controller: TextEditingController(text: stockProduct.quantity.toString()),
           textAlign: TextAlign.center,
-          onChanged: onChange,
-          controller:
-              TextEditingController(text: stockProduct.quantity.toString()),
-          decoration: const InputDecoration(
-            contentPadding: EdgeInsets.all(10),
-            enabledBorder: inputBorder,
-            focusedBorder: inputBorder,
-            border: inputBorder,
-          ),
-        ),
+        )
       ),
     );
   }

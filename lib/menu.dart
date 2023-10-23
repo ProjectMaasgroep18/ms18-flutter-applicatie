@@ -3,6 +3,7 @@ import 'package:ms18_applicatie/Calendar/calendar.dart';
 import 'package:ms18_applicatie/Declarations/declarations.dart';
 import 'package:ms18_applicatie/Pictures/listPictures.dart';
 import 'package:ms18_applicatie/Stock/stockReport.dart';
+import 'package:ms18_applicatie/Users/userList.dart';
 import 'package:ms18_applicatie/roles.dart';
 import 'config.dart';
 import 'menuItem.dart' as menuItem;
@@ -44,6 +45,11 @@ class Menu extends StatelessWidget {
       text: 'Google Maps',
       icon: Icons.map_outlined,
       page: MaterialPageRoute(builder: (context) => Menu(child: Container(),)),
+    ),
+    menuItem.MenuItem(
+      text: 'Gebruikers',
+      icon: Icons.account_circle,
+      page: MaterialPageRoute(builder: (context) => const UserList()),
     ),
   ];
 

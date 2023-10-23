@@ -1,10 +1,9 @@
 import 'dart:js';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:ms18_applicatie/Models/stock.dart';
 import 'package:ms18_applicatie/Stock/widgets.dart';
-import 'package:ms18_applicatie/Widgets/paddingSpacing.dart';
+import 'package:ms18_applicatie/Widgets/pageHeader.dart';
 import 'package:ms18_applicatie/config.dart';
 import 'package:ms18_applicatie/menu.dart';
 
@@ -85,11 +84,11 @@ class StockReportState extends State<StockReport> {
   @override
   Widget build(BuildContext context) {
     return Menu(
-        child: SafeArea(
+      child: SafeArea(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          StockHeader(),
+          PageHeader(title: "Voorraad beheer"),
           Flexible(
             child: ListView.separated(
               padding: const EdgeInsets.all(mobilePadding),
@@ -109,6 +108,7 @@ class StockReportState extends State<StockReport> {
   }
 }
 
+<<<<<<< HEAD
 class StockHeader extends StatelessWidget {
   final TextEditingController searchController = TextEditingController();
 
@@ -387,3 +387,6 @@ class StockHeader extends StatelessWidget {
     );
   }
 }
+=======
+
+>>>>>>> faf5310d4e7640184416ad38586fcb239a61fc95
