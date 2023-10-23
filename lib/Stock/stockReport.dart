@@ -81,37 +81,6 @@ class StockReportState extends State<StockReport> {
     ),
   ];
 
-  @override
-  Widget build(BuildContext context) {
-    return Menu(
-      child: SafeArea(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          PageHeader(title: "Voorraad beheer"),
-          Flexible(
-            child: ListView.separated(
-              padding: const EdgeInsets.all(mobilePadding),
-              shrinkWrap: true,
-              itemCount: stockProducts.length,
-              separatorBuilder: (context, index) => const Divider(),
-              itemBuilder: (context, index) {
-                return StockElement(
-                  stockProduct: stockProducts[index],
-                );
-              },
-            ),
-          ),
-        ],
-      ),
-    ));
-  }
-}
-
-<<<<<<< HEAD
-class StockHeader extends StatelessWidget {
-  final TextEditingController searchController = TextEditingController();
-
   Future<void> addItemsDialog(context) async {
     return showDialog(
         context: context,
@@ -136,36 +105,36 @@ class StockHeader extends StatelessWidget {
                   children: [
                     Container(
                         child: TextFormField(
-                      decoration: InputDecoration(
-                          hintText: "Naam product", labelText: "Naam"),
-                      validator: (String? value) {
-                        if (value == null || value == "") {
-                          return "Graag een naam invoeren";
-                        }
-                      },
-                    )),
+                          decoration: InputDecoration(
+                              hintText: "Naam product", labelText: "Naam"),
+                          validator: (String? value) {
+                            if (value == null || value == "") {
+                              return "Graag een naam invoeren";
+                            }
+                          },
+                        )),
                     Container(
                         child: TextFormField(
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                          hintText: "prijs", labelText: "prijs"),
-                      validator: (String? value) {
-                        if (value == null || value == "") {
-                          return "Graag prijs vermelden";
-                        }
-                      },
-                    )),
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                              hintText: "prijs", labelText: "prijs"),
+                          validator: (String? value) {
+                            if (value == null || value == "") {
+                              return "Graag prijs vermelden";
+                            }
+                          },
+                        )),
                     Container(
                         child: TextFormField(
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                          hintText: "Aantal stuks", labelText: "Aantal"),
-                      validator: (String? value) {
-                        if (value == null || value == "") {
-                          return "Graag aantal vermelden";
-                        }
-                      },
-                    )),
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                              hintText: "Aantal stuks", labelText: "Aantal"),
+                          validator: (String? value) {
+                            if (value == null || value == "") {
+                              return "Graag aantal vermelden";
+                            }
+                          },
+                        )),
                   ],
                 )),
             actions: <Widget>[
@@ -288,105 +257,33 @@ class StockHeader extends StatelessWidget {
             // ],
           );
         }).then((value) {
-      Future.delayed(const Duration(milliseconds: 250), () {
-        SystemChrome.setPreferredOrientations([
-          DeviceOrientation.landscapeRight,
-          DeviceOrientation.landscapeLeft,
-          DeviceOrientation.portraitUp,
-          DeviceOrientation.portraitDown,
-        ]);
-      });
+
     });
   }
 
-  StockHeader({super.key});
-
   @override
   Widget build(BuildContext context) {
-    return PagePadding(
+    return Menu(
+      child: SafeArea(
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Row(
-            children: [
-              Expanded(
-                flex: 7,
-                child: TextField(
-                  controller: searchController,
-                  decoration: const InputDecoration(
-                    contentPadding: EdgeInsets.all(10),
-                    hintText: 'Search',
-                    hintStyle: TextStyle(
-                      color: mainColor,
-                      fontWeight: FontWeight.w300,
-                    ),
-                    enabledBorder: inputBorder,
-                    focusedBorder: inputBorder,
-                    border: inputBorder,
-                    prefixIcon: Align(
-                      widthFactor: 1.0,
-                      heightFactor: 1.0,
-                      child: Icon(
-                        Icons.search,
-                        color: mainColor,
-                        size: 20,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              const PaddingSpacing(),
-              Expanded(
-                flex: 3,
-                child: ElevatedButton(
-                  onPressed: () {
-                    addItemsDialog(context);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: mainColor,
-                    minimumSize: const Size(10, 47),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(
-                        borderRadius,
-                      ),
-                    ),
-                  ),
-                  child: const Icon(
-                    Icons.add,
-                    color: Colors.white,
-                  ),
-                ),
-              )
-            ],
-          ),
-          const PaddingSpacing(),
-          const Row(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text(
-                'Voorraad beheer',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          const Divider(
-            color: mainColor,
-            height: 1,
+          PageHeader(title: "Voorraad beheer", onAdd: (){addItemsDialog(context);},),
+          Flexible(
+            child: ListView.separated(
+              padding: const EdgeInsets.all(mobilePadding),
+              shrinkWrap: true,
+              itemCount: stockProducts.length,
+              separatorBuilder: (context, index) => const Divider(),
+              itemBuilder: (context, index) {
+                return StockElement(
+                  stockProduct: stockProducts[index],
+                );
+              },
+            ),
           ),
         ],
       ),
-    );
+    ));
   }
 }
-=======
-
->>>>>>> faf5310d4e7640184416ad38586fcb239a61fc95

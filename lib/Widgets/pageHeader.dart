@@ -6,8 +6,9 @@ import 'package:ms18_applicatie/config.dart';
 
 class PageHeader extends StatelessWidget {
   final TextEditingController searchController = TextEditingController();
+  final Function() onAdd;
   final String title;
-  PageHeader({super.key, required this.title});
+  PageHeader({super.key, required this.title,required this.onAdd });
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +29,7 @@ class PageHeader extends StatelessWidget {
               const PaddingSpacing(),
               Expanded(
                 flex: 3,
-                child: Button(onTap: (){}, icon: Icons.add)
+                child: Button(onTap: onAdd, icon: Icons.add)
               )
             ],
           ),

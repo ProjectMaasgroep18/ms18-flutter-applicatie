@@ -5,7 +5,7 @@ import 'package:ms18_applicatie/config.dart';
 class Button extends StatelessWidget {
   final IconData? icon;
   final String? text;
-  final Function? onTap;
+  final Function() onTap;
   const Button({
     super.key,
     this.icon,
@@ -16,7 +16,7 @@ class Button extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: () {},
+      onPressed: onTap,
       style: ElevatedButton.styleFrom(
         backgroundColor: mainColor,
         minimumSize: const Size(10, 47),

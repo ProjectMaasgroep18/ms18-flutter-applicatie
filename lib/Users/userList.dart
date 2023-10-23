@@ -47,7 +47,7 @@ class UserListState extends State<UserList> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          PageHeader(title: "Gebruiker beheer"),
+          PageHeader(title: "Gebruiker beheer", onAdd: (){},),
           Flexible(
             child: ListView.separated(
               padding: const EdgeInsets.all(mobilePadding),
