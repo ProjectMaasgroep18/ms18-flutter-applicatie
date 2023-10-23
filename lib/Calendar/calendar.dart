@@ -36,12 +36,10 @@ class CalendarState extends State<Calendar> {
   Future<List<Event>> _getDataSourceAsync() async {
     final client = HttpClient();
     final List<Event> events = [];
-    print("helllloooo");
     try {
       final request = await client
           .getUrl(Uri.parse('https://localhost:7059/Calendar/stam'));
       final response = await request.close();
-      print("kippp");
 
       if (response.statusCode == HttpStatus.ok) {
         final responseBody = await response.transform(utf8.decoder).join();
@@ -49,7 +47,6 @@ class CalendarState extends State<Calendar> {
 
         if (data is List) {
           for (final eventData in data) {
-            print(eventData['title']);
             final eventName = eventData['title'];
             final startDateTime = DateTime.parse(eventData['starDateTime']);
             final endDateTime = DateTime.parse(eventData['endDateTime']);
@@ -82,7 +79,8 @@ class CalendarState extends State<Calendar> {
   Widget build(BuildContext context) {
     return Menu(
       child: SfCalendar(
-        view: CalendarView.schedule,
+        view: CalendarView.month,
+        monthViewSettings: MonthViewSettings(showAgenda: true),
         timeSlotViewSettings: const TimeSlotViewSettings(
           timeFormat: 'HH:mm',
         ),
