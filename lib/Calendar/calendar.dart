@@ -8,10 +8,10 @@ class Calendar extends StatefulWidget {
   @override
   State<Calendar> createState() => CalendarState();
 }
+
 const scheduleViewSettings = ScheduleViewSettings(
-  monthHeaderSettings: MonthHeaderSettings(
-    backgroundColor: Color.fromARGB(255, 227, 233, 255)
-  ),
+  monthHeaderSettings:
+      MonthHeaderSettings(backgroundColor: Color.fromARGB(255, 227, 233, 255)),
 );
 
 class CalendarState extends State<Calendar> {
@@ -19,13 +19,13 @@ class CalendarState extends State<Calendar> {
   Widget build(BuildContext context) {
     return Menu(
       child: SfCalendar(
-        view: CalendarView.schedule,
+        view: CalendarView.month,
+        monthViewSettings: MonthViewSettings(showAgenda: true),
         timeSlotViewSettings: const TimeSlotViewSettings(
           timeFormat: 'HH:mm',
         ),
         dataSource: MeetingDataSource(_getDataSource()),
         scheduleViewSettings: scheduleViewSettings,
-
       ),
     );
   }
@@ -34,11 +34,23 @@ class CalendarState extends State<Calendar> {
     // sample data
     final List<Meeting> meetings = <Meeting>[];
     final DateTime today = DateTime.now();
-    final DateTime startTime = DateTime(today.year, today.month, today.day, 9, 0, 0);
+    final DateTime startTime =
+        DateTime(today.year, today.month, today.day, 9, 0, 0);
     final DateTime endTime = startTime.add(const Duration(hours: 2));
-    meetings.add(Meeting('Voorbeeld 1', startTime, endTime, const Color.fromARGB(255, 102, 140, 217), false));
-    meetings.add(Meeting('Voorbeeld 2', startTime.add(const Duration(hours: 2)), endTime.add(const Duration(hours: 2)), const Color.fromARGB(255, 102, 140, 217), false));
-    meetings.add(Meeting('Voorbeeld 3', startTime.add(const Duration(hours: 24)), endTime.add(const Duration(hours: 24)), const Color.fromARGB(255, 250, 209, 99), false));
+    meetings.add(Meeting('Voorbeeld 1', startTime, endTime,
+        const Color.fromARGB(255, 102, 140, 217), false));
+    meetings.add(Meeting(
+        'Voorbeeld 2',
+        startTime.add(const Duration(hours: 2)),
+        endTime.add(const Duration(hours: 2)),
+        const Color.fromARGB(255, 102, 140, 217),
+        false));
+    meetings.add(Meeting(
+        'Voorbeeld 3',
+        startTime.add(const Duration(hours: 24)),
+        endTime.add(const Duration(hours: 24)),
+        const Color.fromARGB(255, 250, 209, 99),
+        false));
 
     return meetings;
   }
