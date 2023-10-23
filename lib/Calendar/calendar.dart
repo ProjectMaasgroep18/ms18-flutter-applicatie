@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
+import 'package:http/http.dart' as http;
 
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
@@ -34,37 +36,30 @@ class CalendarState extends State<Calendar> {
   }
 
   Future<List<Event>> _getDataSourceAsync() async {
-    final client = HttpClient();
+    final String url = 'https://localhost:7059/Calendar/all';
+
+    final response = await http.get(Uri.parse(url));
+
     final List<Event> events = [];
-    try {
-      final request =
-          await client.getUrl(Uri.parse('https://localhost:7059/Calendar/all'));
-      final response = await request.close();
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
 
-      if (response.statusCode == HttpStatus.ok) {
-        final responseBody = await response.transform(utf8.decoder).join();
-        final data = json.decode(responseBody);
-
-        if (data is List) {
-          for (final eventData in data) {
-            final eventName = eventData['title'];
-            final startDateTime = DateTime.parse(eventData['starDateTime']);
-            final endDateTime = DateTime.parse(eventData['endDateTime']);
-            final isAllDay = endDateTime.isBefore(startDateTime);
-            final event = Event(
-              eventName,
-              startDateTime,
-              endDateTime,
-              Colors.blue, // Vervang dit door de juiste achtergrondkleur
-              isAllDay,
-            );
-            events.add(event);
-          }
+      if (data is List) {
+        for (final eventData in data) {
+          final eventName = eventData['title'];
+          final startDateTime = DateTime.parse(eventData['starDateTime']);
+          final endDateTime = DateTime.parse(eventData['endDateTime']);
+          final isAllDay = endDateTime.isBefore(startDateTime);
+          final event = Event(
+            eventName,
+            startDateTime,
+            endDateTime,
+            Colors.blue, // Vervang dit door de juiste achtergrondkleur
+            isAllDay,
+          );
+          events.add(event);
         }
       }
-    } catch (exception) {
-    } finally {
-      client.close();
     }
     return events;
   }
