@@ -54,23 +54,26 @@ Future<void> addItemsDialog(
           ),
           content: Container(
               width: double.maxFinite,
-              height: 200,
+              height: 220,
               color: Colors.white,
               child: Column(
                 children: [
                   InputField(
                     controller: nameController,
                     labelText: 'Product naam',
+                    isUnderlineBorder: true,
                   ),
                   const PaddingSpacing(),
                   InputField(
                     controller: priceController,
                     labelText: 'Prijs',
+                    isUnderlineBorder: true,
                   ),
                   const PaddingSpacing(),
                   InputField(
                     controller: countController,
                     labelText: 'Aantal stuks',
+                    isUnderlineBorder: true,
                   ),
                 ],
               )),

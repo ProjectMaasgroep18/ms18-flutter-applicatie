@@ -7,6 +7,7 @@ class InputField extends StatelessWidget {
   final String? labelText;
   final TextAlign? textAlign;
   final bool isUnderlineBorder;
+  final bool isPassword;
 
   final TextEditingController? controller;
   const InputField({
@@ -17,16 +18,18 @@ class InputField extends StatelessWidget {
     this.controller,
     this.textAlign,
     this.isUnderlineBorder = false,
+    this.isPassword = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextField(
       controller: controller,
+      obscureText: isPassword,
       textAlign: textAlign ?? TextAlign.start,
       decoration: InputDecoration(
-        contentPadding:
-            const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+        contentPadding: EdgeInsets.symmetric(
+            vertical: 10, horizontal: isUnderlineBorder ? 0 : 15),
         isDense: true,
         hintText: hintText,
         labelText: labelText,

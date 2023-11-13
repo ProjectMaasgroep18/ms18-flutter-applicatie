@@ -1,7 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:ms18_applicatie/config.dart';
+import 'package:ms18_applicatie/Dashboard/dashboard.dart';
+import 'package:ms18_applicatie/Widgets/buttons.dart';
+import 'package:ms18_applicatie/Widgets/inputFields.dart';
+import 'package:ms18_applicatie/Widgets/paddingSpacing.dart';
 import 'package:ms18_applicatie/menu.dart';
 import 'package:rive/rive.dart';
 
@@ -67,71 +68,27 @@ class _SignInFormState extends State<SignInForm> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  "Email",
-                  style: TextStyle(color: Colors.black54),
+                const InputField(
+                  labelText: "Email",
+                  isUnderlineBorder: true,
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 8.0, bottom: 16),
-                  child: TextFormField(
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return "";
-                      }
-                      return null;
-                    },
-                    onSaved: (email) {},
-                    decoration: InputDecoration(),
-                  ),
+                const PaddingSpacing(),
+                const PaddingSpacing(),
+                const InputField(
+                  labelText: "Password",
+                  isUnderlineBorder: true,
+                  isPassword: true,
                 ),
-                const Text(
-                  "Password",
-                  style: TextStyle(color: Colors.black54),
+                const PaddingSpacing(),
+                const PaddingSpacing(),
+                const PaddingSpacing(),
+                Button(
+                  onTap: () {
+                    signIn(context);
+                  },
+                  text: 'Sign in',
+                  icon: Icons.arrow_forward,
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 8.0, bottom: 16),
-                  child: TextFormField(
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return "";
-                      }
-                      return null;
-                    },
-                    onSaved: (password) {},
-                    obscureText: true,
-                    decoration: InputDecoration(),
-                  ),
-                ),
-                SizedBox(
-                  height: 8,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 8.0, bottom: 24),
-                  child: ElevatedButton.icon(
-                      onPressed: () {
-                        signIn(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: mainColor,
-                          minimumSize: const Size(double.infinity, 56),
-                          shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(10),
-                                  topRight: Radius.circular(25),
-                                  bottomRight: Radius.circular(25),
-                                  bottomLeft: Radius.circular(25)))),
-                      icon: const Icon(
-                        CupertinoIcons.arrow_right,
-                        color: Color.fromARGB(255, 255, 255, 255),
-                      ),
-                      label: const Text(
-                        "Sign In",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                        ),
-                      )),
-                )
               ],
             )),
         isShowLoading
@@ -158,11 +115,13 @@ class _SignInFormState extends State<SignInForm> {
                         getRiveController(artboard);
                     confetti =
                         controller.findSMI("Trigger explosion") as SMITrigger;
-                    await Future.delayed(Duration(seconds: 5), () {
+                    await Future.delayed(const Duration(seconds: 5), () {
                       Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => Menu(child: Container())));
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const Dashboard(),
+                        ),
+                      );
                     });
                   },
                 ),
@@ -183,13 +142,13 @@ class CustomPositioned extends StatelessWidget {
     return Positioned.fill(
       child: Column(
         children: [
-          Spacer(),
+          const Spacer(),
           SizedBox(
             height: size,
             width: size,
             child: child,
           ),
-          Spacer(flex: 2),
+          const Spacer(flex: 2),
         ],
       ),
     );

@@ -20,9 +20,7 @@ class Maasgroep18App extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: secondColor),
         useMaterial3: true,
       ),
-      home: Menu(
-        child: const OnboardingScreen(),
-      ),
+      home: const OnboardingScreen(),
     );
   }
 }

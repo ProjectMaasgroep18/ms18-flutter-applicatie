@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:ms18_applicatie/Profile/profile.dart';
 import 'package:ms18_applicatie/menu.dart';
 import 'package:rive/rive.dart';
 
@@ -27,12 +28,13 @@ class _OnboardingScreenState extends State<Dashboard> {
     return Scaffold(
         body: Stack(
       children: [
-        Menu(
-          child: SizedBox(
-            height: 86,
-          ),
-          title: Text(
+         Menu(
+          appBarHeight: 70,
+          centerTitle: false,
+          child: const SizedBox(),
+          title: const Text(
             "Dashboard",
+            textAlign: TextAlign.left,
             style: TextStyle(
                 color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
           ),
@@ -40,10 +42,16 @@ class _OnboardingScreenState extends State<Dashboard> {
             // profile picture in appbar
             Padding(
               padding: const EdgeInsets.only(right: 16),
-              child: CircleAvatar(
-                radius: 22,
-                backgroundImage: NetworkImage(
-                    "https://avatars.githubusercontent.com/u/55942632?v=4"),
+              child: InkWell(
+                onTap: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: ((context) => Profile())));
+                },
+                child: const CircleAvatar(
+                  radius: 22,
+                  backgroundImage: NetworkImage(
+                      "https://avatars.githubusercontent.com/u/55942632?v=4"),
+                ),
               ),
             ),
           ],
