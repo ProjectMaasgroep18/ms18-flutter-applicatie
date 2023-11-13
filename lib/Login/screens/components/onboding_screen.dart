@@ -55,11 +55,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Spacer(),
+                    Image.asset(
+                      "assets/logo.jpg",
+                      width: 50,
+                    ),
                     const SizedBox(
                       width: 260,
                       child: Column(children: [
                         Text(
-                          "Welcome Back",
+                          "Welkom Terug",
                           style: TextStyle(
                               fontSize: 60,
                               fontWeight: FontWeight.bold,
