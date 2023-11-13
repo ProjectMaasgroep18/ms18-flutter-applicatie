@@ -24,6 +24,12 @@ const String smallLogo = 'images/Obladi favicon.png';
 */
 
 //Input styles
+const OutlineInputBorder inputBorder = OutlineInputBorder(
+  borderSide: BorderSide(color: mainColor),
+  borderRadius: BorderRadius.all(
+    Radius.circular(borderRadius),
+  ),
+);
 const TextStyle labelTextStyle =
     TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: textColor);
 const Icon dropdownIcon = Icon(
@@ -69,6 +75,9 @@ const double verticalButtonSpacing = 10;
 //Button height
 const double buttonHeight = 35;
 
+//Border Radius
+const double borderRadius = 10;
+
 //cosnt itemslist/recordlistitem height
 const double itemHeight = 11;
 
@@ -89,4 +98,11 @@ const Map<RolesNames, int> roles = {
   RolesNames.Customer: 0,
   RolesNames.StockUser: 1,
   RolesNames.Admin: 2,
+};
+
+// Base url and headers for the api
+const String apiUrl = "localhost";
+const Map<String, String> apiHeaders = {
+  "Content-Type": "application/json",
+  "Accept": "application/json",
 };

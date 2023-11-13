@@ -3,6 +3,7 @@ import 'package:ms18_applicatie/Calendar/calendar.dart';
 import 'package:ms18_applicatie/Declarations/declarations.dart';
 import 'package:ms18_applicatie/Pictures/listPictures.dart';
 import 'package:ms18_applicatie/Stock/stockReport.dart';
+import 'package:ms18_applicatie/Users/userList.dart';
 import 'package:ms18_applicatie/roles.dart';
 import 'config.dart';
 import 'menuItem.dart' as menuItem;
@@ -14,6 +15,7 @@ class MenuIndex {
 class Menu extends StatelessWidget {
   final Widget child;
   final Widget? title;
+  final List<Widget>? actions;
   //fil the list of custom InputField classes
   final List<menuItem.MenuItem> menuItems = [
     menuItem.MenuItem(
@@ -43,11 +45,19 @@ class Menu extends StatelessWidget {
     menuItem.MenuItem(
       text: 'Google Maps',
       icon: Icons.map_outlined,
-      page: MaterialPageRoute(builder: (context) => Menu(child: Container(),)),
+      page: MaterialPageRoute(
+          builder: (context) => Menu(
+                child: Container(),
+              )),
+    ),
+    menuItem.MenuItem(
+      text: 'Gebruikers',
+      icon: Icons.account_circle,
+      page: MaterialPageRoute(builder: (context) => const UserList()),
     ),
   ];
 
-  Menu({required this.child, this.title});
+  Menu({required this.child, this.title, this.actions});
 
   //get and put the menu items from the list to the widgets for non mobile
   List<Widget> getMenuItems(BuildContext context) {
@@ -155,12 +165,21 @@ class Menu extends StatelessWidget {
             )
           : (title != null
               ? AppBar(
-                  backgroundColor: mainColor,
+                  centerTitle: true,
+                  shadowColor: secondColor,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(
+                      bottom: Radius.circular(borderRadius * 2),
+                    ),
+                  ),
+                  backgroundColor: secondColor,
                   title: title,
+                  elevation: 2,
+                  actions: actions,
                 )
               : null),
       bottomNavigationBar: MediaQuery.of(context).size.width > mobileWidth
-          ? SizedBox()
+          ? null
           : SizedBox(
               height: 48,
               child: BottomNavigationBar(
