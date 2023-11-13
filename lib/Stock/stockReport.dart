@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Models/stock.dart';
 import 'package:ms18_applicatie/Stock/widgets.dart';
-import 'package:ms18_applicatie/Widgets/buttons.dart';
-import 'package:ms18_applicatie/Widgets/inputFields.dart';
-import 'package:ms18_applicatie/Widgets/paddingSpacing.dart';
 import 'package:ms18_applicatie/Widgets/pageHeader.dart';
 import 'package:ms18_applicatie/config.dart';
 import 'package:ms18_applicatie/menu.dart';
@@ -82,74 +79,6 @@ class StockReportState extends State<StockReport> {
     ),
   ];
 
-  Future<void> addItemsDialog(context) async {
-    return showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            backgroundColor: Colors.white,
-            surfaceTintColor: Colors.white,
-            title: const Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Item toevoegen",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                    fontSize: 20,
-                  ),
-                ),
-                Divider(
-                  color: secondColor,
-                )
-              ],
-            ),
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(
-                Radius.circular(borderRadius),
-              ),
-            ),
-            content: Container(
-                width: double.maxFinite,
-                height: 200,
-                color: Colors.white,
-                child: const Column(
-                  children: [
-                    InputField(
-                      labelText: 'Product naam',
-                    ),
-                    PaddingSpacing(),
-                    InputField(
-                      labelText: 'Prijs',
-                    ),
-                    PaddingSpacing(),
-                    InputField(
-                      labelText: 'Aantal stuks',
-                    ),
-                  ],
-                )),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop(); // Sluit het dialoogvenster
-                },
-                child: Text('Terug'),
-              ),
-              SizedBox(
-                width: 150,
-                child: Button(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  text: 'Opslaan',
-                ),
-              )
-            ],
-          );
-        }).then((value) {});
-  }
-
   @override
   Widget build(BuildContext context) {
     return Menu(
@@ -160,7 +89,7 @@ class StockReportState extends State<StockReport> {
           PageHeader(
             title: "Voorraad beheer",
             onAdd: () {
-              addItemsDialog(context);
+              addItemsDialog(context, (stockProduct) {});
             },
           ),
           Flexible(
