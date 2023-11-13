@@ -1,3 +1,8 @@
+import 'dart:convert';
+import 'dart:io';
+import 'dart:math';
+import 'package:http/http.dart' as http;
+
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import '../menu.dart';
@@ -8,44 +13,77 @@ class Calendar extends StatefulWidget {
   @override
   State<Calendar> createState() => CalendarState();
 }
+
 const scheduleViewSettings = ScheduleViewSettings(
-  monthHeaderSettings: MonthHeaderSettings(
-    backgroundColor: Color.fromARGB(255, 227, 233, 255)
-  ),
+  monthHeaderSettings:
+      MonthHeaderSettings(backgroundColor: Color.fromARGB(255, 227, 233, 255)),
 );
 
 class CalendarState extends State<Calendar> {
+  List<Event> events = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchDataAsync();
+  }
+
+  Future<void> _fetchDataAsync() async {
+    final data = await _getDataSourceAsync();
+    setState(() {
+      events = data;
+    });
+  }
+
+  Future<List<Event>> _getDataSourceAsync() async {
+    final String url = 'https://localhost:7059/Calendar/all';
+
+    final response = await http.get(Uri.parse(url));
+
+    final List<Event> events = [];
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+
+      if (data is List) {
+        for (final eventData in data) {
+          final eventName = eventData['title'];
+          final startDateTime = DateTime.parse(eventData['starDateTime']);
+          final endDateTime = DateTime.parse(eventData['endDateTime']);
+          final isAllDay = endDateTime.isBefore(startDateTime);
+          final event = Event(
+            eventName,
+            startDateTime,
+            endDateTime,
+            Colors.blue, // Vervang dit door de juiste achtergrondkleur
+            isAllDay,
+          );
+          events.add(event);
+        }
+      }
+    }
+    return events;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Menu(
       child: SfCalendar(
-        view: CalendarView.schedule,
+        view: MediaQuery.of(context).size.width > 768
+            ? CalendarView.month
+            : CalendarView.schedule,
+        monthViewSettings: MonthViewSettings(showAgenda: true),
         timeSlotViewSettings: const TimeSlotViewSettings(
           timeFormat: 'HH:mm',
         ),
-        dataSource: MeetingDataSource(_getDataSource()),
+        dataSource: EventDataSource(events),
         scheduleViewSettings: scheduleViewSettings,
-
       ),
     );
   }
-
-  List<Meeting> _getDataSource() {
-    // sample data
-    final List<Meeting> meetings = <Meeting>[];
-    final DateTime today = DateTime.now();
-    final DateTime startTime = DateTime(today.year, today.month, today.day, 9, 0, 0);
-    final DateTime endTime = startTime.add(const Duration(hours: 2));
-    meetings.add(Meeting('Voorbeeld 1', startTime, endTime, const Color.fromARGB(255, 102, 140, 217), false));
-    meetings.add(Meeting('Voorbeeld 2', startTime.add(const Duration(hours: 2)), endTime.add(const Duration(hours: 2)), const Color.fromARGB(255, 102, 140, 217), false));
-    meetings.add(Meeting('Voorbeeld 3', startTime.add(const Duration(hours: 24)), endTime.add(const Duration(hours: 24)), const Color.fromARGB(255, 250, 209, 99), false));
-
-    return meetings;
-  }
 }
 
-class MeetingDataSource extends CalendarDataSource {
-  MeetingDataSource(List<Meeting> source) {
+class EventDataSource extends CalendarDataSource {
+  EventDataSource(List<Event> source) {
     appointments = source;
   }
 
@@ -75,8 +113,8 @@ class MeetingDataSource extends CalendarDataSource {
   }
 }
 
-class Meeting {
-  Meeting(this.eventName, this.from, this.to, this.background, this.isAllDay);
+class Event {
+  Event(this.eventName, this.from, this.to, this.background, this.isAllDay);
 
   String eventName;
   DateTime from;
