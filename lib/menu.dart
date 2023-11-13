@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Calendar/calendar.dart';
 import 'package:ms18_applicatie/Dashboard/dashboard.dart';
 import 'package:ms18_applicatie/Declarations/declarations.dart';
+import 'package:ms18_applicatie/Models/stock.dart';
 import 'package:ms18_applicatie/Pictures/listPictures.dart';
+import 'package:ms18_applicatie/Profile/profile.dart';
 import 'package:ms18_applicatie/Stock/stockReport.dart';
 import 'package:ms18_applicatie/Users/userList.dart';
 import 'package:ms18_applicatie/roles.dart';
@@ -27,7 +29,7 @@ class Menu extends StatelessWidget {
     menuItem.MenuItem(
         text: 'Voorraad',
         icon: Icons.add_chart,
-        page: MaterialPageRoute(builder: (context) => const StockReport()),
+        page: MaterialPageRoute(builder: (context) => StockReport()),
         roles: [Roles.Admin, Roles.Subadmin]),
     menuItem.MenuItem(
         text: 'Foto\'s',
@@ -54,7 +56,7 @@ class Menu extends StatelessWidget {
     menuItem.MenuItem(
       text: 'Gebruikers',
       icon: Icons.account_circle,
-      page: MaterialPageRoute(builder: (context) => const UserList()),
+      page: MaterialPageRoute(builder: (context) => Profile()),
     ),
   ];
 
@@ -167,13 +169,13 @@ class Menu extends StatelessWidget {
           : (title != null
               ? AppBar(
                   centerTitle: true,
-                  shadowColor: secondColor,
+                  shadowColor: mainColor,
                   shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.vertical(
                       bottom: Radius.circular(borderRadius * 2),
                     ),
                   ),
-                  backgroundColor: secondColor,
+                  backgroundColor: mainColor,
                   title: title,
                   elevation: 2,
                   actions: actions,

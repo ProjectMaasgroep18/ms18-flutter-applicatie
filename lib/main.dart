@@ -17,10 +17,12 @@ class Maasgroep18App extends StatelessWidget {
       navigatorKey: navigatorKey,
       title: 'Maasgroep 18 Applicatie',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrangeAccent),
+        colorScheme: ColorScheme.fromSeed(seedColor: secondColor),
         useMaterial3: true,
       ),
-      home: OnboardingScreen(),
+      home: Menu(
+        child: const OnboardingScreen(),
+      ),
     );
   }
 }
