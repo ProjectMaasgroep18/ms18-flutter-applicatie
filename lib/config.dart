@@ -92,3 +92,10 @@ const Map<RolesNames, int> roles = {
   RolesNames.StockUser: 1,
   RolesNames.Admin: 2,
 };
+
+// Base url and headers for the api
+const String apiUrl = "localhost";
+const Map<String, String> apiHeaders = {
+  "Content-Type": "application/json",
+  "Accept": "application/json",
+};
