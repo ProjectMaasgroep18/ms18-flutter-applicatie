@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Calendar/calendar.dart';
+import 'package:ms18_applicatie/Dashboard/dashboard.dart';
 import 'package:ms18_applicatie/Declarations/declarations.dart';
 import 'package:ms18_applicatie/Models/stock.dart';
 import 'package:ms18_applicatie/Pictures/listPictures.dart';
@@ -23,7 +24,7 @@ class Menu extends StatelessWidget {
     menuItem.MenuItem(
       text: 'Home',
       icon: Icons.home,
-      page: MaterialPageRoute(builder: (context) => Menu(child: Container())),
+      page: MaterialPageRoute(builder: (context) => Dashboard()),
     ),
     menuItem.MenuItem(
         text: 'Voorraad',

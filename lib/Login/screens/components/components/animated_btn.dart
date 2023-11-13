@@ -1,4 +1,6 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:ms18_applicatie/config.dart';
 import 'package:rive/rive.dart';
 
 class AnimatedBtn extends StatelessWidget {
@@ -16,34 +18,35 @@ class AnimatedBtn extends StatelessWidget {
     return GestureDetector(
       onTap: press,
       child: Container(
-        // color: Color.fromARGB(255, 37, 42, 153),
-        height: 184,
+        color: Colors.transparent,
+        height: 100,
         width: 1260,
         child: Stack(children: [
-          // Container(
-          //   child: RiveAnimation.asset(
-          //     "assets/RiveAssets/button.riv",
-          //     controllers: [_btnAnimationController],
-          //   ),
-
-          // ),
-          RiveAnimation.asset(
-            "assets/RiveAssets/button.riv",
-            controllers: [_btnAnimationController],
-          ),
-          const Positioned.fill(
-              top: 8,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(CupertinoIcons.arrow_right),
-                  SizedBox(
-                    width: 20,
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0, bottom: 24),
+            child: ElevatedButton.icon(
+                onPressed: press,
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: mainColor,
+                    minimumSize: const Size(double.infinity, 56),
+                    shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(10),
+                            topRight: Radius.circular(25),
+                            bottomRight: Radius.circular(25),
+                            bottomLeft: Radius.circular(25)))),
+                icon: const Icon(
+                  CupertinoIcons.arrow_right,
+                  color: Color.fromARGB(255, 255, 255, 255),
+                ),
+                label: const Text(
+                  "Sign In",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
                   ),
-                  Text("Start now",
-                      style: TextStyle(fontWeight: FontWeight.w600))
-                ],
-              )),
+                )),
+          )
         ]),
       ),
     );

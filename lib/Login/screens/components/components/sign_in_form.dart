@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:ms18_applicatie/config.dart';
+import 'package:ms18_applicatie/menu.dart';
 import 'package:rive/rive.dart';
 
 class SignInForm extends StatefulWidget {
@@ -80,11 +81,7 @@ class _SignInFormState extends State<SignInForm> {
                       return null;
                     },
                     onSaved: (email) {},
-                    decoration: InputDecoration(
-                        prefixIcon: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 0.2),
-                      // child: SvgPicture.asset("assets/icons/email.svg"),
-                    )),
+                    decoration: InputDecoration(),
                   ),
                 ),
                 const Text(
@@ -102,11 +99,7 @@ class _SignInFormState extends State<SignInForm> {
                     },
                     onSaved: (password) {},
                     obscureText: true,
-                    decoration: InputDecoration(
-                        prefixIcon: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 0.2),
-                      // child: SvgPicture.asset("assets/icons/password.svg"),
-                    )),
+                    decoration: InputDecoration(),
                   ),
                 ),
                 SizedBox(
@@ -160,11 +153,17 @@ class _SignInFormState extends State<SignInForm> {
                 scale: 6,
                 child: RiveAnimation.asset(
                   "assets/RiveAssets/confetti.riv",
-                  onInit: (artboard) {
+                  onInit: (artboard) async {
                     StateMachineController controller =
                         getRiveController(artboard);
                     confetti =
                         controller.findSMI("Trigger explosion") as SMITrigger;
+                    await Future.delayed(Duration(seconds: 5), () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => Menu(child: Container())));
+                    });
                   },
                 ),
               ))
