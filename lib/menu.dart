@@ -19,6 +19,9 @@ class Menu extends StatelessWidget {
   final Widget child;
   final Widget? title;
   final List<Widget>? actions;
+  final double appBarHeight;
+  final bool centerTitle;
+
   //fil the list of custom InputField classes
   final List<menuItem.MenuItem> menuItems = [
     menuItem.MenuItem(
@@ -56,11 +59,17 @@ class Menu extends StatelessWidget {
     menuItem.MenuItem(
       text: 'Gebruikers',
       icon: Icons.account_circle,
-      page: MaterialPageRoute(builder: (context) => Profile()),
+      page: MaterialPageRoute(builder: (context) => const UserList()),
     ),
   ];
 
-  Menu({required this.child, this.title, this.actions});
+  Menu({
+    required this.child,
+    this.title,
+    this.actions,
+    this.appBarHeight = kToolbarHeight,
+    this.centerTitle = true,
+  });
 
   //get and put the menu items from the list to the widgets for non mobile
   List<Widget> getMenuItems(BuildContext context) {
@@ -71,7 +80,7 @@ class Menu extends StatelessWidget {
     if (screenWidth > tabletWidth) {
       items.add(
         Padding(
-          padding: EdgeInsets.symmetric(vertical: 20),
+          padding: const EdgeInsets.symmetric(vertical: 20),
           child: Image.asset(
             "",
             height: 60,
@@ -98,7 +107,7 @@ class Menu extends StatelessWidget {
     } else if (screenWidth > mobileWidth) {
       items.add(
         Padding(
-          padding: EdgeInsets.symmetric(vertical: 20),
+          padding: const EdgeInsets.symmetric(vertical: 20),
           child: Image.asset(
             "",
             height: 30,
@@ -168,7 +177,7 @@ class Menu extends StatelessWidget {
             )
           : (title != null
               ? AppBar(
-                  centerTitle: true,
+                  centerTitle: centerTitle,
                   shadowColor: mainColor,
                   shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.vertical(
@@ -179,6 +188,7 @@ class Menu extends StatelessWidget {
                   title: title,
                   elevation: 2,
                   actions: actions,
+                  toolbarHeight: appBarHeight,
                 )
               : null),
       bottomNavigationBar: MediaQuery.of(context).size.width > mobileWidth
