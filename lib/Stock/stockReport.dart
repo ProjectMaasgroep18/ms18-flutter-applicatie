@@ -82,31 +82,32 @@ class StockReportState extends State<StockReport> {
   @override
   Widget build(BuildContext context) {
     return Menu(
-        child: SafeArea(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          PageHeader(
-            title: "Voorraad beheer",
-            onAdd: () {
-              addItemsDialog(context, (stockProduct) {});
-            },
-          ),
-          Flexible(
-            child: ListView.separated(
-              padding: const EdgeInsets.all(mobilePadding),
-              shrinkWrap: true,
-              itemCount: stockProducts.length,
-              separatorBuilder: (context, index) => const Divider(),
-              itemBuilder: (context, index) {
-                return StockElement(
-                  stockProduct: stockProducts[index],
-                );
+      child: SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            PageHeader(
+              title: "Voorraad beheer",
+              onAdd: () {
+                addItemsDialog(context, (stockProduct) {});
               },
             ),
-          ),
-        ],
+            Flexible(
+              child: ListView.separated(
+                padding: const EdgeInsets.all(mobilePadding),
+                shrinkWrap: true,
+                itemCount: stockProducts.length,
+                separatorBuilder: (context, index) => const Divider(),
+                itemBuilder: (context, index) {
+                  return StockElement(
+                    stockProduct: stockProducts[index],
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
-    ));
+    );
   }
 }
