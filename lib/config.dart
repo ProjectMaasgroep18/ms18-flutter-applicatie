@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 //Colors
 const Color mainColor = Color.fromARGB(255, 23, 32, 58);
-const Color secondColor = Color(0xff8493BA);
+const Color secondColor = Color.fromRGBO(37, 132, 147, 186);
 const Color dangerColor = Color(0xffEA5A5A);
 const Color successColor = Color(0xff6cc070);
 const Color backgroundColor = Color(0xfffafafa);

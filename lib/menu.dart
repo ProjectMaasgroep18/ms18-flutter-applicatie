@@ -43,10 +43,7 @@ class Menu extends StatelessWidget {
     menuItem.MenuItem(
       text: 'Google Maps',
       icon: Icons.map_outlined,
-      page: MaterialPageRoute(
-          builder: (context) => Menu(
-                child: Container(),
-              )),
+      page: MaterialPageRoute(builder: (context) => Menu(child: Container(),)),
     ),
   ];
 
