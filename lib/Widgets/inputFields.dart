@@ -6,6 +6,7 @@ class InputField extends StatelessWidget {
   final String? hintText;
   final String? labelText;
   final TextAlign? textAlign;
+  final bool isUnderlineBorder;
 
   final TextEditingController? controller;
   const InputField({
@@ -15,15 +16,17 @@ class InputField extends StatelessWidget {
     this.labelText,
     this.controller,
     this.textAlign,
+    this.isUnderlineBorder = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextField(
       controller: controller,
-      textAlign: textAlign??TextAlign.start,
+      textAlign: textAlign ?? TextAlign.start,
       decoration: InputDecoration(
-        contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
         isDense: true,
         hintText: hintText,
         labelText: labelText,
@@ -31,9 +34,9 @@ class InputField extends StatelessWidget {
           color: mainColor,
           fontWeight: FontWeight.w300,
         ),
-        enabledBorder: inputBorder,
-        focusedBorder: inputBorder,
-        border: inputBorder,
+        enabledBorder: isUnderlineBorder ? inputUnderlineBorder : inputBorder,
+        focusedBorder: isUnderlineBorder ? inputUnderlineBorder : inputBorder,
+        border: isUnderlineBorder ? inputUnderlineBorder : inputBorder,
         prefixIcon: icon != null
             ? Align(
                 widthFactor: 1.0,

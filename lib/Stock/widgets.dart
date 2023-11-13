@@ -9,7 +9,7 @@ import '../config.dart';
 Future<void> addItemsDialog(
     BuildContext context, Function(StockProduct stockProduct) onSave,
     [StockProduct? stockProduct]) async {
-      //Checking if the product is being changed
+  //Checking if the product is being changed
   bool isChange = stockProduct != null;
   //Adding default product information
   stockProduct ??= StockProduct(
@@ -121,7 +121,7 @@ class StockElement extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       onTap: () {
-        addItemsDialog(context,(stockProduct){}, stockProduct);
+        addItemsDialog(context, (stockProduct) {}, stockProduct);
       },
       leading: SizedBox(
         width: 45,
@@ -153,43 +153,44 @@ class StockElement extends StatelessWidget {
       subtitle: Text(
           '${stockProduct.product.priceQuantity}: €${stockProduct.product.price}'),
       trailing: SizedBox(
-          width: 175,
-          child: Row(
-            children: [
-              SizedBox(
-                width: 44,
-                height: 44,
-                child: Button(
-                  onTap: () {
-                    changeNumber(-1);
-                  },
-                  icon: Icons.remove,
-                ),
+        width: 175,
+        child: Row(
+          children: [
+            SizedBox(
+              width: 44,
+              height: 44,
+              child: Button(
+                onTap: () {
+                  changeNumber(-1);
+                },
+                icon: Icons.remove,
               ),
-              const SizedBox(
-                width: 5,
+            ),
+            const SizedBox(
+              width: 5,
+            ),
+            Flexible(
+              child: InputField(
+                controller: stockController,
+                textAlign: TextAlign.center,
               ),
-              Flexible(
-                child: InputField(
-                  controller: stockController,
-                  textAlign: TextAlign.center,
-                ),
+            ),
+            const SizedBox(
+              width: 5,
+            ),
+            SizedBox(
+              width: 44,
+              height: 44,
+              child: Button(
+                onTap: () {
+                  changeNumber(1);
+                },
+                icon: Icons.add,
               ),
-              const SizedBox(
-                width: 5,
-              ),
-              SizedBox(
-                width: 44,
-                height: 44,
-                child: Button(
-                  onTap: () {
-                    changeNumber(1);
-                  },
-                  icon: Icons.add,
-                ),
-              ),
-            ],
-          )),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

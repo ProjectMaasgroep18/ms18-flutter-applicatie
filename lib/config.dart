@@ -30,6 +30,9 @@ const OutlineInputBorder inputBorder = OutlineInputBorder(
     Radius.circular(borderRadius),
   ),
 );
+const UnderlineInputBorder inputUnderlineBorder = UnderlineInputBorder(
+  borderSide: BorderSide(color: mainColor),
+);
 const TextStyle labelTextStyle =
     TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: textColor);
 const Icon dropdownIcon = Icon(
