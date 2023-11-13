@@ -20,6 +20,13 @@ class AnimatedBtn extends StatelessWidget {
         height: 184,
         width: 1260,
         child: Stack(children: [
+          // Container(
+          //   child: RiveAnimation.asset(
+          //     "assets/RiveAssets/button.riv",
+          //     controllers: [_btnAnimationController],
+          //   ),
+
+          // ),
           RiveAnimation.asset(
             "assets/RiveAssets/button.riv",
             controllers: [_btnAnimationController],
