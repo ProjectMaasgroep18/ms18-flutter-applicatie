@@ -63,7 +63,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       width: 260,
                       child: Column(children: [
                         Text(
-                          "Welcome Back",
+                          "Welkom Terug",
                           style: TextStyle(
                               fontSize: 60,
                               fontWeight: FontWeight.bold,
