@@ -3,6 +3,7 @@ import 'package:ms18_applicatie/Calendar/calendar.dart';
 import 'package:ms18_applicatie/Declarations/declarations.dart';
 import 'package:ms18_applicatie/Pictures/listPictures.dart';
 import 'package:ms18_applicatie/Stock/stockReport.dart';
+import 'package:ms18_applicatie/Users/userList.dart';
 import 'package:ms18_applicatie/roles.dart';
 import 'package:ms18_applicatie/team-c/Declarations/declarations.dart';
 import 'config.dart';
@@ -15,6 +16,7 @@ class MenuIndex {
 class Menu extends StatelessWidget {
   final Widget child;
   final Widget? title;
+  final List<Widget>? actions;
   //fil the list of custom InputField classes
   final List<menuItem.MenuItem> menuItems = [
     menuItem.MenuItem(
@@ -44,11 +46,19 @@ class Menu extends StatelessWidget {
     menuItem.MenuItem(
       text: 'Google Maps',
       icon: Icons.map_outlined,
-      page: MaterialPageRoute(builder: (context) => Menu(child: Container(),)),
+      page: MaterialPageRoute(
+          builder: (context) => Menu(
+                child: Container(),
+              )),
+    ),
+    menuItem.MenuItem(
+      text: 'Gebruikers',
+      icon: Icons.account_circle,
+      page: MaterialPageRoute(builder: (context) => const UserList()),
     ),
   ];
 
-  Menu({required this.child, this.title});
+  Menu({required this.child, this.title, this.actions});
 
   //get and put the menu items from the list to the widgets for non mobile
   List<Widget> getMenuItems(BuildContext context) {
@@ -127,7 +137,7 @@ class Menu extends StatelessWidget {
           BottomNavigationBarItem(
             label: '',
             icon: Material(
-              color: selected ? textColorOnMainColor : secondColor,
+              color: selected ? textColorOnMainColor : mainColor,
               child: MenuItemBase(
                 index: i,
                 page: menuitem.page,
@@ -156,12 +166,21 @@ class Menu extends StatelessWidget {
             )
           : (title != null
               ? AppBar(
+                  centerTitle: true,
+                  shadowColor: secondColor,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(
+                      bottom: Radius.circular(borderRadius * 2),
+                    ),
+                  ),
                   backgroundColor: secondColor,
                   title: title,
+                  elevation: 2,
+                  actions: actions,
                 )
               : null),
       bottomNavigationBar: MediaQuery.of(context).size.width > mobileWidth
-          ? SizedBox()
+          ? null
           : SizedBox(
               height: 48,
               child: BottomNavigationBar(
@@ -217,13 +236,13 @@ class MenuItemDesktop extends StatelessWidget {
           Icon(
             icon,
             size: 25,
-            color: selected! ? mainColor : textColorOnMainColor,
+            color: selected! ? secondColor : textColorOnMainColor,
           ),
           SizedBox(width: 20),
           Text(
             text!,
             style: TextStyle(
-                color: selected! ? mainColor : textColorOnMainColor,
+                color: selected! ? secondColor : textColorOnMainColor,
                 fontSize: 12,
                 height: 1.5),
             overflow: TextOverflow.ellipsis,
@@ -252,13 +271,13 @@ class MenuItemtabletWidth extends StatelessWidget {
           Icon(
             icon,
             size: 30,
-            color: selected ? mainColor : textColorOnMainColor,
+            color: selected ? secondColor : textColorOnMainColor,
           ),
           SizedBox(width: 25),
           Text(
             text,
             style: TextStyle(
-              color: selected ? mainColor : textColorOnMainColor,
+              color: selected ? secondColor : textColorOnMainColor,
               fontSize: 8,
               height: 1.5,
             ),
@@ -285,7 +304,7 @@ class MenuItemBase extends StatelessWidget {
         elevation: 0,
         alignment: Alignment.center,
         backgroundColor:
-            index == MenuIndex.index! ? secondColor : Colors.transparent,
+            index == MenuIndex.index! ? mainColor : Colors.transparent,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
       ),
       onPressed: () {
@@ -312,12 +331,12 @@ class MobileWidthMenuItem extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Icon(icon, color: selected! ? mainColor : textColorOnMainColor),
+          Icon(icon, color: selected! ? secondColor : textColorOnMainColor),
           Text(
             text!,
             style: TextStyle(
                 fontSize: 8,
-                color: selected! ? mainColor : textColorOnMainColor),
+                color: selected! ? secondColor : textColorOnMainColor),
             overflow: TextOverflow.ellipsis,
           ),
         ],
