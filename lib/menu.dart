@@ -126,7 +126,7 @@ class Menu extends StatelessWidget {
           BottomNavigationBarItem(
             label: '',
             icon: Material(
-              color: selected ? textColorOnMainColor : secondColor,
+              color: selected ? textColorOnMainColor : mainColor,
               child: MenuItemBase(
                 index: i,
                 page: menuitem.page,
@@ -155,7 +155,7 @@ class Menu extends StatelessWidget {
             )
           : (title != null
               ? AppBar(
-                  backgroundColor: secondColor,
+                  backgroundColor: mainColor,
                   title: title,
                 )
               : null),
@@ -216,13 +216,13 @@ class MenuItemDesktop extends StatelessWidget {
           Icon(
             icon,
             size: 25,
-            color: selected! ? mainColor : textColorOnMainColor,
+            color: selected! ? secondColor : textColorOnMainColor,
           ),
           SizedBox(width: 20),
           Text(
             text!,
             style: TextStyle(
-                color: selected! ? mainColor : textColorOnMainColor,
+                color: selected! ? secondColor : textColorOnMainColor,
                 fontSize: 12,
                 height: 1.5),
             overflow: TextOverflow.ellipsis,
@@ -251,13 +251,13 @@ class MenuItemtabletWidth extends StatelessWidget {
           Icon(
             icon,
             size: 30,
-            color: selected ? mainColor : textColorOnMainColor,
+            color: selected ? secondColor : textColorOnMainColor,
           ),
           SizedBox(width: 25),
           Text(
             text,
             style: TextStyle(
-              color: selected ? mainColor : textColorOnMainColor,
+              color: selected ? secondColor : textColorOnMainColor,
               fontSize: 8,
               height: 1.5,
             ),
@@ -284,7 +284,7 @@ class MenuItemBase extends StatelessWidget {
         elevation: 0,
         alignment: Alignment.center,
         backgroundColor:
-            index == MenuIndex.index! ? secondColor : Colors.transparent,
+            index == MenuIndex.index! ? mainColor : Colors.transparent,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
       ),
       onPressed: () {
@@ -311,12 +311,12 @@ class MobileWidthMenuItem extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Icon(icon, color: selected! ? mainColor : textColorOnMainColor),
+          Icon(icon, color: selected! ? secondColor : textColorOnMainColor),
           Text(
             text!,
             style: TextStyle(
                 fontSize: 8,
-                color: selected! ? mainColor : textColorOnMainColor),
+                color: selected! ? secondColor : textColorOnMainColor),
             overflow: TextOverflow.ellipsis,
           ),
         ],
