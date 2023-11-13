@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 //Colors
-const Color mainColor = Color(0xFFf24300);
-const Color secondColor = Color(0xFFffc4ae);
+const Color mainColor = Color.fromARGB(255, 23, 32, 58);
+const Color secondColor = Color.fromRGBO(37, 132, 147, 186);
 const Color dangerColor = Color(0xffEA5A5A);
 const Color successColor = Color(0xff6cc070);
 const Color backgroundColor = Color(0xfffafafa);
@@ -10,6 +10,13 @@ const Color textColor = Colors.black;
 const Color textColorOnSecondColor = Color(0xFFf24300);
 const Color textColorOnMainColor = Colors.white;
 const Color mainButtonColor = mainColor;
+
+// danillo's login
+const Color backgroundColor2 = Color.fromARGB(255, 23, 32, 58);
+const Color backgroundColorLight = Color(0xFFF2F6FF);
+const Color backgroundColorDark = Color.fromRGBO(37, 132, 147, 186);
+const Color shadowColorLight = Color(0xFF4A5367);
+const Color shadowColorDark = Colors.black;
 
 /*Logo's  -  Hebben we (nog) niet
 const String fullLogo = 'images/Obladi logo.png';
