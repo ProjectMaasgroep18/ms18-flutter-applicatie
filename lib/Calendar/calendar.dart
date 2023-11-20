@@ -22,6 +22,7 @@ const scheduleViewSettings = ScheduleViewSettings(
 class CalendarState extends State<Calendar> {
   List<Event> events = [];
   String? _subjectText, _startTimeText, _endTimeText, _dateText, _timeDetails;
+  final CalendarController _controller = CalendarController();
 
   @override
   void initState() {
@@ -72,7 +73,6 @@ class CalendarState extends State<Calendar> {
         view: MediaQuery.of(context).size.width > 768
             ? CalendarView.week
             : CalendarView.schedule,
-        monthViewSettings: MonthViewSettings(showAgenda: true),
         timeSlotViewSettings: const TimeSlotViewSettings(
           timeFormat: 'HH:mm',
         ),
@@ -88,11 +88,27 @@ class CalendarState extends State<Calendar> {
         showNavigationArrow: true,
         onTap: calendarTapped,
         cellEndPadding: 40,
+        allowedViews: [
+          CalendarView.day,
+          CalendarView.week,
+          CalendarView.month,
+          CalendarView.schedule,
+        ],
+        monthViewSettings: MonthViewSettings(
+            navigationDirection: MonthNavigationDirection.vertical),
       ),
     );
   }
 
   void calendarTapped(CalendarTapDetails details) {
+    if (_controller.view == CalendarView.month &&
+        details.targetElement == CalendarElement.calendarCell) {
+      _controller.view = CalendarView.day;
+    } else if ((_controller.view == CalendarView.week ||
+            _controller.view == CalendarView.workWeek) &&
+        details.targetElement == CalendarElement.viewHeader) {
+      _controller.view = CalendarView.day;
+    }
     if (details.targetElement == CalendarElement.appointment ||
         details.targetElement == CalendarElement.agenda) {
       final Event appointmentDetails = details.appointments![0];
