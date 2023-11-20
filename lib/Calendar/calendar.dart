@@ -72,7 +72,7 @@ class CalendarState extends State<Calendar> {
       child: SfCalendar(
         view: MediaQuery.of(context).size.width > 768
             ? CalendarView.week
-            : CalendarView.schedule,
+            : CalendarView.day,
         timeSlotViewSettings: const TimeSlotViewSettings(
           timeFormat: 'HH:mm',
         ),
