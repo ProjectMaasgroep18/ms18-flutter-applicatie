@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'package:http/http.dart' as http;
-
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import '../menu.dart';
@@ -21,6 +21,8 @@ const scheduleViewSettings = ScheduleViewSettings(
 
 class CalendarState extends State<Calendar> {
   List<Event> events = [];
+  String? _subjectText, _startTimeText, _endTimeText, _dateText, _timeDetails;
+  final CalendarController _controller = CalendarController();
 
   @override
   void initState() {
@@ -69,16 +71,104 @@ class CalendarState extends State<Calendar> {
     return Menu(
       child: SfCalendar(
         view: MediaQuery.of(context).size.width > 768
-            ? CalendarView.month
-            : CalendarView.schedule,
-        monthViewSettings: MonthViewSettings(showAgenda: true),
+            ? CalendarView.week
+            : CalendarView.day,
         timeSlotViewSettings: const TimeSlotViewSettings(
           timeFormat: 'HH:mm',
         ),
         dataSource: EventDataSource(events),
         scheduleViewSettings: scheduleViewSettings,
+        selectionDecoration: BoxDecoration(
+          color: Colors.transparent,
+          border: Border.all(color: Colors.blue, width: 2),
+          borderRadius: const BorderRadius.all(Radius.circular(4)),
+          shape: BoxShape.rectangle,
+        ),
+        todayHighlightColor: Colors.blue,
+        showNavigationArrow: true,
+        onTap: calendarTapped,
+        cellEndPadding: 40,
+        allowedViews: [
+          CalendarView.day,
+          CalendarView.week,
+          CalendarView.month,
+          CalendarView.schedule,
+        ],
+        monthViewSettings: MonthViewSettings(
+            navigationDirection: MonthNavigationDirection.vertical),
       ),
     );
+  }
+
+  void calendarTapped(CalendarTapDetails details) {
+    if (_controller.view == CalendarView.month &&
+        details.targetElement == CalendarElement.calendarCell) {
+      _controller.view = CalendarView.day;
+    } else if ((_controller.view == CalendarView.week ||
+            _controller.view == CalendarView.workWeek) &&
+        details.targetElement == CalendarElement.viewHeader) {
+      _controller.view = CalendarView.day;
+    }
+    if (details.targetElement == CalendarElement.appointment ||
+        details.targetElement == CalendarElement.agenda) {
+      final Event appointmentDetails = details.appointments![0];
+      _subjectText = appointmentDetails.eventName;
+      _dateText = DateFormat('MMMM dd, yyyy')
+          .format(appointmentDetails.from)
+          .toString();
+      _startTimeText =
+          DateFormat('hh:mm a').format(appointmentDetails.from).toString();
+      _endTimeText =
+          DateFormat('hh:mm a').format(appointmentDetails.to).toString();
+      _timeDetails = '$_startTimeText - $_endTimeText';
+    } else if (details.targetElement == CalendarElement.calendarCell) {
+      // TODO add a new event in this modal
+      _subjectText = "Add event";
+      _dateText = DateFormat('MMMM dd, yyyy').format(details.date!).toString();
+      _timeDetails = '';
+    }
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Container(child: new Text('$_subjectText')),
+            content: Container(
+              height: 80,
+              child: Column(
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      Text(
+                        '$_dateText',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 20,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Container(
+                    height: 40,
+                    child: Row(
+                      children: <Widget>[
+                        Text(_timeDetails!,
+                            style: TextStyle(
+                                fontWeight: FontWeight.w400, fontSize: 15)),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            actions: <Widget>[
+              new TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: new Text('Sluiten'))
+            ],
+          );
+        });
   }
 }
 
