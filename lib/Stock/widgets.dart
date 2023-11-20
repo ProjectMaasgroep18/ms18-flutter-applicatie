@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Models/stock.dart';
 import 'package:ms18_applicatie/Widgets/buttons.dart';
 import 'package:ms18_applicatie/Widgets/inputFields.dart';
+import 'package:ms18_applicatie/Widgets/inputPopup.dart';
 import 'package:ms18_applicatie/Widgets/paddingSpacing.dart';
 import 'package:ms18_applicatie/Widgets/statusIndicator.dart';
 import '../config.dart';
@@ -25,78 +26,31 @@ Future<void> addItemsDialog(
   TextEditingController countController =
       TextEditingController(text: stockProduct.quantity.toString());
 
-  return showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          backgroundColor: Colors.white,
-          surfaceTintColor: Colors.white,
-          title: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Item ${isChange ? 'wijzigen' : 'toevoegen'}",
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                  fontSize: 20,
-                ),
-              ),
-              const Divider(
-                color: secondColor,
-              )
-            ],
+  await showInputPopup(context,
+      title: "Item ${isChange ? 'wijzigen' : 'toevoegen'}",
+      child: Column(
+        children: [
+          InputField(
+            controller: nameController,
+            labelText: 'Product naam',
+            isUnderlineBorder: true,
           ),
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(
-              Radius.circular(borderRadius),
-            ),
+          const PaddingSpacing(),
+          InputField(
+            controller: priceController,
+            labelText: 'Prijs',
+            isUnderlineBorder: true,
           ),
-          content: Container(
-              width: double.maxFinite,
-              height: 220,
-              color: Colors.white,
-              child: Column(
-                children: [
-                  InputField(
-                    controller: nameController,
-                    labelText: 'Product naam',
-                    isUnderlineBorder: true,
-                  ),
-                  const PaddingSpacing(),
-                  InputField(
-                    controller: priceController,
-                    labelText: 'Prijs',
-                    isUnderlineBorder: true,
-                  ),
-                  const PaddingSpacing(),
-                  InputField(
-                    controller: countController,
-                    labelText: 'Aantal stuks',
-                    isUnderlineBorder: true,
-                  ),
-                ],
-              )),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Sluit het dialoogvenster
-              },
-              child: const Text('Terug'),
-            ),
-            SizedBox(
-              width: 150,
-              child: Button(
-                onTap: () {
-                  Navigator.pop(context);
-                  onSave(stockProduct!);
-                },
-                text: 'Opslaan',
-              ),
-            )
-          ],
-        );
-      }).then((value) {});
+          const PaddingSpacing(),
+          InputField(
+            controller: countController,
+            labelText: 'Aantal stuks',
+            isUnderlineBorder: true,
+          ),
+        ],
+      ), onSave: () {
+    onSave(stockProduct!);
+  });
 }
 
 class StockElement extends StatelessWidget {
