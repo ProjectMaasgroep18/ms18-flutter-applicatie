@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../Declarations/pickPhoto.dart';
 import '../../config.dart';
 import '../../menu.dart';
 
@@ -14,8 +15,14 @@ class DeclarationsState extends State<Declarations> {
   @override
   Widget build(BuildContext context) {
     return Menu(
+        title: const Text(
+          "Maak een keuze",
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         child: bodyContent(),
-      title: const Text("Maak een keuze"),
     );
   }
 
@@ -63,7 +70,7 @@ class DeclarationsState extends State<Declarations> {
                           ),
                           child: ElevatedButton(
                             onPressed: () {
-                              
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => const PickPhoto()));
                             },
                             style: ElevatedButton.styleFrom(
                               elevation: 0,
@@ -96,11 +103,11 @@ class DeclarationsState extends State<Declarations> {
                                   SizedBox(
                                     width: MediaQuery.of(context).size.width *
                                         0.75,
-                                    child: Text(
-                                      "Btn1",
-                                      style: const TextStyle(
+                                    child: const Text(
+                                      "Declaratie uploaden",
+                                      style: TextStyle(
                                           fontSize: 30,
-                                          color: secondColor),
+                                          color: mainColor),
                                     ),
                                   ),
                                 ],
