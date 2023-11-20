@@ -69,7 +69,7 @@ class CalendarState extends State<Calendar> {
     return Menu(
       child: SfCalendar(
         view: MediaQuery.of(context).size.width > 768
-            ? CalendarView.month
+            ? CalendarView.week
             : CalendarView.schedule,
         monthViewSettings: MonthViewSettings(showAgenda: true),
         timeSlotViewSettings: const TimeSlotViewSettings(
@@ -77,6 +77,14 @@ class CalendarState extends State<Calendar> {
         ),
         dataSource: EventDataSource(events),
         scheduleViewSettings: scheduleViewSettings,
+        selectionDecoration: BoxDecoration(
+          color: Colors.transparent,
+          border: Border.all(color: Colors.blue, width: 2),
+          borderRadius: const BorderRadius.all(Radius.circular(4)),
+          shape: BoxShape.rectangle,
+        ),
+        todayHighlightColor: Colors.blue,
+        showNavigationArrow: true,
       ),
     );
   }
