@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Models/stock.dart';
 import 'package:ms18_applicatie/Widgets/buttons.dart';
 import 'package:ms18_applicatie/Widgets/inputFields.dart';
+import 'package:ms18_applicatie/Widgets/inputPopup.dart';
 import 'package:ms18_applicatie/Widgets/paddingSpacing.dart';
 import 'package:ms18_applicatie/Widgets/statusIndicator.dart';
 import '../config.dart';
@@ -9,7 +10,7 @@ import '../config.dart';
 Future<void> addItemsDialog(
     BuildContext context, Function(StockProduct stockProduct) onSave,
     [StockProduct? stockProduct]) async {
-      //Checking if the product is being changed
+  //Checking if the product is being changed
   bool isChange = stockProduct != null;
   //Adding default product information
   stockProduct ??= StockProduct(
@@ -25,75 +26,31 @@ Future<void> addItemsDialog(
   TextEditingController countController =
       TextEditingController(text: stockProduct.quantity.toString());
 
-  return showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          backgroundColor: Colors.white,
-          surfaceTintColor: Colors.white,
-          title: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Item ${isChange ? 'wijzigen' : 'toevoegen'}",
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                  fontSize: 20,
-                ),
-              ),
-              const Divider(
-                color: secondColor,
-              )
-            ],
+  await showInputPopup(context,
+      title: "Item ${isChange ? 'wijzigen' : 'toevoegen'}",
+      child: Column(
+        children: [
+          InputField(
+            controller: nameController,
+            labelText: 'Product naam',
+            isUnderlineBorder: true,
           ),
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(
-              Radius.circular(borderRadius),
-            ),
+          const PaddingSpacing(),
+          InputField(
+            controller: priceController,
+            labelText: 'Prijs',
+            isUnderlineBorder: true,
           ),
-          content: Container(
-              width: double.maxFinite,
-              height: 200,
-              color: Colors.white,
-              child: Column(
-                children: [
-                  InputField(
-                    controller: nameController,
-                    labelText: 'Product naam',
-                  ),
-                  const PaddingSpacing(),
-                  InputField(
-                    controller: priceController,
-                    labelText: 'Prijs',
-                  ),
-                  const PaddingSpacing(),
-                  InputField(
-                    controller: countController,
-                    labelText: 'Aantal stuks',
-                  ),
-                ],
-              )),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Sluit het dialoogvenster
-              },
-              child: const Text('Terug'),
-            ),
-            SizedBox(
-              width: 150,
-              child: Button(
-                onTap: () {
-                  Navigator.pop(context);
-                  onSave(stockProduct!);
-                },
-                text: 'Opslaan',
-              ),
-            )
-          ],
-        );
-      }).then((value) {});
+          const PaddingSpacing(),
+          InputField(
+            controller: countController,
+            labelText: 'Aantal stuks',
+            isUnderlineBorder: true,
+          ),
+        ],
+      ), onSave: () {
+    onSave(stockProduct!);
+  });
 }
 
 class StockElement extends StatelessWidget {
@@ -121,7 +78,7 @@ class StockElement extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       onTap: () {
-        addItemsDialog(context,(stockProduct){}, stockProduct);
+        addItemsDialog(context, (stockProduct) {}, stockProduct);
       },
       leading: SizedBox(
         width: 45,
@@ -153,43 +110,44 @@ class StockElement extends StatelessWidget {
       subtitle: Text(
           '${stockProduct.product.priceQuantity}: €${stockProduct.product.price}'),
       trailing: SizedBox(
-          width: 175,
-          child: Row(
-            children: [
-              SizedBox(
-                width: 44,
-                height: 44,
-                child: Button(
-                  onTap: () {
-                    changeNumber(-1);
-                  },
-                  icon: Icons.remove,
-                ),
+        width: 175,
+        child: Row(
+          children: [
+            SizedBox(
+              width: 44,
+              height: 44,
+              child: Button(
+                onTap: () {
+                  changeNumber(-1);
+                },
+                icon: Icons.remove,
               ),
-              const SizedBox(
-                width: 5,
+            ),
+            const SizedBox(
+              width: 5,
+            ),
+            Flexible(
+              child: InputField(
+                controller: stockController,
+                textAlign: TextAlign.center,
               ),
-              Flexible(
-                child: InputField(
-                  controller: stockController,
-                  textAlign: TextAlign.center,
-                ),
+            ),
+            const SizedBox(
+              width: 5,
+            ),
+            SizedBox(
+              width: 44,
+              height: 44,
+              child: Button(
+                onTap: () {
+                  changeNumber(1);
+                },
+                icon: Icons.add,
               ),
-              const SizedBox(
-                width: 5,
-              ),
-              SizedBox(
-                width: 44,
-                height: 44,
-                child: Button(
-                  onTap: () {
-                    changeNumber(1);
-                  },
-                  icon: Icons.add,
-                ),
-              ),
-            ],
-          )),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

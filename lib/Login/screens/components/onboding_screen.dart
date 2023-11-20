@@ -1,9 +1,8 @@
 import 'dart:ui';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:ms18_applicatie/Widgets/buttons.dart';
+import 'package:ms18_applicatie/Widgets/paddingSpacing.dart';
 import 'package:rive/rive.dart';
-import 'components/animated_btn.dart';
 import 'components/custom_sign_in.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -52,53 +51,55 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 32),
               child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Spacer(),
-                    const SizedBox(
-                      width: 260,
-                      child: Column(children: [
-                        Text(
-                          "Welcome Back",
-                          style: TextStyle(
-                              fontSize: 60,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: "Poppins",
-                              height: 1.2),
-                        ),
-                        SizedBox(
-                          height: 16,
-                        ),
-                        Text("")
-                      ]),
-                    ),
-                    const Spacer(
-                      flex: 2,
-                    ),
-                    AnimatedBtn(
-                      btnAnimationController: _btnAnimationController,
-                      press: () {
-                        _btnAnimationController.isActive = true;
-                        Future.delayed(Duration(milliseconds: 800), () {
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Spacer(),
+                  Image.asset(
+                    "assets/logo.jpg",
+                    width: 50,
+                  ),
+                  const SizedBox(
+                    width: 260,
+                    child: Column(children: [
+                      Text(
+                        "Welkom Terug",
+                        style: TextStyle(
+                            fontSize: 60,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: "Poppins",
+                            height: 1.2),
+                      ),
+                      SizedBox(
+                        height: 16,
+                      ),
+                      Text("")
+                    ]),
+                  ),
+                  const Spacer(
+                    flex: 2,
+                  ),
+                  Button(
+                    text: 'Sign in',
+                    icon: Icons.arrow_forward,
+                    onTap: () {
+                      _btnAnimationController.isActive = true;
+                      Future.delayed(const Duration(milliseconds: 800), () {
+                        setState(() {
+                          isSignInDialogShown = true;
+                        });
+                        customSigninDialog(context, onClosed: (_) {
                           setState(() {
-                            isSignInDialogShown = true;
-                          });
-                          customSigninDialog(context, onClosed: (_) {
-                            setState(() {
-                              isSignInDialogShown = false;
-                            });
+                            isSignInDialogShown = false;
                           });
                         });
-                      },
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 24.0),
-                      // child: Text(
-                      //   "Volg de stappen om jezelf in te loggen",
-                      //   style: TextStyle(),
-                      // ),
-                    )
-                  ]),
+                      });
+                    },
+                  ),
+                  const PaddingSpacing(),
+                  const PaddingSpacing(),
+                  const PaddingSpacing(),
+                ],
+              ),
             ),
           ),
         )

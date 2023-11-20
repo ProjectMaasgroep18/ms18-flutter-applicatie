@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Models/user.dart';
 import 'package:ms18_applicatie/Users/widgets.dart';
+import 'package:ms18_applicatie/Widgets/inputFields.dart';
+import 'package:ms18_applicatie/Widgets/inputPopup.dart';
+import 'package:ms18_applicatie/Widgets/paddingSpacing.dart';
 import 'package:ms18_applicatie/Widgets/pageHeader.dart';
 import 'package:ms18_applicatie/config.dart';
 import 'package:ms18_applicatie/menu.dart';
@@ -30,7 +33,7 @@ class UserListState extends State<UserList> {
       dateOfBirth: DateTime.now(),
       gender: true,
     ),
-        User(
+    User(
       firstName: "Marieke",
       lastName: "Naaktgeboren",
       email: "mariemarie35@gmail.com",
@@ -40,6 +43,38 @@ class UserListState extends State<UserList> {
     ),
   ];
 
+  Future addUser() async {
+    await showInputPopup(
+      context,
+      title: "Gebruiker toevoegen",
+      child: const Column(
+        children: [
+          InputField(
+            labelText: "Email",
+            isUnderlineBorder: true,
+          ),
+          PaddingSpacing(),
+          InputField(
+            labelText: "Voornaam",
+            isUnderlineBorder: true,
+          ),
+          PaddingSpacing(),
+          InputField(
+            labelText: "Achternaam",
+            isUnderlineBorder: true,
+          ),
+          PaddingSpacing(),
+          InputField(
+            labelText: "Wachtwoord",
+            isUnderlineBorder: true,
+          ),
+        ],
+      ),
+      onSave: () {},
+      height: 300,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Menu(
@@ -47,7 +82,12 @@ class UserListState extends State<UserList> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          PageHeader(title: "Gebruiker beheer", onAdd: (){},),
+          PageHeader(
+            title: "Gebruiker beheer",
+            onAdd: () {
+              addUser();
+            },
+          ),
           Flexible(
             child: ListView.separated(
               padding: const EdgeInsets.all(mobilePadding),

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Calendar/calendar.dart';
+import 'package:ms18_applicatie/Dashboard/dashboard.dart';
 import 'package:ms18_applicatie/Declarations/declarations.dart';
+import 'package:ms18_applicatie/Models/stock.dart';
 import 'package:ms18_applicatie/Pictures/listPictures.dart';
+import 'package:ms18_applicatie/Profile/profile.dart';
 import 'package:ms18_applicatie/Stock/stockReport.dart';
 import 'package:ms18_applicatie/Users/userList.dart';
 import 'package:ms18_applicatie/roles.dart';
@@ -17,17 +20,20 @@ class Menu extends StatelessWidget {
   final Widget child;
   final Widget? title;
   final List<Widget>? actions;
+  final double appBarHeight;
+  final bool centerTitle;
+
   //fil the list of custom InputField classes
   final List<menuItem.MenuItem> menuItems = [
     menuItem.MenuItem(
       text: 'Home',
       icon: Icons.home,
-      page: MaterialPageRoute(builder: (context) => Menu(child: Container())),
+      page: MaterialPageRoute(builder: (context) => Dashboard()),
     ),
     menuItem.MenuItem(
         text: 'Voorraad',
         icon: Icons.add_chart,
-        page: MaterialPageRoute(builder: (context) => const StockReport()),
+        page: MaterialPageRoute(builder: (context) => StockReport()),
         roles: [Roles.Admin, Roles.Subadmin]),
     menuItem.MenuItem(
         text: 'Foto\'s',
@@ -58,7 +64,13 @@ class Menu extends StatelessWidget {
     ),
   ];
 
-  Menu({required this.child, this.title, this.actions});
+  Menu({
+    required this.child,
+    this.title,
+    this.actions,
+    this.appBarHeight = kToolbarHeight,
+    this.centerTitle = true,
+  });
 
   //get and put the menu items from the list to the widgets for non mobile
   List<Widget> getMenuItems(BuildContext context) {
@@ -69,7 +81,7 @@ class Menu extends StatelessWidget {
     if (screenWidth > tabletWidth) {
       items.add(
         Padding(
-          padding: EdgeInsets.symmetric(vertical: 20),
+          padding: const EdgeInsets.symmetric(vertical: 20),
           child: Image.asset(
             "",
             height: 60,
@@ -96,7 +108,7 @@ class Menu extends StatelessWidget {
     } else if (screenWidth > mobileWidth) {
       items.add(
         Padding(
-          padding: EdgeInsets.symmetric(vertical: 20),
+          padding: const EdgeInsets.symmetric(vertical: 20),
           child: Image.asset(
             "",
             height: 30,
@@ -166,17 +178,18 @@ class Menu extends StatelessWidget {
             )
           : (title != null
               ? AppBar(
-                  centerTitle: true,
-                  shadowColor: secondColor,
+                  centerTitle: centerTitle,
+                  shadowColor: mainColor,
                   shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.vertical(
                       bottom: Radius.circular(borderRadius * 2),
                     ),
                   ),
-                  backgroundColor: secondColor,
+                  backgroundColor: mainColor,
                   title: title,
                   elevation: 2,
                   actions: actions,
+                  toolbarHeight: appBarHeight,
                 )
               : null),
       bottomNavigationBar: MediaQuery.of(context).size.width > mobileWidth
