@@ -149,7 +149,7 @@ class CalendarState extends State<Calendar> {
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: new Text('Close'))
+                  child: new Text('Sluiten'))
             ],
           );
         });
