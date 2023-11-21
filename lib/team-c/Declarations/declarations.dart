@@ -70,6 +70,7 @@ class DeclarationsState extends State<Declarations> {
                           ),
                           child: ElevatedButton(
                             onPressed: () {
+                              print("Button 1 pressed");
                               Navigator.push(context, MaterialPageRoute(builder: (context) => const PickPhoto()));
                             },
                             style: ElevatedButton.styleFrom(
