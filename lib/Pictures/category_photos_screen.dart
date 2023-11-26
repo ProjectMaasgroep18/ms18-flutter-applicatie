@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'category.dart';
 import 'photo_detail_screen.dart';
 import 'package:intl/intl.dart';
+import 'add_photo_screen.dart';
 
 class CategoryPhotosScreen extends StatelessWidget {
   final Category category;
@@ -47,6 +48,10 @@ class CategoryPhotosScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => AddPhotoScreen(category: category)),
+          );
         },
         child: Icon(Icons.add),
         tooltip: 'Foto toevoegen',
