@@ -175,6 +175,7 @@ class CalendarState extends State<Calendar> {
                             readOnly: true,
                             onTap: () async {
                               DateTime? pickedDate = await showDatePicker(
+                                  locale: const Locale('nl', 'NL'),
                                   context: context,
                                   initialDate: DateTime.now(),
                                   firstDate: DateTime(2000),
