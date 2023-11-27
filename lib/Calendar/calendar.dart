@@ -124,7 +124,7 @@ class CalendarState extends State<Calendar> {
         shouldShowForm = false;
         final Event appointmentDetails = details.appointments![0];
         _subjectText = appointmentDetails.eventName;
-        _dateText = DateFormat('MMMM dd, yyyy')
+        _dateText = DateFormat('dd MMMM, yyyy')
             .format(appointmentDetails.from)
             .toString();
         _startTimeText =
@@ -141,10 +141,10 @@ class CalendarState extends State<Calendar> {
 
         _endTimeText = DateFormat('hh:mm a').format(adjustedDateTime);
 
-        _subjectText = "Add event";
+        _subjectText = "Agenda item toevoegen";
 
         dateinput.text =
-            DateFormat('MMMM dd, yyyy').format(details.date!).toString();
+            DateFormat('dd MMMM, yyyy').format(details.date!).toString();
         startTime.text = DateFormat('hh:mm a').format(details.date!).toString();
         endTime.text = DateFormat('hh:mm a').format(adjustedDateTime);
 
@@ -171,7 +171,7 @@ class CalendarState extends State<Calendar> {
                             controller: dateinput,
                             decoration: const InputDecoration(
                                 icon: Icon(Icons.calendar_today),
-                                labelText: "Enter Date"),
+                                labelText: "Vul datum in"),
                             readOnly: true,
                             onTap: () async {
                               DateTime? pickedDate = await showDatePicker(
@@ -180,8 +180,8 @@ class CalendarState extends State<Calendar> {
                                   firstDate: DateTime(2000),
                                   lastDate: DateTime(2101));
                               if (pickedDate != null) {
-                                String formattedDate =
-                                    DateFormat('yyyy-MM-dd').format(pickedDate);
+                                String formattedDate = DateFormat('dd--MM-YYYY')
+                                    .format(pickedDate);
                                 setState(() {
                                   dateinput.text = formattedDate;
                                 });
@@ -192,7 +192,7 @@ class CalendarState extends State<Calendar> {
                             controller: startTime,
                             decoration: const InputDecoration(
                                 icon: Icon(Icons.access_time),
-                                labelText: "Enter start time"),
+                                labelText: "Start tijd"),
                             readOnly: true,
                             onTap: () async {
                               TimeOfDay? pickedStartTime = await showTimePicker(
@@ -218,7 +218,7 @@ class CalendarState extends State<Calendar> {
                             controller: endTime,
                             decoration: const InputDecoration(
                                 icon: Icon(Icons.access_time),
-                                labelText: "Enter end time"),
+                                labelText: "Eind tijd"),
                             readOnly: true,
                             onTap: () async {
                               TimeOfDay? pickedEndTime = await showTimePicker(
@@ -241,19 +241,19 @@ class CalendarState extends State<Calendar> {
                           ),
                           TextFormField(
                             decoration: const InputDecoration(
-                              hintText: 'Event name',
+                              hintText: 'Agenda item naam',
                             ),
                           ),
                           TextFormField(
                             decoration: const InputDecoration(
-                              hintText: 'Location',
+                              hintText: 'Locatie',
                             ),
                           ),
                           TextFormField(
                             maxLines: 4,
                             keyboardType: TextInputType.multiline,
                             decoration: const InputDecoration(
-                              hintText: 'Description',
+                              hintText: 'Beschrijving',
                             ),
                           ),
                         ] else ...[
