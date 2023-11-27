@@ -8,6 +8,7 @@ class InputField extends StatelessWidget {
   final TextAlign? textAlign;
   final bool isUnderlineBorder;
   final bool isPassword;
+  final bool isNumeric;
 
   final TextEditingController? controller;
   const InputField({
@@ -19,6 +20,7 @@ class InputField extends StatelessWidget {
     this.textAlign,
     this.isUnderlineBorder = false,
     this.isPassword = false,
+    this.isNumeric = false,
   });
 
   @override
@@ -27,6 +29,7 @@ class InputField extends StatelessWidget {
       controller: controller,
       obscureText: isPassword,
       textAlign: textAlign ?? TextAlign.start,
+      keyboardType: isNumeric ? TextInputType.number : TextInputType.text,
       decoration: InputDecoration(
         contentPadding: EdgeInsets.symmetric(
             vertical: 10, horizontal: isUnderlineBorder ? 0 : 15),
