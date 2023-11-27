@@ -121,18 +121,6 @@ class CalendarState extends State<Calendar> {
 
     switch (details.targetElement) {
       case CalendarElement.appointment:
-        shouldShowForm = false;
-        final Event appointmentDetails = details.appointments![0];
-        _subjectText = appointmentDetails.eventName;
-        _dateText = DateFormat('MMMM dd, yyyy')
-            .format(appointmentDetails.from)
-            .toString();
-        _startTimeText =
-            DateFormat('hh:mm a').format(appointmentDetails.from).toString();
-        _endTimeText =
-            DateFormat('hh:mm a').format(appointmentDetails.to).toString();
-        _timeDetails = '$_startTimeText - $_endTimeText';
-        break;
       case CalendarElement.agenda:
         shouldShowForm = false;
         final Event appointmentDetails = details.appointments![0];
