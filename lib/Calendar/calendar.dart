@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:html';
 import 'dart:io';
 import 'dart:math';
 import 'package:http/http.dart' as http;
@@ -125,7 +126,7 @@ class CalendarState extends State<Calendar> {
       // TODO add a new event in this modal
       _subjectText = "Add event";
       _dateText = DateFormat('MMMM dd, yyyy').format(details.date!).toString();
-      _timeDetails = '';
+      _timeDetails = "";
     }
     showDialog(
         context: context,
@@ -133,7 +134,7 @@ class CalendarState extends State<Calendar> {
           return AlertDialog(
             title: Container(child: new Text('$_subjectText')),
             content: Container(
-              height: 80,
+              height: 500,
               child: Column(
                 children: <Widget>[
                   Row(
@@ -146,6 +147,42 @@ class CalendarState extends State<Calendar> {
                         ),
                       ),
                     ],
+                  ),
+                  Form(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        TextFormField(
+                          decoration: const InputDecoration(
+                            hintText: 'Event name',
+                          ),
+                        ),
+                        TextFormField(
+                          decoration: const InputDecoration(
+                            hintText: 'Location',
+                          ),
+                        ),
+                        TextFormField(
+                          maxLines: 4,
+                          keyboardType: TextInputType.multiline,
+                          decoration: const InputDecoration(
+                            hintText: 'Description',
+                          ),
+                        ),
+                        TextFormField(
+                          keyboardType: TextInputType.datetime,
+                          decoration: const InputDecoration(
+                            hintText: 'Start time',
+                          ),
+                        ),
+                        TextFormField(
+                          keyboardType: TextInputType.datetime,
+                          decoration: const InputDecoration(
+                            hintText: 'End time',
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                   Container(
                     height: 40,
@@ -165,7 +202,16 @@ class CalendarState extends State<Calendar> {
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: new Text('Sluiten'))
+                  child: new Text('Sluiten')),
+              ElevatedButton(
+                onPressed: () {
+                  // TODO: Add actual submission to back-end.
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Event toegevoegd')),
+                  );
+                },
+                child: const Text('Toevoegen'),
+              ),
             ],
           );
         });
