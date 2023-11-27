@@ -139,24 +139,34 @@ class CalendarState extends State<Calendar> {
           return AlertDialog(
             title: Container(child: new Text('$_subjectText')),
             content: Container(
-              height: 500,
+              height: 400,
               child: Column(
                 children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      Text(
-                        '$_dateText',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w400,
-                          fontSize: 20,
-                        ),
-                      ),
-                    ],
-                  ),
                   Form(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        TextFormField(
+                          keyboardType: TextInputType.datetime,
+                          initialValue: _dateText,
+                          decoration: const InputDecoration(
+                            hintText: 'Date',
+                          ),
+                        ),
+                        TextFormField(
+                          keyboardType: TextInputType.datetime,
+                          initialValue: _startTimeText,
+                          decoration: const InputDecoration(
+                            hintText: 'Start time',
+                          ),
+                        ),
+                        TextFormField(
+                          keyboardType: TextInputType.datetime,
+                          initialValue: _endTimeText,
+                          decoration: const InputDecoration(
+                            hintText: 'End time',
+                          ),
+                        ),
                         TextFormField(
                           decoration: const InputDecoration(
                             hintText: 'Event name',
@@ -172,20 +182,6 @@ class CalendarState extends State<Calendar> {
                           keyboardType: TextInputType.multiline,
                           decoration: const InputDecoration(
                             hintText: 'Description',
-                          ),
-                        ),
-                        TextFormField(
-                          keyboardType: TextInputType.datetime,
-                          initialValue: _startTimeText,
-                          decoration: const InputDecoration(
-                            hintText: 'Start time',
-                          ),
-                        ),
-                        TextFormField(
-                          keyboardType: TextInputType.datetime,
-                          initialValue: _endTimeText,
-                          decoration: const InputDecoration(
-                            hintText: 'End time',
                           ),
                         ),
                       ],
