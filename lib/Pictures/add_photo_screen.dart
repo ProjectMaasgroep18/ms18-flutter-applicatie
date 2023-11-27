@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_dropzone/flutter_dropzone.dart';
 import 'category.dart';
+import 'photo_viewer_screen.dart';
+import 'editable_file.dart';
 
 class AddPhotoScreen extends StatefulWidget {
   final Category category;
@@ -14,7 +16,7 @@ class AddPhotoScreen extends StatefulWidget {
 
 class _AddPhotoScreenState extends State<AddPhotoScreen> {
   final TextEditingController _titleController = TextEditingController();
-  List<PlatformFile> _selectedFiles = [];
+  List<EditableFile> _selectedFiles = [];
   late DropzoneViewController dropzoneController;
 
   @override
@@ -42,9 +44,18 @@ class _AddPhotoScreenState extends State<AddPhotoScreen> {
 
     if (result != null) {
       setState(() {
-        _selectedFiles.addAll(result.files);
+        _selectedFiles.addAll(result.files.map((file) => EditableFile(file: file)));
       });
     }
+  }
+
+  void _viewPhoto(int index) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PhotoViewerScreen(photos: _selectedFiles, initialIndex: index),
+      ),
+    );
   }
 
   @override
@@ -87,12 +98,12 @@ class _AddPhotoScreenState extends State<AddPhotoScreen> {
                       onDrop: (file) async {
                         final data = await dropzoneController.getFileData(file);
                         setState(() {
-                          _selectedFiles.add(PlatformFile(
+                          _selectedFiles.add(EditableFile(file: PlatformFile(
                             name: file.name,
                             size: file.size,
                             bytes: data,
                             readStream: null,
-                          ));
+                          )));
                         });
                       },
                       mime: ['image/jpeg', 'image/png'],
@@ -112,7 +123,21 @@ class _AddPhotoScreenState extends State<AddPhotoScreen> {
             ),
             SizedBox(height: 20),
             if (_selectedFiles.isNotEmpty) ...[
-              ..._selectedFiles.map((file) => Text(file.name)).toList(),
+              Wrap(
+                spacing: 8,
+                children: List<Widget>.generate(
+                  _selectedFiles.length,
+                      (index) => GestureDetector(
+                    onTap: () => _viewPhoto(index),
+                    child: Image.memory(
+                      _selectedFiles[index].file.bytes!,
+                      width: 100,
+                      height: 100,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+              ),
               SizedBox(height: 20),
             ],
             TextField(
