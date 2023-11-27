@@ -29,7 +29,7 @@ class InputField extends StatelessWidget {
       controller: controller,
       obscureText: isPassword,
       textAlign: textAlign ?? TextAlign.start,
-      keyboardType: isNumeric ? TextInputType.number : TextInputType.text,
+      keyboardType: isNumeric ? TextInputType.phone : TextInputType.text,
       decoration: InputDecoration(
         contentPadding: EdgeInsets.symmetric(
             vertical: 10, horizontal: isUnderlineBorder ? 0 : 15),

@@ -6,11 +6,13 @@ class Button extends StatelessWidget {
   final IconData? icon;
   final String? text;
   final Function() onTap;
+  final EdgeInsets padding;
   const Button({
     super.key,
     this.icon,
     this.text,
     required this.onTap,
+    this.padding = const EdgeInsets.all(0),
   });
 
   @override
@@ -19,7 +21,7 @@ class Button extends StatelessWidget {
       
       onPressed: onTap,
       style: ElevatedButton.styleFrom(
-        padding: EdgeInsets.zero,
+        padding: padding,
         backgroundColor: mainColor,
         minimumSize: const Size(10, 48),
         shape: RoundedRectangleBorder(
