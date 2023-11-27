@@ -2,6 +2,8 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Widgets/buttons.dart';
 import 'package:ms18_applicatie/Widgets/paddingSpacing.dart';
+import 'package:ms18_applicatie/config.dart';
+import 'package:ms18_applicatie/config.dart';
 import 'package:rive/rive.dart';
 import 'components/custom_sign_in.dart';
 
@@ -28,20 +30,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         body: Stack(
       children: [
         Positioned(
-            width: MediaQuery.of(context).size.width * 1.7,
-            bottom: 200,
-            left: 100,
-            child: Image.asset('assets/Backgrounds/Spline.png')),
+            width: MediaQuery.of(context).size.width * 15,
+            bottom: -5350,
+            left: -2760,
+            child: Image.asset('assets/Backgrounds/Shapes.png')),
         Positioned.fill(
             child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 20, sigmaY: 10),
         )),
-        const RiveAnimation.asset('assets/RiveAssets/shapes.riv'),
-        Positioned.fill(
-            child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 20, sigmaY: 10),
-          child: const SizedBox(),
-        )),
+        // const RiveAnimation.asset('assets/RiveAssets/shapes.riv'),
+        // Positioned.fill(
+        //     child: BackdropFilter(
+        //   filter: ImageFilter.blur(sigmaX: 20, sigmaY: 10),
+        //   child: const SizedBox(),
+        // )),
         AnimatedPositioned(
           duration: Duration(milliseconds: 240),
           top: isSignInDialogShown ? -50 : 0,
@@ -65,6 +67,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         "Welkom Terug",
                         style: TextStyle(
                             fontSize: 60,
+                            color: Colors.white,
                             fontWeight: FontWeight.bold,
                             fontFamily: "Poppins",
                             height: 1.2),
@@ -94,6 +97,30 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         });
                       });
                     },
+                  ),
+                  Center(
+                    child: TextButton(
+                      onPressed: () {
+                        _btnAnimationController.isActive = true;
+                        Future.delayed(const Duration(milliseconds: 800), () {
+                          setState(() {
+                            isSignInDialogShown = true;
+                          });
+                          customSigninDialog(context, onClosed: (_) {
+                            setState(() {
+                              isSignInDialogShown = false;
+                            });
+                          });
+                        });
+                      },
+                      child: Text(
+                        "Gast Login",
+                        style: TextStyle(
+                            color: Colors.lightBlue,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ),
                   ),
                   const PaddingSpacing(),
                   const PaddingSpacing(),
