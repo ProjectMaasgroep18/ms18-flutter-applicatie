@@ -42,7 +42,7 @@ class PickPhotoState extends State<PickPhoto> {
           children: [
             InputField(
               icon: Icons.person,
-              hintText: "Naam:",
+              hintText: "Naam: ",
               controller: nameController,
               isUnderlineBorder: true,
             ),
@@ -112,9 +112,6 @@ class PickPhotoState extends State<PickPhoto> {
                       setState(() {
                         photo = res;
                       });
-                      // if (photo != null) {
-                      //   Navigator.pop(context, photo);
-                      // }
                       print(photo?.path);
                     }
                   },
@@ -135,8 +132,8 @@ class PickPhotoState extends State<PickPhoto> {
                   ),
             const PaddingSpacing(),
             // Upload the photo
-        Button(
-            onTap: () async {
+            Button(
+                onTap: () async {
                   if (photo == null ||
                       nameController.text.isEmpty ||
                       descriptionController.text.isEmpty ||
@@ -163,7 +160,7 @@ class PickPhotoState extends State<PickPhoto> {
                     Navigator.pop(context);
                   }
                 },
-            text: "Uploaden")
+                text: "Uploaden")
           ],
         ),
       ),
