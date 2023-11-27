@@ -39,8 +39,40 @@ class CategoryPhotosScreen extends StatelessWidget {
               child: Image.network(photo.imageUrl, fit: BoxFit.cover),
               footer: GridTileBar(
                 backgroundColor: Colors.black.withOpacity(0.7),
-                title: Text(photo.title),
-                subtitle: Text(DateFormat('dd-MM-yyyy').format(photo.date)),
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(photo.title, overflow: TextOverflow.ellipsis),
+                          SizedBox(height: 4),
+                          Text(DateFormat('dd-MM-yyyy').format(photo.date), style: TextStyle(fontSize: 12)),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(photo.uploader, style: TextStyle(fontSize: 12)),
+                          SizedBox(height: 4),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.thumb_up, size: 14, color: Colors.white),
+                              SizedBox(width: 4),
+                              Text('${photo.likeCount} likes', style: TextStyle(fontSize: 12)),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           );

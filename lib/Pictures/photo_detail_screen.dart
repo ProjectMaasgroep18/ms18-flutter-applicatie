@@ -24,27 +24,25 @@ class PhotoDetailScreen extends StatelessWidget {
                 border: OutlineInputBorder(),
               ),
             ),
-            SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    // moeten we hier nog logica voor tovoegen implementeren SM
-                  },
-                  child: Text('Toevoegen'),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    //moeten we hier on DElLETE button implementeren . SM
-                  },
-
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.red,
-                  ),
-                  child: Text('Verwijderen'),
-                ),
-              ],
+            SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () {
+                // Toevoegen button logic here
+              },
+              style: ElevatedButton.styleFrom(
+                primary: Colors.blue,
+              ),
+              child: Text('Toevoegen'),
+            ),
+            SizedBox(height: 10), // Space between the buttons
+            ElevatedButton(
+              onPressed: () {
+                // Verwijderen button logic here
+              },
+              style: ElevatedButton.styleFrom(
+                primary: Colors.grey,
+              ),
+              child: Text('Verwijderen'),
             ),
           ],
         ),

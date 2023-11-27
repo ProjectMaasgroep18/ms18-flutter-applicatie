@@ -18,42 +18,42 @@ class _ListPicturesState extends State<ListPictures> {
       date: DateTime(2023, 10, 10),
       photos: [
         Photo(
-          imageUrl: 'https://picsum.photos/200/300',
+          imageUrl: 'https://picsum.photos/750/300',
           title: 'Familiediner',
           date: DateTime(2023, 10, 11),
           uploader: 'Geupload door: Soumaia Mamo',
           likeCount: 107,
         ),
         Photo(
-          imageUrl: 'https://picsum.photos/200/300',
+          imageUrl: 'https://picsum.photos/750/300',
           title: 'Familiediner',
           date: DateTime(2023, 10, 11),
           uploader: 'Geupload door: Rik Smits',
           likeCount: 107,
         ),
         Photo(
-          imageUrl: 'https://picsum.photos/200/300',
+          imageUrl: 'https://picsum.photos/750/300',
           title: 'Familiediner',
           date: DateTime(2023, 10, 11),
           uploader: 'Geupload door: Soumaia Mamo',
           likeCount: 107,
         ),
         Photo(
-          imageUrl: 'https://picsum.photos/200/300',
+          imageUrl: 'https://picsum.photos/750/300',
           title: 'Familiediner',
           date: DateTime(2023, 10, 11),
           uploader: 'Geupload door: Soumaia Mamo',
           likeCount: 107,
         ),
         Photo(
-          imageUrl: 'https://picsum.photos/200/300',
+          imageUrl: 'https://picsum.photos/750/300',
           title: 'Familiediner',
           date: DateTime(2023, 10, 11),
           uploader: 'Geupload door: Frits',
           likeCount: 107,
         ),
         Photo(
-          imageUrl: 'https://picsum.photos/200/300',
+          imageUrl: 'https://picsum.photos/750/300',
           title: 'Familiediner',
           date: DateTime(2023, 10, 11),
           uploader: 'Geupload door: Elder',
@@ -68,22 +68,14 @@ class _ListPicturesState extends State<ListPictures> {
       date: DateTime(2023, 10, 10),
       photos: [
         Photo(
-          imageUrl: 'https://picsum.photos/200/300',
+          imageUrl: 'https://picsum.photos/750/300',
           title: 'Familiediner',
           date: DateTime(2023, 10, 11),
           uploader: 'Geupload door: Rik Smits',
           likeCount: 107,
         ),
         Photo(
-          imageUrl: 'https://picsum.photos/200/300',
-          title: 'Familiediner',
-          date: DateTime(2023, 10, 11),
-          uploader: 'Geupload door: Rik Smits',
-          likeCount: 107,
-        ),
-
-        Photo(
-          imageUrl: 'https://picsum.photos/200/300',
+          imageUrl: 'https://picsum.photos/750/300',
           title: 'Familiediner',
           date: DateTime(2023, 10, 11),
           uploader: 'Geupload door: Rik Smits',
@@ -91,7 +83,15 @@ class _ListPicturesState extends State<ListPictures> {
         ),
 
         Photo(
-          imageUrl: 'https://picsum.photos/200/300',
+          imageUrl: 'https://picsum.photos/750/300',
+          title: 'Familiediner',
+          date: DateTime(2023, 10, 11),
+          uploader: 'Geupload door: Rik Smits',
+          likeCount: 107,
+        ),
+
+        Photo(
+          imageUrl: 'https://picsum.photos/750/300',
           title: 'Familiediner',
           date: DateTime(2023, 10, 11),
           uploader: 'Geupload door: Rik Smits',
@@ -101,18 +101,18 @@ class _ListPicturesState extends State<ListPictures> {
 
     ),
     Category(
-      title: 'Kerst avond',
+      title: 'Kerst eten',
       date: DateTime(2023, 10, 10),
       photos: [
         Photo(
-          imageUrl: 'https://picsum.photos/200/300',
+          imageUrl: 'https://picsum.photos/750/300',
           title: 'Familiediner',
           date: DateTime(2023, 10, 11),
           uploader: 'Geupload door: Rik Smits',
           likeCount: 107,
         ),
         Photo(
-          imageUrl: 'https://picsum.photos/200/300',
+          imageUrl: 'https://picsum.photos/750/300',
           title: 'Familiediner',
           date: DateTime(2023, 10, 11),
           uploader: 'Geupload door: Rik Smits',
@@ -120,28 +120,28 @@ class _ListPicturesState extends State<ListPictures> {
         ),
 
         Photo(
-          imageUrl: 'https://picsum.photos/200/300',
+          imageUrl: 'https://picsum.photos/750/300',
           title: 'Familiediner',
           date: DateTime(2023, 10, 11),
           uploader: 'Geupload door: Rik Smits',
           likeCount: 107,
         ),
         Photo(
-          imageUrl: 'https://picsum.photos/200/300',
+          imageUrl: 'https://picsum.photos/750/300',
           title: 'Familiediner',
           date: DateTime(2023, 10, 11),
           uploader: 'Geupload door: Rik Smits',
           likeCount: 107,
         ),
         Photo(
-          imageUrl: 'https://picsum.photos/200/300',
-          title: 'Kerst avond',
+          imageUrl: 'https://picsum.photos/750/300',
+          title: 'Familiediner',
           date: DateTime(2023, 10, 11),
           uploader: 'Geupload door: Rik Smits',
           likeCount: 107,
         ),
         Photo(
-          imageUrl: 'https://picsum.photos/200/300',
+          imageUrl: 'https://picsum.photos/750/300',
           title: 'Familiediner',
           date: DateTime(2023, 10, 11),
           uploader: 'Geupload door: Rik Smits',
