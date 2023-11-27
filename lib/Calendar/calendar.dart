@@ -101,7 +101,7 @@ class CalendarState extends State<Calendar> {
           CalendarView.month,
           CalendarView.schedule,
         ],
-        monthViewSettings: MonthViewSettings(
+        monthViewSettings: const MonthViewSettings(
             navigationDirection: MonthNavigationDirection.vertical),
       ),
     );
@@ -145,7 +145,7 @@ class CalendarState extends State<Calendar> {
       case CalendarElement.calendarCell:
         _startTimeText = DateFormat('hh:mm a').format(details.date!).toString();
 
-        DateTime adjustedDateTime = details.date!.add(Duration(hours: 1));
+        DateTime adjustedDateTime = details.date!.add(const Duration(hours: 1));
 
         _endTimeText = DateFormat('hh:mm a').format(adjustedDateTime);
 
@@ -165,8 +165,8 @@ class CalendarState extends State<Calendar> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Container(child: new Text('$_subjectText')),
-            content: Container(
+            title: Text('$_subjectText'),
+            content: SizedBox(
               height: 450,
               child: Column(
                 children: <Widget>[
@@ -266,12 +266,12 @@ class CalendarState extends State<Calendar> {
                       ],
                     ),
                   ),
-                  Container(
+                  SizedBox(
                     height: 40,
                     child: Row(
                       children: <Widget>[
                         Text(_timeDetails!,
-                            style: TextStyle(
+                            style: const TextStyle(
                                 fontWeight: FontWeight.w400, fontSize: 15)),
                       ],
                     ),
@@ -280,11 +280,11 @@ class CalendarState extends State<Calendar> {
               ),
             ),
             actions: <Widget>[
-              new TextButton(
+              TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: new Text('Sluiten')),
+                  child: const Text('Sluiten')),
               ElevatedButton(
                 onPressed: () {
                   // TODO: Add actual submission to back-end.
