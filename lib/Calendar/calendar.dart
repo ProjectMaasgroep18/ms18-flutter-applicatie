@@ -123,7 +123,12 @@ class CalendarState extends State<Calendar> {
           DateFormat('hh:mm a').format(appointmentDetails.to).toString();
       _timeDetails = '$_startTimeText - $_endTimeText';
     } else if (details.targetElement == CalendarElement.calendarCell) {
-      // TODO add a new event in this modal
+      _startTimeText = DateFormat('hh:mm a').format(details.date!).toString();
+
+      DateTime adjustedDateTime = details.date!.add(Duration(hours: 1));
+
+      _endTimeText = DateFormat('hh:mm a').format(adjustedDateTime);
+
       _subjectText = "Add event";
       _dateText = DateFormat('MMMM dd, yyyy').format(details.date!).toString();
       _timeDetails = "";
@@ -171,12 +176,14 @@ class CalendarState extends State<Calendar> {
                         ),
                         TextFormField(
                           keyboardType: TextInputType.datetime,
+                          initialValue: _startTimeText,
                           decoration: const InputDecoration(
                             hintText: 'Start time',
                           ),
                         ),
                         TextFormField(
                           keyboardType: TextInputType.datetime,
+                          initialValue: _endTimeText,
                           decoration: const InputDecoration(
                             hintText: 'End time',
                           ),
