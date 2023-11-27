@@ -27,12 +27,14 @@ class CalendarState extends State<Calendar> {
   TextEditingController dateinput = TextEditingController();
   TextEditingController startTime = TextEditingController();
   TextEditingController endTime = TextEditingController();
+  bool shouldShowForm = false;
 
   @override
   void initState() {
     dateinput.text = "";
     startTime.text = "";
     endTime.text = "";
+    shouldShowForm = false;
     super.initState();
     _fetchDataAsync();
   }
@@ -119,6 +121,7 @@ class CalendarState extends State<Calendar> {
 
     switch (details.targetElement) {
       case CalendarElement.appointment:
+        shouldShowForm = false;
         final Event appointmentDetails = details.appointments![0];
         _subjectText = appointmentDetails.eventName;
         _dateText = DateFormat('MMMM dd, yyyy')
@@ -131,6 +134,7 @@ class CalendarState extends State<Calendar> {
         _timeDetails = '$_startTimeText - $_endTimeText';
         break;
       case CalendarElement.agenda:
+        shouldShowForm = false;
         final Event appointmentDetails = details.appointments![0];
         _subjectText = appointmentDetails.eventName;
         _dateText = DateFormat('MMMM dd, yyyy')
@@ -143,6 +147,7 @@ class CalendarState extends State<Calendar> {
         _timeDetails = '$_startTimeText - $_endTimeText';
         break;
       case CalendarElement.calendarCell:
+        shouldShowForm = true;
         _startTimeText = DateFormat('hh:mm a').format(details.date!).toString();
 
         DateTime adjustedDateTime = details.date!.add(const Duration(hours: 1));
@@ -174,105 +179,104 @@ class CalendarState extends State<Calendar> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        TextFormField(
-                          controller: dateinput,
-                          decoration: const InputDecoration(
-                              icon: Icon(Icons.calendar_today),
-                              labelText: "Enter Date"),
-                          readOnly: true,
-                          onTap: () async {
-                            DateTime? pickedDate = await showDatePicker(
+                        if (shouldShowForm) ...[
+                          TextFormField(
+                            controller: dateinput,
+                            decoration: const InputDecoration(
+                                icon: Icon(Icons.calendar_today),
+                                labelText: "Enter Date"),
+                            readOnly: true,
+                            onTap: () async {
+                              DateTime? pickedDate = await showDatePicker(
+                                  context: context,
+                                  initialDate: DateTime.now(),
+                                  firstDate: DateTime(2000),
+                                  lastDate: DateTime(2101));
+                              if (pickedDate != null) {
+                                String formattedDate =
+                                    DateFormat('yyyy-MM-dd').format(pickedDate);
+                                setState(() {
+                                  dateinput.text = formattedDate;
+                                });
+                              }
+                            },
+                          ),
+                          TextFormField(
+                            controller: startTime,
+                            decoration: const InputDecoration(
+                                icon: Icon(Icons.access_time),
+                                labelText: "Enter start time"),
+                            readOnly: true,
+                            onTap: () async {
+                              TimeOfDay? pickedStartTime = await showTimePicker(
                                 context: context,
-                                initialDate: DateTime.now(),
-                                firstDate: DateTime(2000),
-                                lastDate: DateTime(2101));
-                            if (pickedDate != null) {
-                              String formattedDate =
-                                  DateFormat('yyyy-MM-dd').format(pickedDate);
-                              setState(() {
-                                dateinput.text = formattedDate;
-                              });
-                            }
-                          },
-                        ),
-                        TextFormField(
-                          controller: startTime,
-                          decoration: const InputDecoration(
-                              icon: Icon(Icons.access_time),
-                              labelText: "Enter start time"),
-                          readOnly: true,
-                          onTap: () async {
-                            TimeOfDay? pickedStartTime = await showTimePicker(
-                              context: context,
-                              initialTime: _startTimeText == ""
-                                  ? TimeOfDay.now()
-                                  : TimeOfDay(
-                                      hour: int.parse(
-                                          _startTimeText!.split(":")[0]),
-                                      minute: int.parse(_startTimeText!
-                                          .split(":")[1]
-                                          .split(" ")[0])),
-                            );
-                            if (pickedStartTime != null) {
-                              setState(() {
-                                startTime.text =
-                                    pickedStartTime.format(context);
-                              });
-                            }
-                          },
-                        ),
-                        TextFormField(
-                          controller: endTime,
-                          decoration: const InputDecoration(
-                              icon: Icon(Icons.access_time),
-                              labelText: "Enter end time"),
-                          readOnly: true,
-                          onTap: () async {
-                            TimeOfDay? pickedEndTime = await showTimePicker(
-                              context: context,
-                              initialTime: _endTimeText == ""
-                                  ? TimeOfDay.now()
-                                  : TimeOfDay(
-                                      hour: int.parse(
-                                          _endTimeText!.split(":")[0]),
-                                      minute: int.parse(_endTimeText!
-                                          .split(":")[1]
-                                          .split(" ")[0])),
-                            );
-                            if (pickedEndTime != null) {
-                              setState(() {
-                                endTime.text = pickedEndTime.format(context);
-                              });
-                            }
-                          },
-                        ),
-                        TextFormField(
-                          decoration: const InputDecoration(
-                            hintText: 'Event name',
+                                initialTime: _startTimeText == ""
+                                    ? TimeOfDay.now()
+                                    : TimeOfDay(
+                                        hour: int.parse(
+                                            _startTimeText!.split(":")[0]),
+                                        minute: int.parse(_startTimeText!
+                                            .split(":")[1]
+                                            .split(" ")[0])),
+                              );
+                              if (pickedStartTime != null) {
+                                setState(() {
+                                  startTime.text =
+                                      pickedStartTime.format(context);
+                                });
+                              }
+                            },
                           ),
-                        ),
-                        TextFormField(
-                          decoration: const InputDecoration(
-                            hintText: 'Location',
+                          TextFormField(
+                            controller: endTime,
+                            decoration: const InputDecoration(
+                                icon: Icon(Icons.access_time),
+                                labelText: "Enter end time"),
+                            readOnly: true,
+                            onTap: () async {
+                              TimeOfDay? pickedEndTime = await showTimePicker(
+                                context: context,
+                                initialTime: _endTimeText == ""
+                                    ? TimeOfDay.now()
+                                    : TimeOfDay(
+                                        hour: int.parse(
+                                            _endTimeText!.split(":")[0]),
+                                        minute: int.parse(_endTimeText!
+                                            .split(":")[1]
+                                            .split(" ")[0])),
+                              );
+                              if (pickedEndTime != null) {
+                                setState(() {
+                                  endTime.text = pickedEndTime.format(context);
+                                });
+                              }
+                            },
                           ),
-                        ),
-                        TextFormField(
-                          maxLines: 4,
-                          keyboardType: TextInputType.multiline,
-                          decoration: const InputDecoration(
-                            hintText: 'Description',
+                          TextFormField(
+                            decoration: const InputDecoration(
+                              hintText: 'Event name',
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    height: 40,
-                    child: Row(
-                      children: <Widget>[
-                        Text(_timeDetails!,
-                            style: const TextStyle(
-                                fontWeight: FontWeight.w400, fontSize: 15)),
+                          TextFormField(
+                            decoration: const InputDecoration(
+                              hintText: 'Location',
+                            ),
+                          ),
+                          TextFormField(
+                            maxLines: 4,
+                            keyboardType: TextInputType.multiline,
+                            decoration: const InputDecoration(
+                              hintText: 'Description',
+                            ),
+                          ),
+                        ] else ...[
+                          Text(
+                            _dateText!,
+                          ),
+                          Text(
+                            _timeDetails!,
+                          ),
+                        ],
                       ],
                     ),
                   ),
@@ -285,15 +289,36 @@ class CalendarState extends State<Calendar> {
                     Navigator.of(context).pop();
                   },
                   child: const Text('Sluiten')),
-              ElevatedButton(
-                onPressed: () {
-                  // TODO: Add actual submission to back-end.
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Event toegevoegd')),
-                  );
-                },
-                child: const Text('Toevoegen'),
-              ),
+              if (shouldShowForm) ...[
+                ElevatedButton(
+                  onPressed: () {
+                    // TODO: Add actual submission to back-end.
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Event toegevoegd')),
+                    );
+                  },
+                  child: const Text('Toevoegen'),
+                ),
+              ] else ...[
+                ElevatedButton(
+                  onPressed: () {
+                    // TODO: Add actual submission to back-end.
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Event aangepast')),
+                    );
+                  },
+                  child: const Text('Aanpassen'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    // TODO: Add actual submission to back-end.
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Event verwijderd')),
+                    );
+                  },
+                  child: const Text('Verwijderen'),
+                )
+              ],
             ],
           );
         });
