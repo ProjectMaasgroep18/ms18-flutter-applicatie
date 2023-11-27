@@ -24,9 +24,15 @@ class CalendarState extends State<Calendar> {
   List<Event> events = [];
   String? _subjectText, _startTimeText, _endTimeText, _dateText, _timeDetails;
   final CalendarController _controller = CalendarController();
+  TextEditingController dateinput = TextEditingController();
+  TextEditingController startTime = TextEditingController();
+  TextEditingController endTime = TextEditingController();
 
   @override
   void initState() {
+    dateinput.text = "";
+    startTime.text = "";
+    endTime.text = "";
     super.initState();
     _fetchDataAsync();
   }
@@ -110,36 +116,58 @@ class CalendarState extends State<Calendar> {
         details.targetElement == CalendarElement.viewHeader) {
       _controller.view = CalendarView.day;
     }
-    if (details.targetElement == CalendarElement.appointment ||
-        details.targetElement == CalendarElement.agenda) {
-      final Event appointmentDetails = details.appointments![0];
-      _subjectText = appointmentDetails.eventName;
-      _dateText = DateFormat('MMMM dd, yyyy')
-          .format(appointmentDetails.from)
-          .toString();
-      _startTimeText =
-          DateFormat('hh:mm a').format(appointmentDetails.from).toString();
-      _endTimeText =
-          DateFormat('hh:mm a').format(appointmentDetails.to).toString();
-      _timeDetails = '$_startTimeText - $_endTimeText';
-    } else if (details.targetElement == CalendarElement.calendarCell) {
-      _startTimeText = DateFormat('hh:mm a').format(details.date!).toString();
 
-      DateTime adjustedDateTime = details.date!.add(Duration(hours: 1));
+    switch (details.targetElement) {
+      case CalendarElement.appointment:
+        final Event appointmentDetails = details.appointments![0];
+        _subjectText = appointmentDetails.eventName;
+        _dateText = DateFormat('MMMM dd, yyyy')
+            .format(appointmentDetails.from)
+            .toString();
+        _startTimeText =
+            DateFormat('hh:mm a').format(appointmentDetails.from).toString();
+        _endTimeText =
+            DateFormat('hh:mm a').format(appointmentDetails.to).toString();
+        _timeDetails = '$_startTimeText - $_endTimeText';
+        break;
+      case CalendarElement.agenda:
+        final Event appointmentDetails = details.appointments![0];
+        _subjectText = appointmentDetails.eventName;
+        _dateText = DateFormat('MMMM dd, yyyy')
+            .format(appointmentDetails.from)
+            .toString();
+        _startTimeText =
+            DateFormat('hh:mm a').format(appointmentDetails.from).toString();
+        _endTimeText =
+            DateFormat('hh:mm a').format(appointmentDetails.to).toString();
+        _timeDetails = '$_startTimeText - $_endTimeText';
+        break;
+      case CalendarElement.calendarCell:
+        _startTimeText = DateFormat('hh:mm a').format(details.date!).toString();
 
-      _endTimeText = DateFormat('hh:mm a').format(adjustedDateTime);
+        DateTime adjustedDateTime = details.date!.add(Duration(hours: 1));
 
-      _subjectText = "Add event";
-      _dateText = DateFormat('MMMM dd, yyyy').format(details.date!).toString();
-      _timeDetails = "";
+        _endTimeText = DateFormat('hh:mm a').format(adjustedDateTime);
+
+        _subjectText = "Add event";
+
+        dateinput.text =
+            DateFormat('MMMM dd, yyyy').format(details.date!).toString();
+        startTime.text = DateFormat('hh:mm a').format(details.date!).toString();
+        endTime.text = DateFormat('hh:mm a').format(adjustedDateTime);
+
+        _timeDetails = "";
+      default:
+        break;
     }
+
     showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
             title: Container(child: new Text('$_subjectText')),
             content: Container(
-              height: 400,
+              height: 450,
               child: Column(
                 children: <Widget>[
                   Form(
@@ -147,25 +175,76 @@ class CalendarState extends State<Calendar> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         TextFormField(
-                          keyboardType: TextInputType.datetime,
-                          initialValue: _dateText,
+                          controller: dateinput,
                           decoration: const InputDecoration(
-                            hintText: 'Date',
-                          ),
+                              icon: Icon(Icons.calendar_today),
+                              labelText: "Enter Date"),
+                          readOnly: true,
+                          onTap: () async {
+                            DateTime? pickedDate = await showDatePicker(
+                                context: context,
+                                initialDate: DateTime.now(),
+                                firstDate: DateTime(2000),
+                                lastDate: DateTime(2101));
+                            if (pickedDate != null) {
+                              String formattedDate =
+                                  DateFormat('yyyy-MM-dd').format(pickedDate);
+                              setState(() {
+                                dateinput.text = formattedDate;
+                              });
+                            }
+                          },
                         ),
                         TextFormField(
-                          keyboardType: TextInputType.datetime,
-                          initialValue: _startTimeText,
+                          controller: startTime,
                           decoration: const InputDecoration(
-                            hintText: 'Start time',
-                          ),
+                              icon: Icon(Icons.access_time),
+                              labelText: "Enter start time"),
+                          readOnly: true,
+                          onTap: () async {
+                            TimeOfDay? pickedStartTime = await showTimePicker(
+                              context: context,
+                              initialTime: _startTimeText == ""
+                                  ? TimeOfDay.now()
+                                  : TimeOfDay(
+                                      hour: int.parse(
+                                          _startTimeText!.split(":")[0]),
+                                      minute: int.parse(_startTimeText!
+                                          .split(":")[1]
+                                          .split(" ")[0])),
+                            );
+                            if (pickedStartTime != null) {
+                              setState(() {
+                                startTime.text =
+                                    pickedStartTime.format(context);
+                              });
+                            }
+                          },
                         ),
                         TextFormField(
-                          keyboardType: TextInputType.datetime,
-                          initialValue: _endTimeText,
+                          controller: endTime,
                           decoration: const InputDecoration(
-                            hintText: 'End time',
-                          ),
+                              icon: Icon(Icons.access_time),
+                              labelText: "Enter end time"),
+                          readOnly: true,
+                          onTap: () async {
+                            TimeOfDay? pickedEndTime = await showTimePicker(
+                              context: context,
+                              initialTime: _endTimeText == ""
+                                  ? TimeOfDay.now()
+                                  : TimeOfDay(
+                                      hour: int.parse(
+                                          _endTimeText!.split(":")[0]),
+                                      minute: int.parse(_endTimeText!
+                                          .split(":")[1]
+                                          .split(" ")[0])),
+                            );
+                            if (pickedEndTime != null) {
+                              setState(() {
+                                endTime.text = pickedEndTime.format(context);
+                              });
+                            }
+                          },
                         ),
                         TextFormField(
                           decoration: const InputDecoration(
