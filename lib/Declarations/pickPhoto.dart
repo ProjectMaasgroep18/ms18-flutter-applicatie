@@ -10,13 +10,6 @@ import '../Widgets/buttons.dart';
 import '../Widgets/inputFields.dart';
 import '../Widgets/paddingSpacing.dart';
 
-class PickPhoto extends StatefulWidget {
-  const PickPhoto({Key? key}) : super(key: key);
-
-  @override
-  State<PickPhoto> createState() => PickPhotoState();
-}
-
 final ImagePicker picker = ImagePicker();
 XFile? photo;
 
@@ -25,6 +18,13 @@ ApiManager apiManager = ApiManager();
 TextEditingController nameController = TextEditingController();
 TextEditingController descriptionController = TextEditingController();
 TextEditingController amountController = TextEditingController();
+
+class PickPhoto extends StatefulWidget {
+  const PickPhoto({Key? key}) : super(key: key);
+
+  @override
+  State<PickPhoto> createState() => PickPhotoState();
+}
 
 class PickPhotoState extends State<PickPhoto> {
   @override
@@ -71,9 +71,7 @@ class PickPhotoState extends State<PickPhoto> {
                   padding: const EdgeInsets.fromLTRB(21, 0, 21, 0),
                   icon: Icons.camera_alt,
                   onTap: () async {
-                    if (nameController.text.isEmpty ||
-                        descriptionController.text.isEmpty ||
-                        amountController.text.isEmpty) {
+                    if (amountController.text.isEmpty) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text("Vul alle velden in"),
@@ -96,9 +94,7 @@ class PickPhotoState extends State<PickPhoto> {
                   padding: const EdgeInsets.fromLTRB(25, 0, 25, 0),
                   icon: Icons.photo,
                   onTap: () async {
-                    if (nameController.text.isEmpty ||
-                        descriptionController.text.isEmpty ||
-                        amountController.text.isEmpty) {
+                    if (amountController.text.isEmpty) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text("Vul alle velden in"),
@@ -135,8 +131,6 @@ class PickPhotoState extends State<PickPhoto> {
             Button(
                 onTap: () async {
                   if (photo == null ||
-                      nameController.text.isEmpty ||
-                      descriptionController.text.isEmpty ||
                       amountController.text.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
