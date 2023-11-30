@@ -3,6 +3,9 @@ import 'category.dart';
 import 'photo_detail_screen.dart';
 import 'package:intl/intl.dart';
 import 'add_photo_screen.dart';
+import 'package:ms18_applicatie/config.dart';
+
+Color mainColor = Color(0xFF15233d);
 
 class CategoryPhotosScreen extends StatelessWidget {
   final Category category;
@@ -18,7 +21,7 @@ class CategoryPhotosScreen extends StatelessWidget {
       body: GridView.builder(
         padding: const EdgeInsets.all(8),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2, // Adjust as needed for your layout
+          crossAxisCount: 2,
           childAspectRatio: 1.0,
           crossAxisSpacing: 8.0,
           mainAxisSpacing: 8.0,
@@ -85,9 +88,12 @@ class CategoryPhotosScreen extends StatelessWidget {
             MaterialPageRoute(builder: (context) => AddPhotoScreen(category: category)),
           );
         },
-        child: Icon(Icons.add),
+        child: Icon(Icons.add, color: Colors.white),
+        backgroundColor: mainColor,
+
         tooltip: 'Foto toevoegen',
       ),
+
     );
   }
 }

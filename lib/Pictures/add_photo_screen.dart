@@ -5,6 +5,8 @@ import 'category.dart';
 import 'photo_viewer_screen.dart';
 import 'editable_file.dart';
 
+Color mainColor = Color(0xFF15233d);
+
 class AddPhotoScreen extends StatefulWidget {
   final Category category;
 
@@ -70,11 +72,11 @@ class _AddPhotoScreenState extends State<AddPhotoScreen> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             ElevatedButton.icon(
-              icon: Icon(Icons.file_upload),
-              label: Text('Selecteer bestanden'),
+              icon: Icon(Icons.file_upload, color: Colors.white),
+              label: Text('Selecteer bestanden', style: TextStyle(color: Colors.white)),
               onPressed: _selectFiles,
               style: ElevatedButton.styleFrom(
-                primary: Colors.blue,
+                primary: mainColor,
                 textStyle: TextStyle(fontSize: 16),
               ),
             ),
@@ -82,7 +84,7 @@ class _AddPhotoScreenState extends State<AddPhotoScreen> {
             Expanded(
               child: Container(
                 decoration: BoxDecoration(
-                  border: Border.all(color: Colors.blue, width: 2),
+                  border: Border.all(color: mainColor, width: 2),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 alignment: Alignment.center,
@@ -148,21 +150,27 @@ class _AddPhotoScreenState extends State<AddPhotoScreen> {
               ),
             ),
             SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _submit,
-              child: Text('Toevoegen'),
-              style: ElevatedButton.styleFrom(
-                primary: Colors.blue,
+            SizedBox(
+              width: 200,
+              child: ElevatedButton(
+                onPressed: _submit,
+                child: Text('Toevoegen', style: TextStyle(color: Colors.white)),
+                style: ElevatedButton.styleFrom(
+                  primary: mainColor,
+                ),
               ),
             ),
             SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text('Terug'),
-              style: ElevatedButton.styleFrom(
-                primary: Colors.grey,
+            SizedBox(
+              width: 200,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text('Terug', style: TextStyle(color: Colors.white)),
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.grey,
+                ),
               ),
             ),
           ],

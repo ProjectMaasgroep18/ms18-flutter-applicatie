@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'photo.dart';
 
+Color mainColor = Color(0xFF15233d);
+
 class PhotoDetailScreen extends StatelessWidget {
   final Photo photo;
 
@@ -25,24 +27,30 @@ class PhotoDetailScreen extends StatelessWidget {
               ),
             ),
             SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () {
-                // Toevoegen button logic here
-              },
-              style: ElevatedButton.styleFrom(
-                primary: Colors.blue,
+            SizedBox(
+              width: 200,
+              child: ElevatedButton(
+                onPressed: () {
+                  // Toevoegen button logic here
+                },
+                style: ElevatedButton.styleFrom(
+                  primary: mainColor,
+                ),
+                child: Text('Toevoegen', style: TextStyle(color: Colors.white)),
               ),
-              child: Text('Toevoegen'),
             ),
-            SizedBox(height: 10), // Space between the buttons
-            ElevatedButton(
-              onPressed: () {
-                // Verwijderen button logic here
-              },
-              style: ElevatedButton.styleFrom(
-                primary: Colors.grey,
+            SizedBox(height: 10),
+            SizedBox(
+              width: 200,
+              child: ElevatedButton(
+                onPressed: () {
+                  // Verwijderen button logic here
+                },
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.grey,
+                ),
+                child: Text('Verwijderen', style: TextStyle(color: Colors.white)),
               ),
-              child: Text('Verwijderen'),
             ),
           ],
         ),
