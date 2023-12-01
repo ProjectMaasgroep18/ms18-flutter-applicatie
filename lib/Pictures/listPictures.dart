@@ -12,9 +12,9 @@ class ListPictures extends StatefulWidget {
 }
 
 class _ListPicturesState extends State<ListPictures> {
-  final List<Category> categories = [
+  final List<Category> _allCategories = [
     Category(
-      title: 'Kerst eten',
+      title: 'Kerst eten 1',
       date: DateTime(2023, 10, 10),
       photos: [
         Photo(
@@ -64,7 +64,7 @@ class _ListPicturesState extends State<ListPictures> {
       ],
     ),
     Category(
-      title: 'Kerst eten',
+      title: 'Kerst eten 2',
       date: DateTime(2023, 10, 10),
       photos: [
         Photo(
@@ -101,7 +101,7 @@ class _ListPicturesState extends State<ListPictures> {
 
     ),
     Category(
-      title: 'Kerst eten',
+      title: 'Kerst eten 3',
       date: DateTime(2023, 10, 10),
       photos: [
         Photo(
@@ -151,14 +151,71 @@ class _ListPicturesState extends State<ListPictures> {
     ),
   ];
 
+  List<Category> _filteredCategories = [];
+  TextEditingController _searchController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _filteredCategories = _allCategories;
+    _searchController.addListener(_onSearchChanged);
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _onSearchChanged() {
+    if (_searchController.text.isEmpty) {
+      setState(() {
+        _filteredCategories = _allCategories;
+      });
+    } else {
+      _performSearch();
+    }
+  }
+
+  void _performSearch() {
+    setState(() {
+      _filteredCategories = _allCategories
+          .where((category) => category.title.toLowerCase().contains(_searchController.text.toLowerCase()))
+          .toList();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Menu(
-      child: ListView.builder(
-        itemCount: categories.length,
-        itemBuilder: (context, index) {
-          return CategoryListItem(category: categories[index]);
-        },
+      child: Column(
+        children: [
+          Padding(
+            padding: EdgeInsets.all(8.0),
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width * 0.4,
+              child: TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  labelText: 'Zoek op Categories',
+                  suffixIcon: IconButton(
+                    icon: Icon(Icons.search),
+                    onPressed: _performSearch,
+                  ),
+                ),
+                onSubmitted: (value) => _performSearch(),
+              ),
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: _filteredCategories.length,
+              itemBuilder: (context, index) {
+                return CategoryListItem(category: _filteredCategories[index]);
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
