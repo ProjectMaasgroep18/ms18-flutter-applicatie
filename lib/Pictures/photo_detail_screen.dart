@@ -31,7 +31,7 @@ class PhotoDetailScreen extends StatelessWidget {
               width: 200,
               child: ElevatedButton(
                 onPressed: () {
-                  // Toevoegen button logic here
+                  // Toevoegen button logica here
                 },
                 style: ElevatedButton.styleFrom(
                   primary: mainColor,
@@ -44,7 +44,7 @@ class PhotoDetailScreen extends StatelessWidget {
               width: 200,
               child: ElevatedButton(
                 onPressed: () {
-                  // Verwijderen button logic here
+                  // Verwijderen button logica here
                 },
                 style: ElevatedButton.styleFrom(
                   primary: Colors.grey,
