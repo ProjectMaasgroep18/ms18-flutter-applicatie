@@ -23,9 +23,17 @@ class CalendarState extends State<Calendar> {
   List<Event> events = [];
   String? _subjectText, _startTimeText, _endTimeText, _dateText, _timeDetails;
   final CalendarController _controller = CalendarController();
+  TextEditingController dateinput = TextEditingController();
+  TextEditingController startTime = TextEditingController();
+  TextEditingController endTime = TextEditingController();
+  bool shouldShowForm = false;
 
   @override
   void initState() {
+    dateinput.text = "";
+    startTime.text = "";
+    endTime.text = "";
+    shouldShowForm = false;
     super.initState();
     _fetchDataAsync();
   }
@@ -94,7 +102,7 @@ class CalendarState extends State<Calendar> {
           CalendarView.month,
           CalendarView.schedule,
         ],
-        monthViewSettings: MonthViewSettings(
+        monthViewSettings: const MonthViewSettings(
             navigationDirection: MonthNavigationDirection.vertical),
       ),
     );
@@ -109,51 +117,154 @@ class CalendarState extends State<Calendar> {
         details.targetElement == CalendarElement.viewHeader) {
       _controller.view = CalendarView.day;
     }
-    if (details.targetElement == CalendarElement.appointment ||
-        details.targetElement == CalendarElement.agenda) {
-      final Event appointmentDetails = details.appointments![0];
-      _subjectText = appointmentDetails.eventName;
-      _dateText = DateFormat('MMMM dd, yyyy')
-          .format(appointmentDetails.from)
-          .toString();
-      _startTimeText =
-          DateFormat('hh:mm a').format(appointmentDetails.from).toString();
-      _endTimeText =
-          DateFormat('hh:mm a').format(appointmentDetails.to).toString();
-      _timeDetails = '$_startTimeText - $_endTimeText';
-    } else if (details.targetElement == CalendarElement.calendarCell) {
-      // TODO add a new event in this modal
-      _subjectText = "Add event";
-      _dateText = DateFormat('MMMM dd, yyyy').format(details.date!).toString();
-      _timeDetails = '';
+
+    switch (details.targetElement) {
+      case CalendarElement.appointment:
+      case CalendarElement.agenda:
+        shouldShowForm = false;
+        final Event appointmentDetails = details.appointments![0];
+        _subjectText = appointmentDetails.eventName;
+        _dateText = DateFormat('dd MMMM, yyyy')
+            .format(appointmentDetails.from)
+            .toString();
+        _startTimeText =
+            DateFormat('hh:mm a').format(appointmentDetails.from).toString();
+        _endTimeText =
+            DateFormat('hh:mm a').format(appointmentDetails.to).toString();
+        _timeDetails = '$_startTimeText - $_endTimeText';
+        break;
+      case CalendarElement.calendarCell:
+        shouldShowForm = true;
+        _startTimeText = DateFormat('hh:mm a').format(details.date!).toString();
+
+        DateTime adjustedDateTime = details.date!.add(const Duration(hours: 1));
+
+        _endTimeText = DateFormat('hh:mm a').format(adjustedDateTime);
+
+        _subjectText = "Agenda item toevoegen";
+
+        dateinput.text =
+            DateFormat('dd MMMM, yyyy').format(details.date!).toString();
+        startTime.text = DateFormat('hh:mm a').format(details.date!).toString();
+        endTime.text = DateFormat('hh:mm a').format(adjustedDateTime);
+
+        _timeDetails = "";
+      default:
+        break;
     }
+
     showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Container(child: new Text('$_subjectText')),
-            content: Container(
-              height: 80,
+            title: Text('$_subjectText'),
+            content: SizedBox(
+              height: 450,
               child: Column(
                 children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      Text(
-                        '$_dateText',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w400,
-                          fontSize: 20,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Container(
-                    height: 40,
-                    child: Row(
-                      children: <Widget>[
-                        Text(_timeDetails!,
-                            style: TextStyle(
-                                fontWeight: FontWeight.w400, fontSize: 15)),
+                  Form(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (shouldShowForm) ...[
+                          TextFormField(
+                            controller: dateinput,
+                            decoration: const InputDecoration(
+                                icon: Icon(Icons.calendar_today),
+                                labelText: "Vul datum in"),
+                            readOnly: true,
+                            onTap: () async {
+                              DateTime? pickedDate = await showDatePicker(
+                                  locale: const Locale('nl', 'NL'),
+                                  context: context,
+                                  initialDate: DateTime.now(),
+                                  firstDate: DateTime(2000),
+                                  lastDate: DateTime(2101));
+                              if (pickedDate != null) {
+                                String formattedDate = DateFormat('dd--MM-YYYY')
+                                    .format(pickedDate);
+                                setState(() {
+                                  dateinput.text = formattedDate;
+                                });
+                              }
+                            },
+                          ),
+                          TextFormField(
+                            controller: startTime,
+                            decoration: const InputDecoration(
+                                icon: Icon(Icons.access_time),
+                                labelText: "Start tijd"),
+                            readOnly: true,
+                            onTap: () async {
+                              TimeOfDay? pickedStartTime = await showTimePicker(
+                                context: context,
+                                initialTime: _startTimeText == ""
+                                    ? TimeOfDay.now()
+                                    : TimeOfDay(
+                                        hour: int.parse(
+                                            _startTimeText!.split(":")[0]),
+                                        minute: int.parse(_startTimeText!
+                                            .split(":")[1]
+                                            .split(" ")[0])),
+                              );
+                              if (pickedStartTime != null) {
+                                setState(() {
+                                  startTime.text =
+                                      pickedStartTime.format(context);
+                                });
+                              }
+                            },
+                          ),
+                          TextFormField(
+                            controller: endTime,
+                            decoration: const InputDecoration(
+                                icon: Icon(Icons.access_time),
+                                labelText: "Eind tijd"),
+                            readOnly: true,
+                            onTap: () async {
+                              TimeOfDay? pickedEndTime = await showTimePicker(
+                                context: context,
+                                initialTime: _endTimeText == ""
+                                    ? TimeOfDay.now()
+                                    : TimeOfDay(
+                                        hour: int.parse(
+                                            _endTimeText!.split(":")[0]),
+                                        minute: int.parse(_endTimeText!
+                                            .split(":")[1]
+                                            .split(" ")[0])),
+                              );
+                              if (pickedEndTime != null) {
+                                setState(() {
+                                  endTime.text = pickedEndTime.format(context);
+                                });
+                              }
+                            },
+                          ),
+                          TextFormField(
+                            decoration: const InputDecoration(
+                              hintText: 'Agenda item naam',
+                            ),
+                          ),
+                          TextFormField(
+                            decoration: const InputDecoration(
+                              hintText: 'Locatie',
+                            ),
+                          ),
+                          TextFormField(
+                            maxLines: 4,
+                            keyboardType: TextInputType.multiline,
+                            decoration: const InputDecoration(
+                              hintText: 'Beschrijving',
+                            ),
+                          ),
+                        ] else ...[
+                          Text(
+                            _dateText!,
+                          ),
+                          Text(
+                            _timeDetails!,
+                          ),
+                        ],
                       ],
                     ),
                   ),
@@ -161,11 +272,41 @@ class CalendarState extends State<Calendar> {
               ),
             ),
             actions: <Widget>[
-              new TextButton(
+              TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: new Text('Sluiten'))
+                  child: const Text('Sluiten')),
+              if (shouldShowForm) ...[
+                ElevatedButton(
+                  onPressed: () {
+                    // TODO: Add actual submission to back-end.
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Event toegevoegd')),
+                    );
+                  },
+                  child: const Text('Toevoegen'),
+                ),
+              ] else ...[
+                ElevatedButton(
+                  onPressed: () {
+                    // TODO: Add actual submission to back-end.
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Event aangepast')),
+                    );
+                  },
+                  child: const Text('Aanpassen'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    // TODO: Add actual submission to back-end.
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Event verwijderd')),
+                    );
+                  },
+                  child: const Text('Verwijderen'),
+                )
+              ],
             ],
           );
         });
