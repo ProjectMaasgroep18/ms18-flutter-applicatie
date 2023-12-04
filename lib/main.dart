@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/config.dart';
 import 'package:ms18_applicatie/menu.dart';
+import 'package:ms18_applicatie/Login/screens/components/onboding_screen.dart';
 
 void main() {
   runApp(const Maasgroep18App());
@@ -16,10 +17,10 @@ class Maasgroep18App extends StatelessWidget {
       navigatorKey: navigatorKey,
       title: 'Maasgroep 18 Applicatie',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrangeAccent),
+        colorScheme: ColorScheme.fromSeed(seedColor: secondColor),
         useMaterial3: true,
       ),
-      home: Menu(child: Container()),
+      home: const OnboardingScreen(),
     );
   }
 }
