@@ -46,7 +46,7 @@ class CalendarState extends State<Calendar> {
   }
 
   Future<List<Event>> _getDataSourceAsync() async {
-    final String url = 'https://localhost:7059/Calendar/matrozen';
+    final String url = 'https://localhost:7059/Calendar/all';
 
     final response = await http.get(Uri.parse(url));
 
