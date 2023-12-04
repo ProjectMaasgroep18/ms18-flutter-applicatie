@@ -39,13 +39,15 @@ class CalendarState extends State<Calendar> {
 
   Future<List<Event>> _getDataSourceAsync(String source) async {
     String url = source;
-    debugPrint("custom prints, source loaded:" + source);
-    var response = await http.get(Uri.parse(url));
+    var response;
+    try {
+      response = await http.get(Uri.parse(url));
+    } on Exception catch (exception) {
+      print(exception);
+    }
     final List<Event> events = [];
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
-      debugPrint("" + data);
-
       if (data is List) {
         for (final eventData in data) {
           final eventName = eventData['title'];
