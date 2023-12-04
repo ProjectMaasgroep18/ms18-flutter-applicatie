@@ -198,8 +198,7 @@ class CalendarState extends State<Calendar> {
                                 firstDate: DateTime(2000),
                                 lastDate: DateTime(2101));
                             if (pickedDate != null) {
-                              String formattedDate =
-                                  DateFormat('dd--MM-YYYY').format(pickedDate);
+                              String formattedDate = DateFormat('dd MMMM, yyyy').format(pickedDate).toString();
                               setState(() {
                                 dateinput.text = formattedDate;
                               });
