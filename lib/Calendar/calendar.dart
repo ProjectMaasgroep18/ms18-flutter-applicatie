@@ -348,8 +348,8 @@ class CalendarState extends State<Calendar> {
                             },
                           ),
                           TextFormField(
-                            decoration: const InputDecoration(
-                              hintText: 'Agenda item naam',
+                            decoration: InputDecoration(
+                              hintText: _subjectText
                             ),
                           ),
                           TextFormField(
