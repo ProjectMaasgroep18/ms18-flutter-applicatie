@@ -132,6 +132,13 @@ class CalendarState extends State<Calendar> {
         _endTimeText =
             DateFormat('hh:mm a').format(appointmentDetails.to).toString();
         _timeDetails = '$_startTimeText - $_endTimeText';
+
+        // Use existing values.
+        dateinput.text =
+            DateFormat('dd MMMM, yyyy').format(appointmentDetails.from);
+        startTime.text = _startTimeText!;
+        endTime.text = _endTimeText!;
+
         break;
       case CalendarElement.calendarCell:
         shouldShowCreateForm = true;
@@ -149,6 +156,7 @@ class CalendarState extends State<Calendar> {
         endTime.text = DateFormat('hh:mm a').format(adjustedDateTime);
 
         _timeDetails = "";
+        break;
       default:
         break;
     }
