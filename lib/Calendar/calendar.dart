@@ -30,11 +30,11 @@ class CalendarState extends State<Calendar> {
   TextEditingController startTime = TextEditingController();
   TextEditingController endTime = TextEditingController();
   bool shouldShowForm = false;
+  final restfulUrl = 'https://localhost:7059/Calendar/Event';
 
   Future<void> sendDeleteRequest(calendarName, id) async {
     var response = await http.delete(
-        Uri.parse('https://localhost:7059/Calendar/Event')
-            .replace(queryParameters: {
+        Uri.parse(restfulUrl).replace(queryParameters: {
           'calenderName': calendarName,
           'id': id,
         }),
