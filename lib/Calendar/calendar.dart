@@ -258,27 +258,24 @@ class CalendarState extends State<Calendar> {
                           },
                         ),
                         TextFormField(
-                          decoration: InputDecoration(
-                            hintText:
-                                isNewEvent ? 'Titel' : _subjectText,
+                          decoration: const InputDecoration(
+                            hintText: 'Titel',
                           ),
-                          initialValue: isNewEvent ? 'Titel' : _subjectText
+                          initialValue: isNewEvent ? null : _subjectText
                         ),
                         TextFormField(
-                          decoration: InputDecoration(
-                            hintText: isNewEvent
-                                ? 'Locatie'
-                                : 'Oude Locatie',
+                          decoration: const InputDecoration(
+                            hintText: 'Locatie',
                           ),
+                          initialValue: isNewEvent ? null : 'Bestaande locatie',
                         ),
                         TextFormField(
                           maxLines: 4,
                           keyboardType: TextInputType.multiline,
-                          decoration: InputDecoration(
-                            hintText: isNewEvent
-                                ? 'Beschrijving'
-                                : 'Oude Beschrijving',
+                          decoration: const InputDecoration(
+                            hintText: 'Beschrijving',
                           ),
+                          initialValue: isNewEvent ? null : "Bestaande beschrijving",
                         ),
                       ],
                     ),
