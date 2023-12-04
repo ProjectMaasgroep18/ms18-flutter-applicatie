@@ -329,6 +329,7 @@ class CalendarState extends State<Calendar> {
                 ),
                 ElevatedButton(
                   onPressed: () {
+                    // TODO change the "4" to dynamic calendar enum id
                     sendDeleteRequest("4", _eventId);
                   },
                   child: const Text('Verwijderen'),
