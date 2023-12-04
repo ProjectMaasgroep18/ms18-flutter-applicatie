@@ -26,14 +26,14 @@ class CalendarState extends State<Calendar> {
   TextEditingController dateinput = TextEditingController();
   TextEditingController startTime = TextEditingController();
   TextEditingController endTime = TextEditingController();
-  bool shouldShowForm = false;
+  bool shouldShowCreateForm = false;
 
   @override
   void initState() {
     dateinput.text = "";
     startTime.text = "";
     endTime.text = "";
-    shouldShowForm = false;
+    shouldShowCreateForm = false;
     super.initState();
     _fetchDataAsync();
   }
@@ -46,7 +46,7 @@ class CalendarState extends State<Calendar> {
   }
 
   Future<List<Event>> _getDataSourceAsync() async {
-    final String url = 'https://localhost:7059/Calendar/all';
+    final String url = 'https://localhost:7059/Calendar/matrozen';
 
     final response = await http.get(Uri.parse(url));
 
@@ -121,7 +121,7 @@ class CalendarState extends State<Calendar> {
     switch (details.targetElement) {
       case CalendarElement.appointment:
       case CalendarElement.agenda:
-        shouldShowForm = false;
+        shouldShowCreateForm = false;
         final Event appointmentDetails = details.appointments![0];
         _subjectText = appointmentDetails.eventName;
         _dateText = DateFormat('dd MMMM, yyyy')
@@ -134,7 +134,7 @@ class CalendarState extends State<Calendar> {
         _timeDetails = '$_startTimeText - $_endTimeText';
         break;
       case CalendarElement.calendarCell:
-        shouldShowForm = true;
+        shouldShowCreateForm = true;
         _startTimeText = DateFormat('hh:mm a').format(details.date!).toString();
 
         DateTime adjustedDateTime = details.date!.add(const Duration(hours: 1));
@@ -166,7 +166,8 @@ class CalendarState extends State<Calendar> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        if (shouldShowForm) ...[
+                        if (shouldShowCreateForm) ...[
+                          // Create new event.
                           TextFormField(
                             controller: dateinput,
                             decoration: const InputDecoration(
@@ -258,11 +259,102 @@ class CalendarState extends State<Calendar> {
                             ),
                           ),
                         ] else ...[
+                          // Edit existing event.
                           Text(
                             _dateText!,
                           ),
                           Text(
                             _timeDetails!,
+                          ),
+                          TextFormField(
+                            controller: dateinput,
+                            decoration: const InputDecoration(
+                                icon: Icon(Icons.calendar_today),
+                                labelText: "Vul datum in"),
+                            readOnly: true,
+                            onTap: () async {
+                              DateTime? pickedDate = await showDatePicker(
+                                  locale: const Locale('nl', 'NL'),
+                                  context: context,
+                                  initialDate: DateTime.now(),
+                                  firstDate: DateTime(2000),
+                                  lastDate: DateTime(2101));
+                              if (pickedDate != null) {
+                                String formattedDate = DateFormat('dd--MM-YYYY')
+                                    .format(pickedDate);
+                                setState(() {
+                                  dateinput.text = formattedDate;
+                                });
+                              }
+                            },
+                          ),
+                          TextFormField(
+                            controller: startTime,
+                            decoration: const InputDecoration(
+                                icon: Icon(Icons.access_time),
+                                labelText: "Start tijd"),
+                            readOnly: true,
+                            onTap: () async {
+                              TimeOfDay? pickedStartTime = await showTimePicker(
+                                context: context,
+                                initialTime: _startTimeText == ""
+                                    ? TimeOfDay.now()
+                                    : TimeOfDay(
+                                        hour: int.parse(
+                                            _startTimeText!.split(":")[0]),
+                                        minute: int.parse(_startTimeText!
+                                            .split(":")[1]
+                                            .split(" ")[0])),
+                              );
+                              if (pickedStartTime != null) {
+                                setState(() {
+                                  startTime.text =
+                                      pickedStartTime.format(context);
+                                });
+                              }
+                            },
+                          ),
+                          TextFormField(
+                            controller: endTime,
+                            decoration: const InputDecoration(
+                                icon: Icon(Icons.access_time),
+                                labelText: "Eind tijd"),
+                            readOnly: true,
+                            onTap: () async {
+                              TimeOfDay? pickedEndTime = await showTimePicker(
+                                context: context,
+                                initialTime: _endTimeText == ""
+                                    ? TimeOfDay.now()
+                                    : TimeOfDay(
+                                        hour: int.parse(
+                                            _endTimeText!.split(":")[0]),
+                                        minute: int.parse(_endTimeText!
+                                            .split(":")[1]
+                                            .split(" ")[0])),
+                              );
+                              if (pickedEndTime != null) {
+                                setState(() {
+                                  endTime.text = pickedEndTime.format(context);
+                                });
+                              }
+                            },
+                          ),
+                          TextFormField(
+                            decoration: const InputDecoration(
+                              hintText: 'Agenda item naam',
+                            ),
+                          ),
+                          TextFormField(
+                            decoration: const InputDecoration(
+                              hintText: 'Locatie',
+                            ),
+                          ),
+                          TextFormField(
+                            maxLines: 4,
+                            keyboardType: TextInputType.multiline,
+                            decoration: const InputDecoration(
+                              hintText: 'Beschrijving',
+                            ),
                           ),
                         ],
                       ],
@@ -277,7 +369,8 @@ class CalendarState extends State<Calendar> {
                     Navigator.of(context).pop();
                   },
                   child: const Text('Sluiten')),
-              if (shouldShowForm) ...[
+              if (shouldShowCreateForm) ...[
+                // Create new event.
                 ElevatedButton(
                   onPressed: () {
                     // TODO: Add actual submission to back-end.
@@ -288,6 +381,7 @@ class CalendarState extends State<Calendar> {
                   child: const Text('Toevoegen'),
                 ),
               ] else ...[
+                // Edit existing event.
                 ElevatedButton(
                   onPressed: () {
                     // TODO: Add actual submission to back-end.
