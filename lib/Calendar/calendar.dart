@@ -24,7 +24,10 @@ class CalendarState extends State<Calendar> {
       _startTimeText,
       _endTimeText,
       _dateText,
-      _timeDetails;
+      _timeDetails,
+      _description,
+      _location;
+  int? _calendarId;
   final CalendarController _controller = CalendarController();
   TextEditingController dateinput = TextEditingController();
   TextEditingController startTime = TextEditingController();
@@ -46,8 +49,7 @@ class CalendarState extends State<Calendar> {
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('Event is niet verwijderd, probeer opnieuw')),
+        SnackBar(content: Text('Event is niet verwijderd, probeer opnieuw')),
       );
     }
   }
@@ -57,6 +59,8 @@ class CalendarState extends State<Calendar> {
     dateinput.text = "";
     startTime.text = "";
     endTime.text = "";
+    _description = "";
+    _location = "";
     shouldShowForm = false;
     super.initState();
     _fetchDataAsync();
@@ -81,13 +85,22 @@ class CalendarState extends State<Calendar> {
       if (data is List) {
         for (final eventData in data) {
           final eventId = eventData['id'];
+          final calendarId = eventData['calendarId'];
           final eventName = eventData['title'];
+          final description = (eventData['description'] == null)
+              ? ""
+              : eventData['description'];
+          final location =
+              (eventData['location'] == null) ? "" : eventData['location'];
           final startDateTime = DateTime.parse(eventData['starDateTime']);
           final endDateTime = DateTime.parse(eventData['endDateTime']);
           final isAllDay = endDateTime.isBefore(startDateTime);
           final event = Event(
             eventId,
+            calendarId,
             eventName,
+            description,
+            location,
             startDateTime,
             endDateTime,
             Colors.blue, // Vervang dit door de juiste achtergrondkleur
@@ -151,6 +164,9 @@ class CalendarState extends State<Calendar> {
         final Event appointmentDetails = details.appointments![0];
         _subjectText = appointmentDetails.eventName;
         _eventId = appointmentDetails.eventId;
+        _calendarId = appointmentDetails.calendarId;
+        _description = appointmentDetails.description;
+        _location = appointmentDetails.location;
 
         _dateText = DateFormat('dd MMMM, yyyy')
             .format(appointmentDetails.from)
@@ -164,6 +180,9 @@ class CalendarState extends State<Calendar> {
       case CalendarElement.calendarCell:
         final Event appointmentDetails = details.appointments![0];
         _eventId = appointmentDetails.eventId;
+        _calendarId = appointmentDetails.calendarId;
+        _description = appointmentDetails.description;
+        _location = appointmentDetails.location;
 
         shouldShowForm = true;
         _startTimeText = DateFormat('hh:mm a').format(details.date!).toString();
@@ -330,8 +349,7 @@ class CalendarState extends State<Calendar> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    // TODO change the "4" to dynamic calendar enum id
-                    sendDeleteRequest("4", _eventId);
+                    sendDeleteRequest(_calendarId.toString(), _eventId);
                   },
                   child: const Text('Verwijderen'),
                 )
@@ -374,11 +392,14 @@ class EventDataSource extends CalendarDataSource {
 }
 
 class Event {
-  Event(this.eventId, this.eventName, this.from, this.to, this.background,
-      this.isAllDay);
+  Event(this.eventId, this.calendarId, this.eventName, this.description,
+      this.location, this.from, this.to, this.background, this.isAllDay);
 
   String eventId;
+  int calendarId;
   String eventName;
+  String description;
+  String location;
   DateTime from;
   DateTime to;
   Color background;
