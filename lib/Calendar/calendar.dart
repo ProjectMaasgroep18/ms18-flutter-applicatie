@@ -46,7 +46,8 @@ class CalendarState extends State<Calendar> {
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(response.body)),
+        const SnackBar(
+            content: Text('Event is niet verwijderd, probeer opnieuw')),
       );
     }
   }
