@@ -26,14 +26,14 @@ class CalendarState extends State<Calendar> {
   TextEditingController dateinput = TextEditingController();
   TextEditingController startTime = TextEditingController();
   TextEditingController endTime = TextEditingController();
-  bool shouldShowCreateForm = false;
+  bool isNewEvent = false;
 
   @override
   void initState() {
     dateinput.text = "";
     startTime.text = "";
     endTime.text = "";
-    shouldShowCreateForm = false;
+    isNewEvent = false; // Whether form is creating or updating event.
     super.initState();
     _fetchDataAsync();
   }
@@ -121,7 +121,7 @@ class CalendarState extends State<Calendar> {
     switch (details.targetElement) {
       case CalendarElement.appointment:
       case CalendarElement.agenda:
-        shouldShowCreateForm = false;
+        isNewEvent = false;
         final Event appointmentDetails = details.appointments![0];
         _subjectText = appointmentDetails.eventName;
         _dateText = DateFormat('dd MMMM, yyyy')
@@ -141,7 +141,7 @@ class CalendarState extends State<Calendar> {
 
         break;
       case CalendarElement.calendarCell:
-        shouldShowCreateForm = true;
+        isNewEvent = true;
         _startTimeText = DateFormat('hh:mm a').format(details.date!).toString();
 
         DateTime adjustedDateTime = details.date!.add(const Duration(hours: 1));
@@ -175,7 +175,7 @@ class CalendarState extends State<Calendar> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         // Summary if updating existing.
-                        if (!shouldShowCreateForm) ...[
+                        if (!isNewEvent) ...[
                           Text(
                             _dateText!,
                           ),
@@ -260,12 +260,13 @@ class CalendarState extends State<Calendar> {
                         TextFormField(
                           decoration: InputDecoration(
                             hintText:
-                                shouldShowCreateForm ? 'Titel' : _subjectText,
+                                isNewEvent ? 'Titel' : _subjectText,
                           ),
+                          initialValue: isNewEvent ? 'Titel' : _subjectText
                         ),
                         TextFormField(
                           decoration: InputDecoration(
-                            hintText: shouldShowCreateForm
+                            hintText: isNewEvent
                                 ? 'Locatie'
                                 : 'Oude Locatie',
                           ),
@@ -274,7 +275,7 @@ class CalendarState extends State<Calendar> {
                           maxLines: 4,
                           keyboardType: TextInputType.multiline,
                           decoration: InputDecoration(
-                            hintText: shouldShowCreateForm
+                            hintText: isNewEvent
                                 ? 'Beschrijving'
                                 : 'Oude Beschrijving',
                           ),
@@ -291,7 +292,7 @@ class CalendarState extends State<Calendar> {
                     Navigator.of(context).pop();
                   },
                   child: const Text('Sluiten')),
-              if (shouldShowCreateForm) ...[
+              if (isNewEvent) ...[
                 // Create new event.
                 ElevatedButton(
                   onPressed: () {
