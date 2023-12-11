@@ -48,7 +48,7 @@ class PickPhotoState extends State<PickPhoto> {
       for (var i = 0; i < data.length; i++) {
         temp.add(
           DropdownMenuItem(
-          value: data[i]['id'].toString(),
+          value: data[i]['name'].toString(),
           child: Text(data[i]['name'].toString()),
         ));
       }
@@ -199,7 +199,7 @@ class PickPhotoState extends State<PickPhoto> {
                         "amount": amountController.text,
                         "name": nameController.text,
                         "note": descriptionController.text,
-                        "costCentre": "$selectedCostCentre",
+                        "costCentre": selectedCostCentre,
                         "photos": [
                           {
                             "fileName": file!.path.split("/").last,
@@ -209,7 +209,14 @@ class PickPhotoState extends State<PickPhoto> {
                         ],
                       },
                     );
-                    print(res);
+                    if (res == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("Er is iets fout gegaan"),
+                        ),
+                      );
+                      return;
+                    }
                     SnackBar snackBar = const SnackBar(
                       content: Text("Succesvol geupload"),
                     );

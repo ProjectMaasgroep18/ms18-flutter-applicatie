@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Models/declaration.dart';
+import 'package:ms18_applicatie/Widgets/inputFields.dart';
 import 'package:ms18_applicatie/config.dart';
 
 import '../Api/apiManager.dart';
@@ -9,6 +11,7 @@ import '../Widgets/paddingSpacing.dart';
 import '../menu.dart';
 
 Future<dynamic>? _future;
+TextEditingController remarkController = TextEditingController();
 
 class Declarations extends StatefulWidget {
   const Declarations({super.key});
@@ -116,28 +119,48 @@ class _DeclarationsState extends State<Declarations> {
                                     MainAxisAlignment.spaceEvenly,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
-                                  Column(
+                                  Row(
                                     mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: <Widget>[
-                                      Text(
-                                        decl['note'] ?? "Geen beschrijving",
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              decl['note'] ??
+                                                  "Geen beschrijving",
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            Text(
+                                              decl['statusString'] ??
+                                                  "Geen status",
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
-                                      decl['photos'].first.base64Image != null
-                                          ? Image.file(
-                                              File(decl['photos']
-                                                  .first
-                                                  .base64Image!
-                                                  .path),
-                                              width: 250,
-                                              height: 250,
+                                      decl['photos'] != null &&
+                                              decl['photos'].length > 0 &&
+                                              decl['photos'][0]
+                                                      ['base64Image'] !=
+                                                  null
+                                          ? Image(
+                                              image: MemoryImage(base64Decode(
+                                                  decl['photos'][0]
+                                                      ['base64Image'])),
+                                              height: 100,
+                                              width: 150,
                                             )
                                           : Container(
                                               child: const PaddingSpacing(),
@@ -164,28 +187,55 @@ class _DeclarationsState extends State<Declarations> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(declInfo.note),
+          title: Text(declInfo['note']),
           content: SingleChildScrollView(
             child: Column(
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text("Note: ${declInfo.note}"),
+                    Text("Note: ${declInfo['note']}"),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text("Amount: ${declInfo.amount}"),
+                    Text("Amount: ${declInfo['amount']}"),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text("Status: ${declInfo.statusString}"),
+                    Text("Status: ${declInfo['statusString']}"),
                   ],
                 ),
+                const PaddingSpacing(),
+                Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+                  declInfo['photos'] != null &&
+                          declInfo['photos'].length > 0 &&
+                          declInfo['photos'][0]['base64Image'] != null
+                      ? Image(
+                          image: MemoryImage(base64Decode(
+                              declInfo['photos'][0]['base64Image'])),
+                          height: 250,
+                          width: 250,
+                        )
+                      : Container(
+                          child: const PaddingSpacing(),
+                        ),
+                ]),
+                const PaddingSpacing(),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.start,
+                //   children: [
+                //     InputField(
+                //       icon: Icons.note,
+                //       hintText: "Opmerking",
+                //       labelText: "Opmerking: ",
+                //       controller: remarkController
+                //     )
+                //   ],
+                // )
               ],
             ),
           ),
@@ -193,12 +243,54 @@ class _DeclarationsState extends State<Declarations> {
             TextButton(
               onPressed: () async {
                 // Update the status
+                var res = apiManager
+                    .post("/api/v1/Receipt/${declInfo['id']}/Approve", {
+                  "receiptId": declInfo['id'],
+                  "note": declInfo['note'],
+                  "approved": true,
+                });
+                if (res != null) {
+                  // Show snackbar
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Declaratie goedgekeurd"),
+                    ),
+                  );
+                  Navigator.pop(context);
+                  setState(() {
+                    _future = null;
+                  });
+                  setState(() {
+                    _future = apiManager.get("/api/v1/Receipt");
+                  });
+                }
               },
               child: const Text('Goedkeuren'),
             ),
             TextButton(
               onPressed: () {
                 // Update the status
+                var res = apiManager
+                    .post("/api/v1/Receipt/${declInfo['id']}/Approve", {
+                  "receiptId": declInfo['id'],
+                  "note": declInfo['note'],
+                  "approved": false,
+                });
+                if (res != null) {
+                  // Show snackbar
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Declaratie afgekeurd"),
+                    ),
+                  );
+                  Navigator.pop(context);
+                  setState(() {
+                    _future = null;
+                  });
+                  setState(() {
+                    _future = apiManager.get("/api/v1/Receipt");
+                  });
+                }
               },
               child: const Text('Afkeuren'),
             ),
