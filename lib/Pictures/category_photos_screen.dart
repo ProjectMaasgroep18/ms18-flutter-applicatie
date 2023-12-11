@@ -122,9 +122,15 @@ class _CategoryPhotosScreenState extends State<CategoryPhotosScreen> {
                                 Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Icon(Icons.thumb_up, size: 25, color: mainColor),
+                                    Icon(Icons.thumb_up, size: 20, color: Colors.white60),
                                     SizedBox(width: 6),
-                                    Text('${photo.likeCount} likes', style: TextStyle(fontSize: 12)),
+                                    Flexible( 
+                                      child: Text(
+                                        '${photo.likeCount} likes',
+                                        style: TextStyle(fontSize: 12),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ],
@@ -133,6 +139,7 @@ class _CategoryPhotosScreenState extends State<CategoryPhotosScreen> {
                         ],
                       ),
                     ),
+
                   ),
                 );
               },
