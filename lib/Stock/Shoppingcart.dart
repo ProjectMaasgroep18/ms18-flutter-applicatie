@@ -1,14 +1,9 @@
-
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Models/stock.dart';
 import 'package:ms18_applicatie/Stock/widgets.dart';
 import 'package:ms18_applicatie/Widgets/pageHeader.dart';
 import 'package:ms18_applicatie/config.dart';
 import 'package:ms18_applicatie/menu.dart';
-
-import 'package:flutter/material.dart';
-
-// Define your models (Product and StockProduct) here
 
 class ShoppingCart extends StatefulWidget {
   ShoppingCart({Key? key}) : super(key: key);
@@ -19,6 +14,7 @@ class ShoppingCart extends StatefulWidget {
 
 class _ShoppingCartState extends State<ShoppingCart> {
   final List<StockProduct> shoppingCart = [];
+  final List<Order> orderHistory = [];
 
   final List<Product> productList = [
     Product(
@@ -49,7 +45,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
       price: 0.43,
       icon: Icons.local_drink,
     ),
-    // Voeg hier meer producten toe zoals nodig
+    // Voeg hier meer producten toe
   ];
 
   @override
@@ -74,6 +70,8 @@ class _ShoppingCartState extends State<ShoppingCart> {
             shoppingCart: shoppingCart,
             removeFromCart: removeFromCart,
             updateQuantity: updateQuantity,
+            clearCartAndAddToHistory: clearCartAndAddToHistory,
+            orderHistory: orderHistory,
           ),
         ],
       ),
@@ -121,6 +119,29 @@ class _ShoppingCartState extends State<ShoppingCart> {
       }
     });
   }
+
+  void clearCartAndAddToHistory() {
+    if (shoppingCart.isNotEmpty) {
+      Order order = Order(
+        orderedProducts: List.from(shoppingCart),
+        totalAmount: calculateTotalAmount(),
+        orderDate: DateTime.now(),
+      );
+
+      setState(() {
+        orderHistory.insert(0, order);
+        shoppingCart.clear();
+      });
+    }
+  }
+
+  double calculateTotalAmount() {
+    double totalAmount = 0.0;
+    for (var item in shoppingCart) {
+      totalAmount += item.product.price * item.quantity;
+    }
+    return totalAmount;
+  }
 }
 
 class ProductListItem extends StatelessWidget {
@@ -149,7 +170,7 @@ class ProductListItem extends StatelessWidget {
                   color: Colors.grey.withOpacity(0.5),
                   spreadRadius: 1,
                   blurRadius: 4,
-                  offset: const Offset(2, 2), // changes position of shadow
+                  offset: const Offset(2, 2),
                 ),
               ],
             ),
@@ -168,11 +189,15 @@ class ShoppingCartPopupMenu extends StatelessWidget {
   final List<StockProduct> shoppingCart;
   final Function(StockProduct) removeFromCart;
   final Function(StockProduct, int) updateQuantity;
+  final VoidCallback clearCartAndAddToHistory;
+  final List<Order> orderHistory;
 
   ShoppingCartPopupMenu({
     required this.shoppingCart,
     required this.removeFromCart,
     required this.updateQuantity,
+    required this.clearCartAndAddToHistory,
+    required this.orderHistory,
   });
 
   double calculateTotalAmount() {
@@ -192,7 +217,7 @@ class ShoppingCartPopupMenu extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            'Totaal: \€${calculateTotalAmount().toStringAsFixed(2)}',
+            'Total: \€${calculateTotalAmount().toStringAsFixed(2)}',
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 18.0,
@@ -201,10 +226,27 @@ class ShoppingCartPopupMenu extends StatelessWidget {
           SizedBox(height: 8.0),
           ElevatedButton(
             onPressed: () {
-              // Implement logic to confirm the order
               print('Order confirmed!');
+              clearCartAndAddToHistory();
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Order confirmed!'),
+                ),
+              );
             },
             child: Text('Bestellen'),
+          ),
+          SizedBox(height: 8.0),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => OrderHistoryScreen(orderHistory: orderHistory),
+                ),
+              );
+            },
+            child: Text('Bestelhistorie'),
           ),
           SizedBox(height: 8.0),
           Text('Winkelwagen'),
@@ -222,7 +264,7 @@ class ShoppingCartPopupMenu extends StatelessWidget {
                         updateQuantity(shoppingCart[index], -1);
                       },
                     ),
-                    Text('Aantal: ${shoppingCart[index].quantity}'),
+                    Text('Quantity: ${shoppingCart[index].quantity}'),
                     IconButton(
                       icon: Icon(Icons.add),
                       onPressed: () {
@@ -240,6 +282,75 @@ class ShoppingCartPopupMenu extends StatelessWidget {
               );
             },
           ),
+        ],
+      ),
+    );
+  }
+}
+
+class OrderHistoryScreen extends StatelessWidget {
+  final List<Order> orderHistory;
+
+  OrderHistoryScreen({required this.orderHistory});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Bestelhistorie'),
+      ),
+      body: ListView.builder(
+        itemCount: orderHistory.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+            title: Text('Bestelling ${index + 1}'),
+            subtitle: Text('Totaal: \€${orderHistory[index].totalAmount.toStringAsFixed(2)}'),
+            onTap: () {
+              // Navigeer naar het gedetailleerde scherm voor deze bestelling
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => DetailedOrderScreen(order: orderHistory[index]),
+                ),
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+}
+
+class DetailedOrderScreen extends StatelessWidget {
+  final Order order;
+
+  DetailedOrderScreen({required this.order});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Bestelling Details'),
+      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Besteldatum: ${order.orderDate.toString()}'),
+          SizedBox(height: 8.0),
+          Text('Bestelde producten:'),
+          ListView.builder(
+            shrinkWrap: true,
+            itemCount: order.orderedProducts.length,
+            itemBuilder: (context, index) {
+              return ListTile(
+                title: Text(order.orderedProducts[index].product.name),
+                subtitle: Text('Aantal: ${order.orderedProducts[index].quantity}'),
+              );
+            },
+          ),
+          SizedBox(height: 8.0),
+          Text('Totaalbedrag: \€${order.totalAmount.toStringAsFixed(2)}'),
+          Text('Betaald'),
         ],
       ),
     );
@@ -268,3 +379,17 @@ class StockProduct {
 
   StockProduct({required this.product, required this.quantity});
 }
+
+class Order {
+  final List<StockProduct> orderedProducts;
+  final double totalAmount;
+  final DateTime orderDate;
+
+  Order({
+    required this.orderedProducts,
+    required this.totalAmount,
+    required this.orderDate,
+  });
+}
+
+
