@@ -23,7 +23,8 @@ class CalendarState extends State<Calendar> {
       _subjectText,
       _startTimeText,
       _endTimeText,
-      _dateText,
+      _startDateText,
+      _endDateText,
       _timeDetails,
       _description,
       _location;
@@ -51,6 +52,32 @@ class CalendarState extends State<Calendar> {
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Event is niet verwijderd, probeer opnieuw')),
+      );
+    }
+  }
+
+  Future<void> sendEditRequest(calendarName, id, startTime, endTime, title,
+      description, location, endDate, startDate) async {
+    var response = await http.patch(
+        Uri.parse(restfulUrl).replace(queryParameters: {
+          'calendarName': calendarName,
+          'StarDateTime': "2023-12-11T07:15:00+01:00",
+          'EndDateTime': "2023-12-11T09:45:00+01:00",
+          'Title': title,
+          'Description': description,
+          'id': id,
+          'Location': location,
+          'CalendarId': calendarName
+        }),
+        headers: {"Content-Type": "application/json"});
+
+    if (response.statusCode == 200) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Event aangepast')),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Event is niet aangepast, probeer opnieuw')),
       );
     }
   }
@@ -170,13 +197,17 @@ class CalendarState extends State<Calendar> {
         _description = appointmentDetails.description;
         _location = appointmentDetails.location;
 
-        _dateText = DateFormat('dd MMMM, yyyy')
+        _startDateText = DateFormat('dd MMMM, yyyy')
             .format(appointmentDetails.from)
             .toString();
         _startTimeText =
-            DateFormat('hh:mm a').format(appointmentDetails.from).toString();
+            DateFormat('hh:mm').format(appointmentDetails.from).toString();
+
+        _endDateText = DateFormat('dd MMMM, yyyy')
+            .format(appointmentDetails.to)
+            .toString();
         _endTimeText =
-            DateFormat('hh:mm a').format(appointmentDetails.to).toString();
+            DateFormat('hh:mm').format(appointmentDetails.to).toString();
         _timeDetails = '$_startTimeText - $_endTimeText';
 
         // Use existing values.
@@ -188,11 +219,11 @@ class CalendarState extends State<Calendar> {
         break;
       case CalendarElement.calendarCell:
         isNewEvent = true;
-        final Event appointmentDetails = details.appointments![0];
-        _eventId = appointmentDetails.eventId;
-        _calendarId = appointmentDetails.calendarId;
-        _description = appointmentDetails.description;
-        _location = appointmentDetails.location;
+        // final Event appointmentDetails = details.appointments![0];
+        // _eventId = appointmentDetails.eventId;
+        // _calendarId = appointmentDetails.calendarId;
+        // _description = appointmentDetails.description;
+        // _location = appointmentDetails.location;
 
         shouldShowForm = true;
         _startTimeText = DateFormat('hh:mm a').format(details.date!).toString();
@@ -220,7 +251,7 @@ class CalendarState extends State<Calendar> {
           return AlertDialog(
             title: Text('$_subjectText'),
             content: SizedBox(
-              height: 450,
+              height: 500,
               child: Column(
                 children: <Widget>[
                   Form(
@@ -230,7 +261,7 @@ class CalendarState extends State<Calendar> {
                         // Summary if updating existing.
                         if (!isNewEvent) ...[
                           Text(
-                            _dateText!,
+                            _startDateText!,
                           ),
                           Text(
                             _timeDetails!,
@@ -239,25 +270,31 @@ class CalendarState extends State<Calendar> {
 
                         // Create / update event form.
                         TextFormField(
-                          controller: dateinput,
-                          decoration:
-                              const InputDecoration(labelText: "Vul datum in"),
-                          readOnly: true,
-                          onTap: () async {
-                            DateTime? pickedDate = await showDatePicker(
-                                locale: const Locale('nl', 'NL'),
-                                context: context,
-                                initialDate: DateTime.now(),
-                                firstDate: DateTime(2000),
-                                lastDate: DateTime(2101));
-                            if (pickedDate != null) {
-                              String formattedDate = DateFormat('dd MMMM, yyyy').format(pickedDate).toString();
-                              setState(() {
-                                dateinput.text = formattedDate;
-                              });
-                            }
-                          },
-                        ),
+                            controller: dateinput,
+                            decoration: const InputDecoration(
+                                labelText: "Vul startdatum in"),
+                            readOnly: true,
+                            onTap: () async {
+                              DateTime? pickedDate = await showDatePicker(
+                                  locale: const Locale('nl', 'NL'),
+                                  context: context,
+                                  initialDate: isNewEvent
+                                      ? DateTime.now()
+                                      : DateTime.parse(_startDateText!),
+                                  firstDate: DateTime(2000),
+                                  lastDate: DateTime(2101));
+                              if (pickedDate != null) {
+                                String formattedDate = DateFormat('dd MM, yyyy')
+                                    .format(pickedDate)
+                                    .toString();
+                                setState(() {
+                                  dateinput.text = formattedDate;
+                                });
+                              }
+                            },
+                            onChanged: (String? newValue) {
+                              _startDateText = newValue;
+                            }),
                         TextFormField(
                           controller: startTime,
                           decoration: const InputDecoration(
@@ -284,6 +321,32 @@ class CalendarState extends State<Calendar> {
                             }
                           },
                         ),
+                        TextFormField(
+                            controller: dateinput,
+                            decoration: const InputDecoration(
+                                labelText: "Vul einddatum in"),
+                            readOnly: true,
+                            onTap: () async {
+                              DateTime? pickedDate = await showDatePicker(
+                                  locale: const Locale('nl', 'NL'),
+                                  context: context,
+                                  initialDate: isNewEvent
+                                      ? DateTime.now()
+                                      : DateTime.parse(_endDateText!),
+                                  firstDate: DateTime(2000),
+                                  lastDate: DateTime(2101));
+                              if (pickedDate != null) {
+                                String formattedDate = DateFormat('dd MM, yyyy')
+                                    .format(pickedDate)
+                                    .toString();
+                                setState(() {
+                                  dateinput.text = formattedDate;
+                                });
+                              }
+                            },
+                            onChanged: (String? newValue) {
+                              _endDateText = newValue;
+                            }),
                         TextFormField(
                           controller: endTime,
                           decoration: const InputDecoration(
@@ -313,22 +376,29 @@ class CalendarState extends State<Calendar> {
                           decoration: const InputDecoration(
                             hintText: 'Titel',
                           ),
-                          initialValue: isNewEvent ? null : _subjectText
+                          initialValue: isNewEvent ? null : _subjectText,
+                          onChanged: (String? value) {
+                            _subjectText = value;
+                          },
                         ),
                         TextFormField(
-                          decoration: const InputDecoration(
-                            hintText: 'Locatie',
-                          ),
-                          initialValue: isNewEvent ? null : 'Bestaande locatie',
-                        ),
+                            decoration: const InputDecoration(
+                              hintText: 'Locatie',
+                            ),
+                            initialValue: isNewEvent ? null : _location,
+                            onChanged: (String? value) {
+                              _location = value;
+                            }),
                         TextFormField(
-                          maxLines: 4,
-                          keyboardType: TextInputType.multiline,
-                          decoration: const InputDecoration(
-                            hintText: 'Beschrijving',
-                          ),
-                          initialValue: isNewEvent ? null : "Bestaande beschrijving",
-                        ),
+                            maxLines: 4,
+                            keyboardType: TextInputType.multiline,
+                            decoration: const InputDecoration(
+                              hintText: 'Beschrijving',
+                            ),
+                            initialValue: isNewEvent ? null : _description,
+                            onChanged: (String? value) {
+                              _description = value;
+                            }),
                       ],
                     ),
                   ),
@@ -357,9 +427,16 @@ class CalendarState extends State<Calendar> {
                 ElevatedButton(
                   onPressed: () {
                     // TODO: Add actual submission to back-end.
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Event aangepast')),
-                    );
+                    sendEditRequest(
+                        _calendarId.toString(),
+                        _eventId,
+                        _startTimeText,
+                        _endTimeText,
+                        _subjectText,
+                        _description,
+                        _location,
+                        _endDateText,
+                        _startDateText);
                   },
                   child: const Text('Aanpassen'),
                 ),
