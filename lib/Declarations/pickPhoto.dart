@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -12,6 +14,10 @@ import '../Widgets/paddingSpacing.dart';
 
 final ImagePicker picker = ImagePicker();
 XFile? photo;
+File? file;
+
+List<DropdownMenuItem<String>> _costCentres = [];
+String selectedCostCentre = "Selecteer een kostencentrum";
 
 ApiManager apiManager = ApiManager();
 
@@ -27,6 +33,24 @@ class PickPhoto extends StatefulWidget {
 }
 
 class PickPhotoState extends State<PickPhoto> {
+  @override
+  void initState() {
+    // Retrieve all the costcentres and put them in a list
+    apiManager.get("/api/v1/CostCentre").then((x) {
+      Map<String, dynamic> data = x;
+
+      // Loop over the data and add the names to the list
+      for (var i = 0; i < data.length; i++) {
+        _costCentres.add(
+          DropdownMenuItem(
+          value: data[i]['id'],
+          child: Text(data[i]['name']),
+        ));
+      }
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Menu(
@@ -62,6 +86,32 @@ class PickPhotoState extends State<PickPhoto> {
               isUnderlineBorder: true,
             ),
             const PaddingSpacing(),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Expanded(
+                child: DropdownButton<String>(
+                  isExpanded: true,
+                  value: selectedCostCentre,
+                  iconEnabledColor: mainColor,
+                  style: const TextStyle(
+                      color: mainColor, fontSize: 17), underline: Container(
+                  decoration: const BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                          color:
+                          mainButtonColor), // Onderstreping kleur
+                    ),
+                  ),
+                ),
+                  items: _costCentres,
+                  onChanged: (String? value) {
+                    setState(() {
+                      selectedCostCentre = value!;
+                    });
+                  },
+                ),
+              ),
+            ),
             const PaddingSpacing(),
             // Make or take a photo in a alertDialog
             Row(
@@ -85,7 +135,7 @@ class PickPhotoState extends State<PickPhoto> {
                       setState(() {
                         photo = res;
                       });
-                      print(photo?.path);
+                      file = File(photo!.path);
                     }
                   },
                   text: "Maak een foto",
@@ -108,7 +158,7 @@ class PickPhotoState extends State<PickPhoto> {
                       setState(() {
                         photo = res;
                       });
-                      print(photo?.path);
+                      file = File(photo!.path);
                     }
                   },
                   text: "Kies een foto",
@@ -130,8 +180,7 @@ class PickPhotoState extends State<PickPhoto> {
             // Upload the photo
             Button(
                 onTap: () async {
-                  if (photo == null ||
-                      amountController.text.isEmpty) {
+                  if (photo == null || amountController.text.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text("Kies een foto en vul alle velden in"),
@@ -140,15 +189,24 @@ class PickPhotoState extends State<PickPhoto> {
                     return;
                   } else {
                     var res = await apiManager.post(
-                      "",
+                      "/api/v1/Receipt",
                       {
+                        "amount": amountController.text,
                         "name": nameController.text,
-                        "description": descriptionController.text,
-                        "image": photo!.path,
+                        "note": descriptionController.text,
+                        "photos": [
+                          {
+                            "base64Image": await imageToBase64(file!),
+                            "fileName": file!.path.split("/").last,
+                            "fileExtension": file!.path.split(".").last,
+                          }
+                        ],
+                        "costCentre": "",
                       },
                     );
+                    print(res);
                     SnackBar snackBar = const SnackBar(
-                      content: Text("succesvol geupload"),
+                      content: Text("Succesvol geupload"),
                     );
                     ScaffoldMessenger.of(context).showSnackBar(snackBar);
                     Navigator.pop(context);
@@ -159,5 +217,11 @@ class PickPhotoState extends State<PickPhoto> {
         ),
       ),
     );
+  }
+
+  Future<String> imageToBase64(File imageFile) async {
+    List<int> imageBytes = await imageFile.readAsBytes();
+    String base64Image = base64Encode(Uint8List.fromList(imageBytes));
+    return base64Image;
   }
 }

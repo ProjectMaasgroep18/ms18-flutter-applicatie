@@ -105,7 +105,7 @@ const Map<RolesNames, int> roles = {
 };
 
 // Base url and headers for the api
-const String apiUrl = "localhost";
+const String apiUrl = "https://api.hr.rspn.io/";
 const Map<String, String> apiHeaders = {
   "Content-Type": "application/json",
   "Accept": "application/json",
