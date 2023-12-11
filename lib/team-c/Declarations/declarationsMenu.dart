@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:ms18_applicatie/Declarations/declarations.dart';
 
 import '../../Declarations/pickPhoto.dart';
 import '../../config.dart';
 import '../../menu.dart';
 
-class Declarations extends StatefulWidget {
-  const Declarations({Key? key}) : super(key: key);
+class DeclarationsMenu extends StatefulWidget {
+  const DeclarationsMenu({Key? key}) : super(key: key);
 
   @override
-  State<Declarations> createState() => DeclarationsState();
+  State<DeclarationsMenu> createState() => DeclarationsMenuState();
 }
 
-class DeclarationsState extends State<Declarations> {
+class DeclarationsMenuState extends State<DeclarationsMenu> {
   @override
   Widget build(BuildContext context) {
     return Menu(
@@ -143,7 +144,7 @@ class DeclarationsState extends State<Declarations> {
                       Expanded(
                         child: ElevatedButton(
                           onPressed: () {
-
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => const Declarations()));
                           },
                           style: ElevatedButton.styleFrom(
                             elevation: 0,
@@ -186,7 +187,7 @@ class DeclarationsState extends State<Declarations> {
                       // Icon
                       GestureDetector(
                         onTap: () {
-
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => const Declarations()));
                         },
                         child: const Padding(
                           padding: EdgeInsets.fromLTRB(10, 0, 0, 0),

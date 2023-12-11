@@ -7,7 +7,7 @@ import 'package:ms18_applicatie/Profile/profile.dart';
 import 'package:ms18_applicatie/Stock/stockReport.dart';
 import 'package:ms18_applicatie/Users/userList.dart';
 import 'package:ms18_applicatie/roles.dart';
-import 'package:ms18_applicatie/team-c/Declarations/declarations.dart';
+import 'package:ms18_applicatie/team-c/Declarations/declarationsMenu.dart';
 import 'config.dart';
 import 'menuItem.dart' as menuItem;
 
@@ -41,7 +41,7 @@ class Menu extends StatelessWidget {
     menuItem.MenuItem(
         text: 'Declaraties',
         icon: Icons.message,
-        page: MaterialPageRoute(builder: (context) => const Declarations()),
+        page: MaterialPageRoute(builder: (context) => const DeclarationsMenu()),
         roles: [Roles.Admin, Roles.Subadmin]),
     menuItem.MenuItem(
       text: 'Agenda',

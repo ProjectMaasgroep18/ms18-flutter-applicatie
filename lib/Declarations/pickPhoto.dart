@@ -16,8 +16,13 @@ final ImagePicker picker = ImagePicker();
 XFile? photo;
 File? file;
 
-List<DropdownMenuItem<String>> _costCentres = [];
-String selectedCostCentre = "Selecteer een kostencentrum";
+List<DropdownMenuItem<String>> _costCentres = [
+  const DropdownMenuItem(
+  value: "Selecteer een kostencentrum",
+  enabled: false,
+  child: Text("Selecteer een kostencentrum"),
+)];
+String? selectedCostCentre;
 
 ApiManager apiManager = ApiManager();
 
@@ -37,16 +42,20 @@ class PickPhotoState extends State<PickPhoto> {
   void initState() {
     // Retrieve all the costcentres and put them in a list
     apiManager.get("/api/v1/CostCentre").then((x) {
-      Map<String, dynamic> data = x;
-
+      List<dynamic> data = x;
+      List<DropdownMenuItem<String>> temp = [];
       // Loop over the data and add the names to the list
       for (var i = 0; i < data.length; i++) {
-        _costCentres.add(
+        temp.add(
           DropdownMenuItem(
-          value: data[i]['id'],
-          child: Text(data[i]['name']),
+          value: data[i]['id'].toString(),
+          child: Text(data[i]['name'].toString()),
         ));
       }
+
+      setState(() {
+        _costCentres = temp;
+      });
     });
     super.initState();
   }
@@ -86,31 +95,27 @@ class PickPhotoState extends State<PickPhoto> {
               isUnderlineBorder: true,
             ),
             const PaddingSpacing(),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Expanded(
-                child: DropdownButton<String>(
-                  isExpanded: true,
-                  value: selectedCostCentre,
-                  iconEnabledColor: mainColor,
-                  style: const TextStyle(
-                      color: mainColor, fontSize: 17), underline: Container(
-                  decoration: const BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(
-                          color:
-                          mainButtonColor), // Onderstreping kleur
-                    ),
-                  ),
-                ),
-                  items: _costCentres,
-                  onChanged: (String? value) {
-                    setState(() {
-                      selectedCostCentre = value!;
-                    });
-                  },
+            DropdownButton<String>(
+              hint: const Text("Selecteer een kostencentrum"),
+              isExpanded: true,
+              value: selectedCostCentre,
+              iconEnabledColor: mainColor,
+              style: const TextStyle(
+                  color: mainColor, fontSize: 17), underline: Container(
+              decoration: const BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(
+                      color:
+                      mainButtonColor), // Onderstreping kleur
                 ),
               ),
+            ),
+              items: _costCentres,
+              onChanged: (String? value) {
+                setState(() {
+                  selectedCostCentre = value!;
+                });
+              },
             ),
             const PaddingSpacing(),
             // Make or take a photo in a alertDialog
@@ -194,14 +199,14 @@ class PickPhotoState extends State<PickPhoto> {
                         "amount": amountController.text,
                         "name": nameController.text,
                         "note": descriptionController.text,
+                        "costCentre": "$selectedCostCentre",
                         "photos": [
                           {
-                            "base64Image": await imageToBase64(file!),
                             "fileName": file!.path.split("/").last,
                             "fileExtension": file!.path.split(".").last,
+                            "base64Image": await imageToBase64(file!),
                           }
                         ],
-                        "costCentre": "",
                       },
                     );
                     print(res);

@@ -1,9 +1,15 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:ms18_applicatie/Models/declaration.dart';
 import 'package:ms18_applicatie/config.dart';
 
+import '../Api/apiManager.dart';
+import '../Widgets/paddingSpacing.dart';
 import '../menu.dart';
 
-Future<List<Declarations>>? _future;
+Future<dynamic>? _future;
+
 class Declarations extends StatefulWidget {
   const Declarations({super.key});
 
@@ -11,7 +17,15 @@ class Declarations extends StatefulWidget {
   State<Declarations> createState() => _DeclarationsState();
 }
 
+ApiManager apiManager = ApiManager();
+
 class _DeclarationsState extends State<Declarations> {
+  @override
+  void initState() {
+    _future = apiManager.get("/api/v1/Receipt");
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Menu(
@@ -65,19 +79,21 @@ class _DeclarationsState extends State<Declarations> {
         Expanded(
             child: FutureBuilder(
                 future: _future,
-                builder: (context, AsyncSnapshot<List<Declarations>> snapshot) {
+                builder: (context, AsyncSnapshot<dynamic> snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(
                       child: CircularProgressIndicator(),
                     );
                   } else {
                     if (snapshot.hasData) {
+                      List<dynamic> data = snapshot.data;
                       return ListView.builder(
                         physics: const NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
-                        itemCount: snapshot.data?.length,
+                        itemCount: data.length,
                         itemBuilder: (context, index) {
-                          Declarations decl = snapshot.data![index];
+                          Map<String, dynamic> decl = data[index];
+                          print("DECL: $decl");
                           return Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: ElevatedButton(
@@ -87,10 +103,10 @@ class _DeclarationsState extends State<Declarations> {
                               },
                               style: ElevatedButton.styleFrom(
                                 elevation: 0,
-                                backgroundColor: Colors.white,
+                                backgroundColor: mainColor,
                                 padding:
                                     const EdgeInsets.fromLTRB(5, 30, 5, 30),
-                                shadowColor: mainColor,
+                                shadowColor: backgroundColor,
                                 shape: const RoundedRectangleBorder(
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(3))),
@@ -107,13 +123,25 @@ class _DeclarationsState extends State<Declarations> {
                                         CrossAxisAlignment.start,
                                     children: <Widget>[
                                       Text(
-                                        decl.note,
+                                        decl['note'] ?? "Geen beschrijving",
                                         style: const TextStyle(
-                                          color: Colors.black,
+                                          color: Colors.white,
                                           fontSize: 20,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
+                                      decl['photos'].first.base64Image != null
+                                          ? Image.file(
+                                              File(decl['photos']
+                                                  .first
+                                                  .base64Image!
+                                                  .path),
+                                              width: 250,
+                                              height: 250,
+                                            )
+                                          : Container(
+                                              child: const PaddingSpacing(),
+                                            ),
                                     ],
                                   ),
                                 ],
@@ -185,5 +213,4 @@ class _DeclarationsState extends State<Declarations> {
       },
     );
   }
-
 }

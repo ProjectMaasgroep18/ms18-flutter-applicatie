@@ -22,6 +22,4 @@ class Declaration {
     required this.costCentre,
     required this.approval,
   });
-
-
 }
