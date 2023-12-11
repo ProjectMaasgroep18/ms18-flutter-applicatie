@@ -38,7 +38,7 @@ class CalendarState extends State<Calendar> {
   Future<void> sendDeleteRequest(calendarName, id) async {
     var response = await http.delete(
         Uri.parse(restfulUrl).replace(queryParameters: {
-          'calenderName': calendarName,
+          'calendarName': calendarName,
           'id': id,
         }),
         headers: {"Content-Type": "application/json"});
