@@ -5,6 +5,7 @@ import 'package:ms18_applicatie/Declarations/declarations.dart';
 import 'package:ms18_applicatie/Models/stock.dart';
 import 'package:ms18_applicatie/Pictures/listPictures.dart';
 import 'package:ms18_applicatie/Profile/profile.dart';
+import 'package:ms18_applicatie/les/les.dart';
 import 'package:ms18_applicatie/Stock/stockReport.dart';
 import 'package:ms18_applicatie/Users/userList.dart';
 import 'package:ms18_applicatie/roles.dart';
@@ -56,6 +57,11 @@ class Menu extends StatelessWidget {
                 child: Container(),
               )),
     ),
+    menuItem.MenuItem(
+        text: 'lesTest',
+        icon: Icons.add_chart,
+        page: MaterialPageRoute(builder: (context) => Les()),
+        roles: [Roles.Admin, Roles.Subadmin]),
     menuItem.MenuItem(
       text: 'Gebruikers',
       icon: Icons.account_circle,
