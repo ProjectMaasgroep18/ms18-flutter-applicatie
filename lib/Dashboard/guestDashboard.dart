@@ -6,14 +6,14 @@ import 'package:ms18_applicatie/Profile/profile.dart';
 import 'package:ms18_applicatie/menu.dart';
 import 'package:rive/rive.dart';
 
-class Dashboard extends StatefulWidget {
-  const Dashboard({super.key});
+class GuestDashboard extends StatefulWidget {
+  const GuestDashboard({super.key});
 
   @override
-  State<Dashboard> createState() => _OnboardingScreenState();
+  State<GuestDashboard> createState() => _OnboardingScreenState();
 }
 
-class _OnboardingScreenState extends State<Dashboard> {
+class _OnboardingScreenState extends State<GuestDashboard> {
   bool isSignInDialogShown = false;
   late RiveAnimationController _btnAnimationController;
 
@@ -28,15 +28,18 @@ class _OnboardingScreenState extends State<Dashboard> {
     return Scaffold(
         body: Stack(
       children: [
-         Menu(
-          appBarHeight: 70,
+        Menu(
+          appBarHeight: 270,
           centerTitle: false,
           child: const SizedBox(),
           title: const Text(
-            "Dashboard",
+            "Gast Dashboard",
             textAlign: TextAlign.left,
             style: TextStyle(
-                color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+              color: Colors.white,
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           actions: [
             // profile picture in appbar
@@ -58,10 +61,21 @@ class _OnboardingScreenState extends State<Dashboard> {
         ),
         Positioned(
           width: MediaQuery.of(context).size.width * 1.7,
-          bottom: 200,
+          bottom: 500,
           left: 100,
           child: Container(
             color: Colors.white,
+          ),
+        ),
+        Title(
+          color: Colors.black,
+          child: Text(
+            "mooie dingen",
+            style: TextStyle(
+                fontSize: 35,
+                color: Color.fromARGB(255, 0, 0, 0),
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Roboto'),
           ),
         ),
       ],

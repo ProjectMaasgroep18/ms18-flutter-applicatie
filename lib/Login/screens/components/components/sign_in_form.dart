@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Dashboard/dashboard.dart';
+import 'package:ms18_applicatie/Dashboard/guestDashboard.dart';
 import 'package:ms18_applicatie/Widgets/buttons.dart';
 import 'package:ms18_applicatie/Widgets/inputFields.dart';
 import 'package:ms18_applicatie/Widgets/paddingSpacing.dart';
@@ -119,7 +120,7 @@ class _SignInFormState extends State<SignInForm> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const Dashboard(),
+                          builder: (context) => const GuestDashboard(),
                         ),
                       );
                     });
