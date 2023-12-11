@@ -1,4 +1,7 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
+import 'package:ms18_applicatie/Api/apiManager.dart';
 import 'package:ms18_applicatie/Models/stock.dart';
 import 'package:ms18_applicatie/Stock/widgets.dart';
 import 'package:ms18_applicatie/Widgets/pageHeader.dart';
@@ -7,71 +10,25 @@ import 'package:ms18_applicatie/menu.dart';
 
 class StockReport extends StatelessWidget {
   StockReport({Key? key}) : super(key: key);
-  final List<StockProduct> stockProducts = [
-    StockProduct(
-      product: Product(
-        priceQuantity: 1,
-        color: Colors.redAccent,
-        name: 'Bier',
-        price: 2.43,
-      ),
-      quantity: 40,
-    ),
-    StockProduct(
-      product: Product(
-        priceQuantity: 1,
-        color: Colors.blueAccent,
-        name: 'Cola',
-        price: 3.13,
-      ),
-      quantity: 21,
-    ),
-    StockProduct(
-      product: Product(
-        priceQuantity: 1,
-        color: Colors.redAccent,
-        name: 'Bier',
-        price: 2.43,
-      ),
-      quantity: 40,
-    ),
-    StockProduct(
-      product: Product(
-        priceQuantity: 1,
-        color: Colors.yellowAccent,
-        name: 'Fanta',
-        price: 6.81,
-      ),
-      quantity: 12,
-    ),
-    StockProduct(
-      product: Product(
-        priceQuantity: 1,
-        color: Colors.redAccent,
-        name: 'Bier',
-        price: 2.43,
-      ),
-      quantity: 40,
-    ),
-    StockProduct(
-      product: Product(
-        priceQuantity: 1,
-        color: Colors.greenAccent,
-        name: 'Wiskey',
-        price: 0.43,
-      ),
-      quantity: 8,
-    ),
-    StockProduct(
-      product: Product(
-        priceQuantity: 1,
-        color: Colors.redAccent,
-        name: 'Bier',
-        price: 2.43,
-      ),
-      quantity: 40,
-    ),
-  ];
+
+  static Future<List<StockProduct>> getStock() async {
+    List<StockProduct> stockItems = [];
+
+    await ApiManager.get<List<dynamic>>("api/v1/Product").then((data) {
+      for (Map<String, dynamic> product in data) {
+        Map<String, dynamic> map = product as Map<String, dynamic>;
+        StockProduct tempProduct = StockProduct(
+            product: Product(
+                color: Colors.blue,
+                name: map["name"],
+                price: 1,
+                priceQuantity: 1),
+            quantity: 1);
+        stockItems.add(tempProduct);
+      }
+    });
+    return stockItems;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,19 +43,32 @@ class StockReport extends StatelessWidget {
                 addItemsDialog(context, (stockProduct) {});
               },
             ),
-            Flexible(
-              child: ListView.separated(
-                padding: const EdgeInsets.all(mobilePadding),
-                shrinkWrap: true,
-                itemCount: stockProducts.length,
-                separatorBuilder: (context, index) => const Divider(),
-                itemBuilder: (context, index) {
-                  return StockElement(
-                    stockProduct: stockProducts[index],
-                  );
-                },
-              ),
-            ),
+            FutureBuilder(
+                future: getStock(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return const Text("error");
+                  } else if (snapshot.hasData) {
+                    var stockProducts = snapshot.data ?? [];
+                    return Flexible(
+                      child: ListView.separated(
+                        padding: const EdgeInsets.all(mobilePadding),
+                        shrinkWrap: true,
+                        itemCount: stockProducts.length,
+                        separatorBuilder: (context, index) => const Divider(),
+                        itemBuilder: (context, index) {
+                          return StockElement(
+                            stockProduct: stockProducts[index],
+                          );
+                        },
+                      ),
+                    );
+                  } else {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                }),
           ],
         ),
       ),
