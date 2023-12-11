@@ -40,7 +40,7 @@ class _CategoryPhotosScreenState extends State<CategoryPhotosScreen> {
         actions: [
           Container(
             width: 200.0,
-            height: 40.0, // Reduced the height of the container
+            height: 40.0,
             decoration: BoxDecoration(
               color: mainColor,
               borderRadius: BorderRadius.circular(5.0),
@@ -90,7 +90,10 @@ class _CategoryPhotosScreenState extends State<CategoryPhotosScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => PhotoDetailScreen(photo: photo),
+                        builder: (context) => PhotoDetailScreen(
+                          photos: photos,
+                          currentIndex: index,
+                        ),
                       ),
                     );
                   },
@@ -124,7 +127,7 @@ class _CategoryPhotosScreenState extends State<CategoryPhotosScreen> {
                                   children: [
                                     Icon(Icons.thumb_up, size: 20, color: Colors.white60),
                                     SizedBox(width: 6),
-                                    Flexible( 
+                                    Flexible(
                                       child: Text(
                                         '${photo.likeCount} likes',
                                         style: TextStyle(fontSize: 12),
@@ -139,7 +142,6 @@ class _CategoryPhotosScreenState extends State<CategoryPhotosScreen> {
                         ],
                       ),
                     ),
-
                   ),
                 );
               },
@@ -151,7 +153,9 @@ class _CategoryPhotosScreenState extends State<CategoryPhotosScreen> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => AddPhotoScreen(category: widget.category)),
+            MaterialPageRoute(
+              builder: (context) => AddPhotoScreen(category: widget.category),
+            ),
           );
         },
         child: Icon(Icons.add, color: Colors.white),
