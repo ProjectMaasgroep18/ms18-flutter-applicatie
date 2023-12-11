@@ -32,24 +32,49 @@ class _PhotoDetailScreenState extends State<PhotoDetailScreen> {
       appBar: AppBar(
         title: Text('Foto informatie'),
       ),
-      body: PageView.builder(
-        controller: _controller,
-        itemCount: widget.photos.length,
-        onPageChanged: (int index) {
-          setState(() {
-            widget.currentIndex = index;
-          });
-        },
-        itemBuilder: (context, index) {
-          Photo photo = widget.photos[index];
-          return Stack(
-            children: [
-              SingleChildScrollView(
+      body: Stack(
+        children: [
+          PageView.builder(
+            controller: _controller,
+            itemCount: widget.photos.length,
+            onPageChanged: (int index) {
+              setState(() {
+                widget.currentIndex = index;
+              });
+            },
+            itemBuilder: (context, index) {
+              Photo photo = widget.photos[index];
+              return SingleChildScrollView(
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
                     children: [
-                      Image.network(photo.imageUrl),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          if (widget.currentIndex > 0)
+                            IconButton(
+                              icon: Icon(Icons.arrow_back_ios, size: 40, color: mainColor),
+                              onPressed: () {
+                                _controller.previousPage(
+                                  duration: Duration(milliseconds: 300),
+                                  curve: Curves.easeInOut,
+                                );
+                              },
+                            ),
+                          Image.network(photo.imageUrl),
+                          if (widget.currentIndex < widget.photos.length - 1)
+                            IconButton(
+                              icon: Icon(Icons.arrow_forward_ios, size: 40, color: mainColor),
+                              onPressed: () {
+                                _controller.nextPage(
+                                  duration: Duration(milliseconds: 300),
+                                  curve: Curves.easeInOut,
+                                );
+                              },
+                            ),
+                        ],
+                      ),
                       SizedBox(height: 20),
                       TextField(
                         decoration: InputDecoration(
@@ -86,46 +111,10 @@ class _PhotoDetailScreenState extends State<PhotoDetailScreen> {
                     ],
                   ),
                 ),
-              ),
-              // Left arrow
-              if (widget.currentIndex > 0)
-                Positioned(
-                  left: 10,
-                  top: 0,
-                  bottom: 0,
-                  child: Center(
-                    child: IconButton(
-                      icon: Icon(Icons.arrow_back_ios, size: 30, color: mainColor),
-                      onPressed: () {
-                        _controller.previousPage(
-                          duration: Duration(milliseconds: 300),
-                          curve: Curves.easeInOut,
-                        );
-                      },
-                    ),
-                  ),
-                ),
-              // Right arrow
-              if (widget.currentIndex < widget.photos.length - 1)
-                Positioned(
-                  right: 10,
-                  top: 0,
-                  bottom: 0,
-                  child: Center(
-                    child: IconButton(
-                      icon: Icon(Icons.arrow_forward_ios, size: 30, color: mainColor),
-                      onPressed: () {
-                        _controller.nextPage(
-                          duration: Duration(milliseconds: 300),
-                          curve: Curves.easeInOut,
-                        );
-                      },
-                    ),
-                  ),
-                ),
-            ],
-          );
-        },
+              );
+            },
+          ),
+        ],
       ),
     );
   }
