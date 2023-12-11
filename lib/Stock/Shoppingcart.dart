@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Models/stock.dart';
+import 'package:ms18_applicatie/Stock/stockReport.dart';
 import 'package:ms18_applicatie/Stock/widgets.dart';
 import 'package:ms18_applicatie/Widgets/pageHeader.dart';
 import 'package:ms18_applicatie/config.dart';
 import 'package:ms18_applicatie/menu.dart';
+
+import '../Api/apiManager.dart';
 
 class ShoppingCart extends StatefulWidget {
   ShoppingCart({Key? key}) : super(key: key);
@@ -16,7 +19,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
   final List<StockProduct> shoppingCart = [];
   final List<Order> orderHistory = [];
 
-  final List<Product> productList = [
+  /*final List<Product> productList = [
     Product(
       priceQuantity: 1,
       color: Colors.redAccent,
@@ -46,26 +49,58 @@ class _ShoppingCartState extends State<ShoppingCart> {
       icon: Icons.local_drink,
     ),
     // Voeg hier meer producten toe
-  ];
+  ];*/
+
+  static Future<List<Product>> getProducts() async {
+    List<Product> productList = [];
+
+    await ApiManager.get<List<dynamic>>("api/v1/Product").then((data) {
+      for (Map<String, dynamic> product in data) {
+        Map<String, dynamic> map = product as Map<String, dynamic>;
+        Product tempProduct = Product(
+                color: Colors.blue,
+                name: map["name"],
+                price: 1,
+                priceQuantity: 1,
+                icon: Icons.import_contacts_sharp);
+            productList.add(tempProduct);
+      }
+    });
+    return productList;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Menu(
       child: Column(
         children: [
-          Expanded(
-            child: ListView.builder(
-              itemCount: productList.length,
-              itemBuilder: (context, index) {
-                return ProductListItem(
-                  product: productList[index],
-                  onAddToCart: () {
-                    addToCart(productList[index]);
-                  },
-                );
-              },
-            ),
-          ),
+          FutureBuilder(
+              future: getProducts(),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return const Text("error");
+                } else if (snapshot.hasData) {
+                  var productList = snapshot.data ?? [];
+                  return  Expanded(
+                    child: ListView.builder(
+                      itemCount: productList.length,
+                      itemBuilder: (context, index) {
+                        return ProductListItem(
+                          product: productList[index],
+                          onAddToCart: () {
+                            addToCart(productList[index]);
+                          },
+                        );
+                      },
+                    )
+                  );
+                } else {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+              }),
+
           ShoppingCartPopupMenu(
             shoppingCart: shoppingCart,
             removeFromCart: removeFromCart,

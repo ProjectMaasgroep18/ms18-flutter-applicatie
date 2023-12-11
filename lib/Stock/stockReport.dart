@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Api/apiManager.dart';
 import 'package:ms18_applicatie/Models/stock.dart';
