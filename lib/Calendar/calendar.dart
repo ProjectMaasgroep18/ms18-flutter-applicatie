@@ -1,6 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
-import 'dart:math';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
@@ -21,18 +19,48 @@ const scheduleViewSettings = ScheduleViewSettings(
 
 class CalendarState extends State<Calendar> {
   List<Event> events = [];
-  String? _subjectText, _startTimeText, _endTimeText, _dateText, _timeDetails;
+  String? _eventId,
+      _subjectText,
+      _startTimeText,
+      _endTimeText,
+      _dateText,
+      _timeDetails,
+      _description,
+      _location;
+  int? _calendarId;
   final CalendarController _controller = CalendarController();
   TextEditingController dateinput = TextEditingController();
   TextEditingController startTime = TextEditingController();
   TextEditingController endTime = TextEditingController();
   bool shouldShowForm = false;
+  final restfulUrl = 'https://localhost:7059/Calendar/Event';
+
+  Future<void> sendDeleteRequest(calendarName, id) async {
+    var response = await http.delete(
+        Uri.parse(restfulUrl).replace(queryParameters: {
+          'calenderName': calendarName,
+          'id': id,
+        }),
+        headers: {"Content-Type": "application/json"});
+
+    if (response.statusCode == 200) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Event verwijderd')),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Event is niet verwijderd, probeer opnieuw')),
+      );
+    }
+  }
 
   @override
   void initState() {
     dateinput.text = "";
     startTime.text = "";
     endTime.text = "";
+    _description = "";
+    _location = "";
     shouldShowForm = false;
     super.initState();
     _fetchDataAsync();
@@ -56,12 +84,23 @@ class CalendarState extends State<Calendar> {
 
       if (data is List) {
         for (final eventData in data) {
+          final eventId = eventData['id'];
+          final calendarId = eventData['calendarId'];
           final eventName = eventData['title'];
+          final description = (eventData['description'] == null)
+              ? ""
+              : eventData['description'];
+          final location =
+              (eventData['location'] == null) ? "" : eventData['location'];
           final startDateTime = DateTime.parse(eventData['starDateTime']);
           final endDateTime = DateTime.parse(eventData['endDateTime']);
           final isAllDay = endDateTime.isBefore(startDateTime);
           final event = Event(
+            eventId,
+            calendarId,
             eventName,
+            description,
+            location,
             startDateTime,
             endDateTime,
             Colors.blue, // Vervang dit door de juiste achtergrondkleur
@@ -124,6 +163,11 @@ class CalendarState extends State<Calendar> {
         shouldShowForm = false;
         final Event appointmentDetails = details.appointments![0];
         _subjectText = appointmentDetails.eventName;
+        _eventId = appointmentDetails.eventId;
+        _calendarId = appointmentDetails.calendarId;
+        _description = appointmentDetails.description;
+        _location = appointmentDetails.location;
+
         _dateText = DateFormat('dd MMMM, yyyy')
             .format(appointmentDetails.from)
             .toString();
@@ -134,6 +178,12 @@ class CalendarState extends State<Calendar> {
         _timeDetails = '$_startTimeText - $_endTimeText';
         break;
       case CalendarElement.calendarCell:
+        final Event appointmentDetails = details.appointments![0];
+        _eventId = appointmentDetails.eventId;
+        _calendarId = appointmentDetails.calendarId;
+        _description = appointmentDetails.description;
+        _location = appointmentDetails.location;
+
         shouldShowForm = true;
         _startTimeText = DateFormat('hh:mm a').format(details.date!).toString();
 
@@ -299,10 +349,7 @@ class CalendarState extends State<Calendar> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    // TODO: Add actual submission to back-end.
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Event verwijderd')),
-                    );
+                    sendDeleteRequest(_calendarId.toString(), _eventId);
                   },
                   child: const Text('Verwijderen'),
                 )
@@ -345,9 +392,14 @@ class EventDataSource extends CalendarDataSource {
 }
 
 class Event {
-  Event(this.eventName, this.from, this.to, this.background, this.isAllDay);
+  Event(this.eventId, this.calendarId, this.eventName, this.description,
+      this.location, this.from, this.to, this.background, this.isAllDay);
 
+  String eventId;
+  int calendarId;
   String eventName;
+  String description;
+  String location;
   DateTime from;
   DateTime to;
   Color background;
