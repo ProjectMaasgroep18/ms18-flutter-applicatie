@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Calendar/calendar.dart';
+import 'package:ms18_applicatie/Dashboard/dashboard.dart';
 import 'package:ms18_applicatie/Declarations/declarations.dart';
+import 'package:ms18_applicatie/Models/stock.dart';
 import 'package:ms18_applicatie/Pictures/listPictures.dart';
+import 'package:ms18_applicatie/Profile/profile.dart';
 import 'package:ms18_applicatie/Stock/stockReport.dart';
+import 'package:ms18_applicatie/Users/userList.dart';
 import 'package:ms18_applicatie/roles.dart';
 import 'config.dart';
 import 'menuItem.dart' as menuItem;
@@ -14,17 +18,21 @@ class MenuIndex {
 class Menu extends StatelessWidget {
   final Widget child;
   final Widget? title;
+  final List<Widget>? actions;
+  final double appBarHeight;
+  final bool centerTitle;
+
   //fil the list of custom InputField classes
   final List<menuItem.MenuItem> menuItems = [
     menuItem.MenuItem(
       text: 'Home',
       icon: Icons.home,
-      page: MaterialPageRoute(builder: (context) => Menu(child: Container())),
+      page: MaterialPageRoute(builder: (context) => Dashboard()),
     ),
     menuItem.MenuItem(
         text: 'Voorraad',
         icon: Icons.add_chart,
-        page: MaterialPageRoute(builder: (context) => const StockReport()),
+        page: MaterialPageRoute(builder: (context) => StockReport()),
         roles: [Roles.Admin, Roles.Subadmin]),
     menuItem.MenuItem(
         text: 'Foto\'s',
@@ -43,11 +51,25 @@ class Menu extends StatelessWidget {
     menuItem.MenuItem(
       text: 'Google Maps',
       icon: Icons.map_outlined,
-      page: MaterialPageRoute(builder: (context) => Menu(child: Container(),)),
+      page: MaterialPageRoute(
+          builder: (context) => Menu(
+                child: Container(),
+              )),
+    ),
+    menuItem.MenuItem(
+      text: 'Gebruikers',
+      icon: Icons.account_circle,
+      page: MaterialPageRoute(builder: (context) => const UserList()),
     ),
   ];
 
-  Menu({required this.child, this.title});
+  Menu({
+    required this.child,
+    this.title,
+    this.actions,
+    this.appBarHeight = kToolbarHeight,
+    this.centerTitle = true,
+  });
 
   //get and put the menu items from the list to the widgets for non mobile
   List<Widget> getMenuItems(BuildContext context) {
@@ -58,7 +80,7 @@ class Menu extends StatelessWidget {
     if (screenWidth > tabletWidth) {
       items.add(
         Padding(
-          padding: EdgeInsets.symmetric(vertical: 20),
+          padding: const EdgeInsets.symmetric(vertical: 20),
           child: Image.asset(
             "",
             height: 60,
@@ -85,7 +107,7 @@ class Menu extends StatelessWidget {
     } else if (screenWidth > mobileWidth) {
       items.add(
         Padding(
-          padding: EdgeInsets.symmetric(vertical: 20),
+          padding: const EdgeInsets.symmetric(vertical: 20),
           child: Image.asset(
             "",
             height: 30,
@@ -126,7 +148,7 @@ class Menu extends StatelessWidget {
           BottomNavigationBarItem(
             label: '',
             icon: Material(
-              color: selected ? textColorOnMainColor : secondColor,
+              color: selected ? textColorOnMainColor : mainColor,
               child: MenuItemBase(
                 index: i,
                 page: menuitem.page,
@@ -155,12 +177,22 @@ class Menu extends StatelessWidget {
             )
           : (title != null
               ? AppBar(
-                  backgroundColor: secondColor,
+                  centerTitle: centerTitle,
+                  shadowColor: mainColor,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(
+                      bottom: Radius.circular(borderRadius * 2),
+                    ),
+                  ),
+                  backgroundColor: mainColor,
                   title: title,
+                  elevation: 2,
+                  actions: actions,
+                  toolbarHeight: appBarHeight,
                 )
               : null),
       bottomNavigationBar: MediaQuery.of(context).size.width > mobileWidth
-          ? SizedBox()
+          ? null
           : SizedBox(
               height: 48,
               child: BottomNavigationBar(
@@ -216,13 +248,13 @@ class MenuItemDesktop extends StatelessWidget {
           Icon(
             icon,
             size: 25,
-            color: selected! ? mainColor : textColorOnMainColor,
+            color: selected! ? secondColor : textColorOnMainColor,
           ),
           SizedBox(width: 20),
           Text(
             text!,
             style: TextStyle(
-                color: selected! ? mainColor : textColorOnMainColor,
+                color: selected! ? secondColor : textColorOnMainColor,
                 fontSize: 12,
                 height: 1.5),
             overflow: TextOverflow.ellipsis,
@@ -251,13 +283,13 @@ class MenuItemtabletWidth extends StatelessWidget {
           Icon(
             icon,
             size: 30,
-            color: selected ? mainColor : textColorOnMainColor,
+            color: selected ? secondColor : textColorOnMainColor,
           ),
           SizedBox(width: 25),
           Text(
             text,
             style: TextStyle(
-              color: selected ? mainColor : textColorOnMainColor,
+              color: selected ? secondColor : textColorOnMainColor,
               fontSize: 8,
               height: 1.5,
             ),
@@ -284,7 +316,7 @@ class MenuItemBase extends StatelessWidget {
         elevation: 0,
         alignment: Alignment.center,
         backgroundColor:
-            index == MenuIndex.index! ? secondColor : Colors.transparent,
+            index == MenuIndex.index! ? mainColor : Colors.transparent,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
       ),
       onPressed: () {
@@ -311,12 +343,12 @@ class MobileWidthMenuItem extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Icon(icon, color: selected! ? mainColor : textColorOnMainColor),
+          Icon(icon, color: selected! ? secondColor : textColorOnMainColor),
           Text(
             text!,
             style: TextStyle(
                 fontSize: 8,
-                color: selected! ? mainColor : textColorOnMainColor),
+                color: selected! ? secondColor : textColorOnMainColor),
             overflow: TextOverflow.ellipsis,
           ),
         ],
