@@ -160,7 +160,7 @@ class _CategoryPhotosScreenState extends State<CategoryPhotosScreen> {
         },
         child: Icon(Icons.add, color: Colors.white),
         backgroundColor: mainColor,
-        tooltip: 'Foto toevoegen',
+        tooltip: 'Fotos toevoegen',
       ),
     );
   }

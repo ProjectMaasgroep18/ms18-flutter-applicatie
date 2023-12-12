@@ -87,12 +87,12 @@ class _PhotoDetailScreenState extends State<PhotoDetailScreen> {
                         width: 200,
                         child: ElevatedButton(
                           onPressed: () {
-                            // Toevoegen button logic here
+                            //Opslaan button logic here
                           },
                           style: ElevatedButton.styleFrom(
                             primary: mainColor,
                           ),
-                          child: Text('Toevoegen', style: TextStyle(color: Colors.white)),
+                          child: Text('Opslaan', style: TextStyle(color: Colors.white)),
                         ),
                       ),
                       SizedBox(height: 10),

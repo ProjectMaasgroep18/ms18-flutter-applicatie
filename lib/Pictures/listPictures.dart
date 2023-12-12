@@ -3,6 +3,7 @@ import '../menu.dart';
 import 'category.dart';
 import 'category_list_item.dart';
 import 'photo.dart';
+import 'add_category_screen.dart';
 
 class ListPictures extends StatefulWidget {
   const ListPictures({Key? key}) : super(key: key);
@@ -12,6 +13,7 @@ class ListPictures extends StatefulWidget {
 }
 
 class _ListPicturesState extends State<ListPictures> {
+  //Hier moeten we foreach maken om alle categorie en photos uit database halen . ipv deze data .
   final List<Category> _allCategories = [
     Category(
       title: 'Kerst eten 1',
@@ -215,43 +217,52 @@ class _ListPicturesState extends State<ListPictures> {
     }
 
     return Menu(
-      child: Column(
-        children: [
-          Padding(
-            padding: EdgeInsets.all(8.0),
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width * 0.4,
-              child: TextField(
-                controller: _searchController,
-                decoration: InputDecoration(
-                  labelText: 'Zoek op Categories',
-                  suffixIcon: IconButton(
-                    icon: Icon(Icons.search),
-                    onPressed: _performSearch,
+      child: Scaffold(
+        body: Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.all(8.0),
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width * 0.4,
+                child: TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    labelText: 'Zoek op Categories',
+                    suffixIcon: IconButton(
+                      icon: Icon(Icons.search),
+                      onPressed: _performSearch,
+                    ),
                   ),
+                  onSubmitted: (value) => _performSearch(),
                 ),
-                onSubmitted: (value) => _performSearch(),
               ),
             ),
-          ),
-
-          // Dropdown for selecting year
-          DropdownButton<int>(
-            value: _selectedYear,
-            items: yearItems,
-            hint: Text("Jaar selecteren"),
-            onChanged: _onYearChanged,
-          ),
-
-          Expanded(
-            child: ListView.builder(
-              itemCount: _filteredCategories.length,
-              itemBuilder: (context, index) {
-                return CategoryListItem(category: _filteredCategories[index]);
-              },
+            DropdownButton<int>(
+              value: _selectedYear,
+              items: yearItems,
+              hint: Text("Jaar selecteren"),
+              onChanged: _onYearChanged,
             ),
-          ),
-        ],
+            Expanded(
+              child: ListView.builder(
+                itemCount: _filteredCategories.length,
+                itemBuilder: (context, index) {
+                  return CategoryListItem(category: _filteredCategories[index]);
+                },
+              ),
+            ),
+          ],
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            // Navigate to AddCategoryScreen
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => AddCategoryScreen()),
+            );
+          },
+          child: Icon(Icons.add),
+          tooltip: 'Nieuwe Categorie Toevoegen',
+        ),
       ),
     );
   }
