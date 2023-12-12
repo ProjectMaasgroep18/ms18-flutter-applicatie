@@ -4,6 +4,7 @@ import 'category.dart';
 import 'category_list_item.dart';
 import 'photo.dart';
 import 'add_category_screen.dart';
+import 'package:intl/intl.dart';
 
 class ListPictures extends StatefulWidget {
   const ListPictures({Key? key}) : super(key: key);
@@ -13,7 +14,6 @@ class ListPictures extends StatefulWidget {
 }
 
 class _ListPicturesState extends State<ListPictures> {
-  //Hier moeten we foreach maken om alle categorie en photos uit database halen . ipv deze data .
   final List<Category> _allCategories = [
     Category(
       title: 'Kerst eten 1',
@@ -153,6 +153,7 @@ class _ListPicturesState extends State<ListPictures> {
     ),
   ];
 
+
   List<Category> _filteredCategories = [];
   TextEditingController _searchController = TextEditingController();
   int? _selectedYear;
@@ -247,7 +248,40 @@ class _ListPicturesState extends State<ListPictures> {
               child: ListView.builder(
                 itemCount: _filteredCategories.length,
                 itemBuilder: (context, index) {
-                  return CategoryListItem(category: _filteredCategories[index]);
+                  return CategoryListItem(
+                    category: _filteredCategories[index],
+                    onDelete: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text('Delete Category'),
+                            content: Text('Weet u zeker dat u deze categorie wilt verwijderen? '),
+                            actions: <Widget>[
+                              TextButton(
+                                child: Text('Annuleren'),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                              TextButton(
+                                child: Text('verwijderen'),
+                                onPressed: () {
+                                  setState(() {
+                                    _filteredCategories.removeAt(index);
+                                    //Hier moeten we nog de categorie vanuit de database verwijderen .
+                                    });
+
+
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                  );
                 },
               ),
             ),
@@ -255,7 +289,6 @@ class _ListPicturesState extends State<ListPictures> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            // Navigate to AddCategoryScreen
             Navigator.of(context).push(
               MaterialPageRoute(builder: (context) => AddCategoryScreen()),
             );
