@@ -49,7 +49,7 @@ class _CategoryPhotosScreenState extends State<CategoryPhotosScreen> {
             child: PopupMenuButton<SortingOption>(
               itemBuilder: (context) => [
                 _buildSortingOption(SortingOption.newest, 'Nieuwste'),
-                _buildSortingOption(SortingOption.oldest, 'Oudeste'),
+                _buildSortingOption(SortingOption.oldest, 'Oudste'),
                 _buildSortingOption(SortingOption.likes, 'Likes'),
               ],
               onSelected: (option) {
@@ -59,7 +59,7 @@ class _CategoryPhotosScreenState extends State<CategoryPhotosScreen> {
               },
               child: Center(
                 child: Text(
-                  'Soort op',
+                  'Sorteer op',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 16.0,

@@ -3,7 +3,6 @@ import 'package:intl/intl.dart';
 import 'category.dart';
 import 'category_photos_screen.dart';
 
-
 class CategoryListItem extends StatelessWidget {
   final Category category;
 
@@ -15,6 +14,7 @@ class CategoryListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final formattedDate = DateFormat('yyyy-MM-dd').format(category.date);
+    final screenWidth = MediaQuery.of(context).size.width;
 
     return InkWell(
       onTap: () {
@@ -44,9 +44,12 @@ class CategoryListItem extends StatelessWidget {
               ),
             ),
             SizedBox(height: 8.0),
-            Image.network(
-              category.photos.first.imageUrl,
-              fit: BoxFit.cover,
+            Container(
+              width: screenWidth,
+              child: Image.network(
+                category.photos.first.imageUrl,
+                fit: BoxFit.cover,
+              ),
             ),
           ],
         ),

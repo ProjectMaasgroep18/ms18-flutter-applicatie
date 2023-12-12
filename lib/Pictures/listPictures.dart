@@ -153,6 +153,7 @@ class _ListPicturesState extends State<ListPictures> {
 
   List<Category> _filteredCategories = [];
   TextEditingController _searchController = TextEditingController();
+  int? _selectedYear;
 
   @override
   void initState() {
@@ -180,13 +181,39 @@ class _ListPicturesState extends State<ListPictures> {
   void _performSearch() {
     setState(() {
       _filteredCategories = _allCategories
-          .where((category) => category.title.toLowerCase().contains(_searchController.text.toLowerCase()))
+          .where((category) {
+        final matchesTitle = category.title.toLowerCase().contains(_searchController.text.toLowerCase());
+        final matchesYear = _selectedYear == null || category.date.year == _selectedYear;
+        return matchesTitle && matchesYear;
+      })
           .toList();
+    });
+  }
+
+  void _onYearChanged(int? year) {
+    setState(() {
+      _selectedYear = year;
+      _performSearch();
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    List<DropdownMenuItem<int>> yearItems = [
+      DropdownMenuItem<int>(
+        value: null,
+        child: Text('Alle jaren'),
+      ),
+    ];
+
+    final currentYear = DateTime.now().year;
+    for (int year = 1923; year <= currentYear; year++) {
+      yearItems.add(DropdownMenuItem<int>(
+        value: year,
+        child: Text(year.toString()),
+      ));
+    }
+
     return Menu(
       child: Column(
         children: [
@@ -207,6 +234,15 @@ class _ListPicturesState extends State<ListPictures> {
               ),
             ),
           ),
+
+          // Dropdown for selecting year
+          DropdownButton<int>(
+            value: _selectedYear,
+            items: yearItems,
+            hint: Text("Jaar selecteren"),
+            onChanged: _onYearChanged,
+          ),
+
           Expanded(
             child: ListView.builder(
               itemCount: _filteredCategories.length,
