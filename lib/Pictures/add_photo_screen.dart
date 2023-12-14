@@ -4,6 +4,7 @@ import 'package:flutter_dropzone/flutter_dropzone.dart';
 import 'category.dart';
 import 'photo_viewer_screen.dart';
 import 'editable_file.dart';
+import 'package:flutter/foundation.dart' as foundation;
 
 Color mainColor = Color(0xFF15233d);
 
@@ -60,6 +61,24 @@ class _AddPhotoScreenState extends State<AddPhotoScreen> {
     );
   }
 
+  bool isDesktop(BuildContext context) {
+    if (foundation.kIsWeb) {
+      return false;
+    }
+    switch (foundation.defaultTargetPlatform) {
+      case TargetPlatform.android:
+      case TargetPlatform.iOS:
+      case TargetPlatform.fuchsia:
+        return false;
+      case TargetPlatform.linux:
+      case TargetPlatform.macOS:
+      case TargetPlatform.windows:
+        return true;
+      default:
+        return false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -81,48 +100,38 @@ class _AddPhotoScreenState extends State<AddPhotoScreen> {
               ),
             ),
             SizedBox(height: 20),
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: mainColor, width: 2),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                alignment: Alignment.center,
-                child: Stack(
-                  children: [
-                    DropzoneView(
-                      operation: DragOperation.copy,
-                      cursor: CursorType.grab,
-                      onCreated: (controller) => this.dropzoneController = controller,
-                      onLoaded: () => print('Dropzone loaded'),
-                      onError: (error) => print('Error: $error'),
-                      onHover: () => print('File hovered'),
-                      onDrop: (file) async {
-                        final data = await dropzoneController.getFileData(file);
-                        setState(() {
-                          _selectedFiles.add(EditableFile(file: PlatformFile(
-                            name: file.name,
-                            size: file.size,
-                            bytes: data,
-                            readStream: null,
-                          )));
-                        });
-                      },
-                      mime: ['image/jpeg', 'image/png'],
-                    ),
-                    Center(
-                      child: Text(
-                        _selectedFiles.isEmpty
-                            ? 'Sleep bestanden hier'
-                            : 'Geselecteerde bestanden',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ),
-                  ],
+
+            if (isDesktop(context))
+              Expanded(
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: mainColor, width: 2),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  alignment: Alignment.center,
+                  child: DropzoneView(
+                    operation: DragOperation.copy,
+                    cursor: CursorType.grab,
+                    onCreated: (controller) => this.dropzoneController = controller,
+                    onLoaded: () => print('Dropzone loaded'),
+                    onError: (error) => print('Error: $error'),
+                    onHover: () => print('File hovered'),
+                    onDrop: (file) async {
+                      final data = await dropzoneController.getFileData(file);
+                      setState(() {
+                        _selectedFiles.add(EditableFile(file: PlatformFile(
+                          name: file.name,
+                          size: file.size,
+                          bytes: data,
+                          readStream: null,
+                        )));
+                      });
+                    },
+                    mime: ['image/jpeg', 'image/png'],
+                  ),
                 ),
               ),
-            ),
+
             SizedBox(height: 20),
             if (_selectedFiles.isNotEmpty) ...[
               Wrap(
