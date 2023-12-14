@@ -17,24 +17,35 @@ class AddPhotoScreen extends StatefulWidget {
 }
 
 class _AddPhotoScreenState extends State<AddPhotoScreen> {
-  final TextEditingController _titleController = TextEditingController();
+  final List<TextEditingController> _titleControllers = [];
   List<EditableFile> _selectedFiles = [];
   late DropzoneViewController dropzoneController;
 
   @override
   void dispose() {
-    _titleController.dispose();
+    for (var controller in _titleControllers) {
+      controller.dispose();
+    }
     super.dispose();
   }
 
   void _submit() {
-    if (_selectedFiles.isNotEmpty && _titleController.text.isNotEmpty) {
+    if (_selectedFiles.isNotEmpty && _areTitlesValid()) {
       setState(() {
         _selectedFiles = [];
-        _titleController.clear();
+        _titleControllers.clear();
       });
       Navigator.pop(context);
     }
+  }
+
+  bool _areTitlesValid() {
+    for (var controller in _titleControllers) {
+      if (controller.text.isEmpty) {
+        return false;
+      }
+    }
+    return true;
   }
 
   Future<void> _selectFiles() async {
@@ -47,6 +58,7 @@ class _AddPhotoScreenState extends State<AddPhotoScreen> {
     if (result != null) {
       setState(() {
         _selectedFiles.addAll(result.files.map((file) => EditableFile(file: file)));
+        _titleControllers.addAll(result.files.map((_) => TextEditingController()));
       });
     }
   }
@@ -106,6 +118,7 @@ class _AddPhotoScreenState extends State<AddPhotoScreen> {
                             bytes: data,
                             readStream: null,
                           )));
+                          _titleControllers.add(TextEditingController());
                         });
                       },
                       mime: ['image/jpeg', 'image/png'],
@@ -125,31 +138,44 @@ class _AddPhotoScreenState extends State<AddPhotoScreen> {
             ),
             SizedBox(height: 20),
             if (_selectedFiles.isNotEmpty) ...[
-              Wrap(
-                spacing: 8,
-                children: List<Widget>.generate(
-                  _selectedFiles.length,
-                      (index) => GestureDetector(
-                    onTap: () => _viewPhoto(index),
-                    child: Image.memory(
-                      _selectedFiles[index].file.bytes!,
-                      width: 100,
-                      height: 100,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: _selectedFiles.length,
+                  itemBuilder: (context, index) {
+                    return Column(
+                      children: [
+                        GestureDetector(
+                          onTap: () => _viewPhoto(index),
+                          child: Row(
+                            children: [
+                              Image.memory(
+                                _selectedFiles[index].file.bytes!,
+                                width: 100,
+                                height: 100,
+                                fit: BoxFit.cover,
+                              ),
+                              SizedBox(width: 10),
+                              Expanded(
+                                child: TextField(
+                                  controller: _titleControllers[index],
+                                  decoration: InputDecoration(
+                                    labelText: 'Titel',
+                                    border: OutlineInputBorder(),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 20),
+                      ],
+                    );
+                  },
                 ),
               ),
               SizedBox(height: 20),
             ],
-            TextField(
-              controller: _titleController,
-              decoration: InputDecoration(
-                labelText: 'Titel',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            SizedBox(height: 20),
+
             SizedBox(
               width: 200,
               child: ElevatedButton(
