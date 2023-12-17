@@ -4,6 +4,8 @@ import 'package:flutter_dropzone/flutter_dropzone.dart';
 import 'category.dart';
 import 'photo_viewer_screen.dart';
 import 'editable_file.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 Color mainColor = Color(0xFF15233d);
 
@@ -20,6 +22,9 @@ class _AddPhotoScreenState extends State<AddPhotoScreen> {
   final List<TextEditingController> _titleControllers = [];
   List<EditableFile> _selectedFiles = [];
   late DropzoneViewController dropzoneController;
+  final ImagePicker picker = ImagePicker();
+  XFile? photo;
+  File? file;
 
   @override
   void dispose() {
@@ -29,13 +34,9 @@ class _AddPhotoScreenState extends State<AddPhotoScreen> {
     super.dispose();
   }
 
-  void _submit() {
+  Future<void> _submit() async {
     if (_selectedFiles.isNotEmpty && _areTitlesValid()) {
-      setState(() {
-        _selectedFiles = [];
-        _titleControllers.clear();
-      });
-      Navigator.pop(context);
+      // Submit logic here
     }
   }
 
@@ -63,6 +64,26 @@ class _AddPhotoScreenState extends State<AddPhotoScreen> {
     }
   }
 
+  Future<void> _takePhoto() async {
+    var res = await picker.pickImage(source: ImageSource.camera);
+    if (res != null) {
+      setState(() {
+        photo = res;
+        file = File(photo!.path);
+        _selectedFiles.add(EditableFile(file: PlatformFile(name: res.name, path: res.path, size: 0, bytes: null, readStream: null)));
+        _titleControllers.add(TextEditingController());
+      });
+    }
+  }
+
+  void _removeSelectedFile(int index) {
+    setState(() {
+      _selectedFiles.removeAt(index);
+      _titleControllers[index].dispose();
+      _titleControllers.removeAt(index);
+    });
+  }
+
   void _viewPhoto(int index) {
     Navigator.push(
       context,
@@ -71,9 +92,104 @@ class _AddPhotoScreenState extends State<AddPhotoScreen> {
       ),
     );
   }
+  Widget _buildWebContent() {
+    return Expanded(
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: mainColor, width: 2),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        alignment: Alignment.center,
+        child: Stack(
+          children: [
+            DropzoneView(
+              operation: DragOperation.copy,
+              cursor: CursorType.grab,
+              onCreated: (controller) => this.dropzoneController = controller,
+              onLoaded: () => print('Dropzone loaded'),
+              onError: (error) => print('Error: $error'),
+              onHover: () => print('File hovered'),
+              onDrop: (file) async {
+                final data = await dropzoneController.getFileData(file);
+                setState(() {
+                  _selectedFiles.add(EditableFile(file: PlatformFile(
+                    name: file.name,
+                    size: file.size,
+                    bytes: data,
+                    readStream: null,
+                  )));
+                  _titleControllers.add(TextEditingController());
+                });
+              },
+              mime: ['image/jpeg', 'image/png'],
+            ),
+            Center(
+              child: Text(
+                _selectedFiles.isEmpty ? 'Sleep bestanden hier' : 'Geselecteerde bestanden',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMobileContent() {
+    return Column(
+      children: [
+        SizedBox(height: 20),
+        ElevatedButton(
+          onPressed: _takePhoto,
+          style: ElevatedButton.styleFrom(
+            primary: Colors.blue,
+            onPrimary: Colors.white,
+            padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30),
+            ),
+            elevation: 5,
+            textStyle: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.camera_alt, color: Colors.white),
+              SizedBox(width: 8),
+              Text("Maak foto", style: TextStyle(color: Colors.white)),
+            ],
+          ),
+        ),
+        if (photo != null) ...[
+          Image.file(
+            File(photo!.path),
+            width: 250,
+            height: 250,
+          ),
+          IconButton(
+            icon: Icon(Icons.cancel),
+            onPressed: () {
+              setState(() {
+                _selectedFiles.removeWhere((element) => element.file.path == photo!.path);
+                photo = null;
+                file = null;
+              });
+            },
+          ),
+        ],
+        SizedBox(height: 20),
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
+    bool isSmallScreen = MediaQuery.of(context).size.width < 600;
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Foto\'s toevoegen'),
@@ -83,59 +199,21 @@ class _AddPhotoScreenState extends State<AddPhotoScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            ElevatedButton.icon(
-              icon: Icon(Icons.file_upload, color: Colors.white),
-              label: Text('Selecteer bestanden', style: TextStyle(color: Colors.white)),
-              onPressed: _selectFiles,
-              style: ElevatedButton.styleFrom(
-                primary: mainColor,
-                textStyle: TextStyle(fontSize: 16),
-              ),
-            ),
-            SizedBox(height: 20),
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: mainColor, width: 2),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                alignment: Alignment.center,
-                child: Stack(
-                  children: [
-                    DropzoneView(
-                      operation: DragOperation.copy,
-                      cursor: CursorType.grab,
-                      onCreated: (controller) => this.dropzoneController = controller,
-                      onLoaded: () => print('Dropzone loaded'),
-                      onError: (error) => print('Error: $error'),
-                      onHover: () => print('File hovered'),
-                      onDrop: (file) async {
-                        final data = await dropzoneController.getFileData(file);
-                        setState(() {
-                          _selectedFiles.add(EditableFile(file: PlatformFile(
-                            name: file.name,
-                            size: file.size,
-                            bytes: data,
-                            readStream: null,
-                          )));
-                          _titleControllers.add(TextEditingController());
-                        });
-                      },
-                      mime: ['image/jpeg', 'image/png'],
-                    ),
-                    Center(
-                      child: Text(
-                        _selectedFiles.isEmpty
-                            ? 'Sleep bestanden hier'
-                            : 'Geselecteerde bestanden',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ),
-                  ],
+            if (isSmallScreen) _buildMobileContent(),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 20.0),
+              child: ElevatedButton.icon(
+                icon: Icon(Icons.file_upload, color: Colors.white),
+                label: Text('Selecteer bestanden', style: TextStyle(color: Colors.white)),
+                onPressed: _selectFiles,
+                style: ElevatedButton.styleFrom(
+                  primary: mainColor,
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  textStyle: TextStyle(fontSize: 16),
                 ),
               ),
             ),
+            if (!isSmallScreen) _buildWebContent(),
             SizedBox(height: 20),
             if (_selectedFiles.isNotEmpty) ...[
               Expanded(
@@ -164,6 +242,10 @@ class _AddPhotoScreenState extends State<AddPhotoScreen> {
                                   ),
                                 ),
                               ),
+                              IconButton(
+                                icon: Icon(Icons.cancel),
+                                onPressed: () => _removeSelectedFile(index),
+                              ),
                             ],
                           ),
                         ),
@@ -175,7 +257,6 @@ class _AddPhotoScreenState extends State<AddPhotoScreen> {
               ),
               SizedBox(height: 20),
             ],
-
             SizedBox(
               width: 200,
               child: ElevatedButton(
