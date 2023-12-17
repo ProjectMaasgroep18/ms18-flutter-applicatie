@@ -140,28 +140,30 @@ class _AddPhotoScreenState extends State<AddPhotoScreen> {
     return Column(
       children: [
         SizedBox(height: 20),
-        ElevatedButton(
-          onPressed: _takePhoto,
-          style: ElevatedButton.styleFrom(
-            primary: Colors.blue,
-            onPrimary: Colors.white,
-            padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30),
+        Center(
+          child: ElevatedButton(
+            onPressed: _takePhoto,
+            style: ElevatedButton.styleFrom(
+              primary: Colors.blue,
+              onPrimary: Colors.white,
+              padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
+              elevation: 5,
+              textStyle: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-            elevation: 5,
-            textStyle: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.camera_alt, color: Colors.white),
+                SizedBox(width: 8),
+                Text("Maak foto", style: TextStyle(color: Colors.white)),
+              ],
             ),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.camera_alt, color: Colors.white),
-              SizedBox(width: 8),
-              Text("Maak foto", style: TextStyle(color: Colors.white)),
-            ],
           ),
         ),
         if (photo != null) ...[
@@ -170,15 +172,17 @@ class _AddPhotoScreenState extends State<AddPhotoScreen> {
             width: 250,
             height: 250,
           ),
-          IconButton(
-            icon: Icon(Icons.cancel),
-            onPressed: () {
-              setState(() {
-                _selectedFiles.removeWhere((element) => element.file.path == photo!.path);
-                photo = null;
-                file = null;
-              });
-            },
+          Center(
+            child: IconButton(
+              icon: Icon(Icons.cancel),
+              onPressed: () {
+                setState(() {
+                  _selectedFiles.removeWhere((element) => element.file.path == photo!.path);
+                  photo = null;
+                  file = null;
+                });
+              },
+            ),
           ),
         ],
         SizedBox(height: 20),
