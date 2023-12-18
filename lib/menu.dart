@@ -30,7 +30,7 @@ class Menu extends StatelessWidget {
     menuItem.MenuItem(
         text: 'Voorraad',
         icon: Icons.add_chart,
-        page: MaterialPageRoute(builder: (context) => const StockReport()),
+        page: MaterialPageRoute(builder: (context) => StockReport()),
         roles: [Roles.Admin, Roles.Subadmin]),
     menuItem.MenuItem(
         text: 'Foto\'s',
