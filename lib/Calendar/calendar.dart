@@ -25,6 +25,8 @@ class CalendarState extends State<Calendar> {
       _endTimeText,
       _startDateText,
       _endDateText,
+      _toStr,
+      _fromStr,
       _timeDetails,
       _description,
       _location;
@@ -57,12 +59,19 @@ class CalendarState extends State<Calendar> {
   }
 
   Future<void> sendEditRequest(calendarName, id, startTime, endTime, title,
-      description, location, endDate, startDate) async {
+      description, location, endDate, startDate, _fromStr, _toStr) async {
+
+      // 2023-12-11 16:15:00.000Z => 2023-12-11T16:15:00+01:00
+      var formattedFromStr = DateTime.parse(_fromStr).toIso8601String().replaceRange(19, 24, '+01:00');
+      var formattedToStr = DateTime.parse(_toStr).toIso8601String().replaceRange(19, 24, '+01:00');
+
+      print(formattedFromStr);
     var response = await http.patch(
         Uri.parse(restfulUrl).replace(queryParameters: {
           'calendarName': calendarName,
-          'StarDateTime': "2023-12-11T07:15:00+01:00",
-          'EndDateTime': "2023-12-11T09:45:00+01:00",
+          //           'StarDateTime': "2023-12-11T07:15:00+01:00",
+          'StarDateTime': formattedToStr,
+          'EndDateTime': formattedToStr,
           'Title': title,
           'Description': description,
           'id': id,
@@ -209,6 +218,10 @@ class CalendarState extends State<Calendar> {
         _endTimeText =
             DateFormat('hh:mm').format(appointmentDetails.to).toString();
         _timeDetails = '$_startTimeText - $_endTimeText';
+
+        // Raw Strdates, used for updating.
+        _fromStr = appointmentDetails.from.toString();
+        _toStr = appointmentDetails.to.toString();
 
         // Use existing values.
         dateinput.text =
@@ -436,7 +449,10 @@ class CalendarState extends State<Calendar> {
                         _description,
                         _location,
                         _endDateText,
-                        _startDateText);
+                        _startDateText,
+                        _fromStr,
+                        _toStr
+                        );
                   },
                   child: const Text('Aanpassen'),
                 ),
