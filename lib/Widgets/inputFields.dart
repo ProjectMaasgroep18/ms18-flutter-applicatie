@@ -8,6 +8,7 @@ class InputField extends StatelessWidget {
   final TextAlign? textAlign;
   final bool isUnderlineBorder;
   final bool isPassword;
+  final bool isNumeric;
 
   final TextEditingController? controller;
   const InputField({
@@ -19,6 +20,7 @@ class InputField extends StatelessWidget {
     this.textAlign,
     this.isUnderlineBorder = false,
     this.isPassword = false,
+    this.isNumeric = false,
   });
 
   @override
@@ -27,6 +29,7 @@ class InputField extends StatelessWidget {
       controller: controller,
       obscureText: isPassword,
       textAlign: textAlign ?? TextAlign.start,
+      keyboardType: isNumeric ? TextInputType.phone : TextInputType.text,
       decoration: InputDecoration(
         contentPadding: EdgeInsets.symmetric(
             vertical: 10, horizontal: isUnderlineBorder ? 0 : 15),
@@ -52,6 +55,61 @@ class InputField extends StatelessWidget {
               )
             : null,
       ),
+    );
+  }
+}
+
+class InputDropDown extends StatefulWidget {
+  InputDropDown(
+      {super.key,
+      required this.items,
+      this.value,
+      this.onChange,
+      this.hintText,
+      this.isUnderlineBorder = true,
+      this.labelText});
+
+  final List<DropdownMenuItem<String>> items;
+  final Function(String? value)? onChange;
+  final String? hintText;
+  final String? labelText;
+  final bool isUnderlineBorder;
+  String? value;
+
+  @override
+  State<InputDropDown> createState() => _InputDropDownState();
+}
+
+class _InputDropDownState extends State<InputDropDown> {
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButtonFormField(
+      items: widget.items,
+      value: widget.value,
+      isExpanded: true,
+      decoration: InputDecoration(
+        contentPadding: EdgeInsets.symmetric(
+            vertical: 10, horizontal: widget.isUnderlineBorder ? 0 : 15),
+        isDense: true,
+        hintText: widget.hintText,
+        labelText: widget.labelText,
+        hintStyle: const TextStyle(
+          color: mainColor,
+          fontWeight: FontWeight.w300,
+        ),
+        enabledBorder:
+            widget.isUnderlineBorder ? inputUnderlineBorder : inputBorder,
+        focusedBorder:
+            widget.isUnderlineBorder ? inputUnderlineBorder : inputBorder,
+        border: widget.isUnderlineBorder ? inputUnderlineBorder : inputBorder,
+      ),
+      onChanged: (newValue) {
+        if (widget.onChange != null) widget.onChange!(newValue);
+
+        setState(() {
+          widget.value = newValue;
+        });
+      },
     );
   }
 }
