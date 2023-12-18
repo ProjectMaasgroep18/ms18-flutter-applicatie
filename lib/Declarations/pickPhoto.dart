@@ -185,7 +185,7 @@ class PickPhotoState extends State<PickPhoto> {
             // Upload the photo
             Button(
                 onTap: () async {
-                  if (photo == null || amountController.text.isEmpty) {
+                  if (photo == null) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text("Kies een foto en vul alle velden in"),

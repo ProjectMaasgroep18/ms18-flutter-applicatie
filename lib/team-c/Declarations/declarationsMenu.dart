@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Declarations/declarations.dart';
 
+import '../../Declarations/declarationsPayout.dart';
 import '../../Declarations/pickPhoto.dart';
 import '../../config.dart';
 import '../../menu.dart';
@@ -176,6 +177,72 @@ class DeclarationsMenuState extends State<DeclarationsMenu> {
                                   MediaQuery.of(context).size.width * 0.75,
                                   child: const Text(
                                     "Declaraties goedkeuren",
+                                    style: TextStyle(fontSize: 30),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      // Icon
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => const Declarations()));
+                        },
+                        child: const Padding(
+                          padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+                          child: Icon(
+                            Icons.arrow_forward_ios,
+                            color: mainColor,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(
+                    height: 30,
+                  ),
+
+                  // Button 2
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => const DeclarationsPayout()));
+                          },
+                          style: ElevatedButton.styleFrom(
+                            elevation: 0,
+                            backgroundColor: mainColor,
+                            padding: const EdgeInsets.fromLTRB(20, 30, 20, 30),
+                            shadowColor: mainColor,
+                            shape: const RoundedRectangleBorder(
+                                borderRadius:
+                                BorderRadius.all(Radius.circular(3))),
+                          ),
+                          child: FittedBox(
+                            fit: BoxFit.fill,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                SizedBox(
+                                  width:
+                                  MediaQuery.of(context).size.width * 0.25,
+                                  child: const Icon(
+                                    Icons.logout_rounded,
+                                    size: 50,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 20,
+                                ),
+                                SizedBox(
+                                  width:
+                                  MediaQuery.of(context).size.width * 0.75,
+                                  child: const Text(
+                                    "Declaraties uitbetalen",
                                     style: TextStyle(fontSize: 30),
                                   ),
                                 ),
