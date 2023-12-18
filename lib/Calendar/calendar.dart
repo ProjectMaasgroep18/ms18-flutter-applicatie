@@ -256,7 +256,7 @@ class CalendarState extends State<Calendar> {
 
         _endDateText =
             DateFormat('yyyy-MM-dd').format(appointmentDetails.to).toString();
-        _endTimeText = DateFormat('hh:mm').format(appointmentDetails.to);
+        _endTimeText = DateFormat('HH:mm').format(appointmentDetails.to);
         _timeDetails = '$_startTimeText - $_endTimeText';
 
         // Use existing values.
@@ -394,7 +394,8 @@ class CalendarState extends State<Calendar> {
                             );
                             if (pickedStartTime != null) {
                               setState(() {
-                                startTime.text = pickedStartTime.toString();
+                                startTime.text =
+                                    pickedStartTime.format(context).toString();
                               });
                             }
                           },
@@ -420,7 +421,8 @@ class CalendarState extends State<Calendar> {
                             );
                             if (pickedEndTime != null) {
                               setState(() {
-                                endTime.text = pickedEndTime.toString();
+                                endTime.text =
+                                    pickedEndTime.format(context).toString();
                               });
                             }
                           },
