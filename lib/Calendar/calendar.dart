@@ -177,8 +177,10 @@ class CalendarState extends State<Calendar> {
               : eventData['description'];
           final location =
               (eventData['location'] == null) ? "" : eventData['location'];
-          final startDateTime = DateTime.parse(eventData['starDateTime']);
-          final endDateTime = DateTime.parse(eventData['endDateTime']);
+          final startDateTime =
+              DateTime.parse(eventData['starDateTime']).toLocal();
+          final endDateTime =
+              DateTime.parse(eventData['endDateTime']).toLocal();
           final isAllDay = endDateTime.isBefore(startDateTime);
           final event = Event(
             eventId,
