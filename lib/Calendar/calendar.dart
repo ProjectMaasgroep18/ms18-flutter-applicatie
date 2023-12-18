@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:ms18_applicatie/config.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import '../menu.dart';
 
@@ -66,7 +67,6 @@ class CalendarState extends State<Calendar> {
     _location = "";
     shouldShowForm = false;
     super.initState();
-    // _fetchDataAsync();
   }
 
   Future<void> _fetchDataAsync(String source) async {
@@ -123,6 +123,9 @@ class CalendarState extends State<Calendar> {
   Widget build(BuildContext context) {
     _fetchDataAsync(source);
 
+    double imageSize =
+        MediaQuery.of(context).size.width > mobileWidth ? 110.0 : 55.0;
+
     return Menu(
       child: SizedBox(
         child: Row(
@@ -146,7 +149,7 @@ class CalendarState extends State<Calendar> {
                       },
                       child: ClipRRect(
                         child: Image.asset('../assets/groups/globaal.png',
-                            width: 110.0, height: 110.0),
+                            width: imageSize, height: imageSize),
                       ),
                     ),
                   ),
@@ -167,7 +170,7 @@ class CalendarState extends State<Calendar> {
                       },
                       child: ClipRRect(
                         child: Image.asset('../assets/groups/welpen.png',
-                            width: 110.0, height: 110.0),
+                            width: imageSize, height: imageSize),
                       ),
                     ),
                   ),
@@ -190,7 +193,7 @@ class CalendarState extends State<Calendar> {
                       },
                       child: ClipRRect(
                         child: Image.asset('../assets/groups/zee_verkenner.png',
-                            width: 110.0, height: 110.0),
+                            width: imageSize, height: imageSize),
                       ),
                     ),
                   ),
@@ -210,7 +213,7 @@ class CalendarState extends State<Calendar> {
                       },
                       child: ClipRRect(
                         child: Image.asset('../assets/groups/matrozen.png',
-                            width: 110.0, height: 110.0),
+                            width: imageSize, height: imageSize),
                       ),
                     ),
                   ),
@@ -231,7 +234,7 @@ class CalendarState extends State<Calendar> {
                       },
                       child: ClipRRect(
                         child: Image.asset('../assets/groups/stam.png',
-                            width: 110.0, height: 110.0),
+                            width: imageSize, height: imageSize),
                       ),
                     ),
                   ),
@@ -240,7 +243,7 @@ class CalendarState extends State<Calendar> {
             ),
             Expanded(
               child: SfCalendar(
-                view: MediaQuery.of(context).size.width > 768
+                view: MediaQuery.of(context).size.width > mobileWidth
                     ? CalendarView.week
                     : CalendarView.day,
                 timeSlotViewSettings: const TimeSlotViewSettings(
