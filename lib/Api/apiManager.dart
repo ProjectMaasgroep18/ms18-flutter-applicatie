@@ -29,11 +29,9 @@ class ApiManager {
 
     checkStatusCode(response);
     print("RESP: ${response.body}");
-    try {
+
       return tryJsonDecode(response.body);
-    } catch (e) {
-      return response.body;
-    }
+
   }
 
   static Future<T> put<T>(String url,

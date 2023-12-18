@@ -12,6 +12,6 @@ class Calendar extends StatefulWidget {
 class CalendarState extends State<Calendar> {
   @override
   Widget build(BuildContext context) {
-    return Menu(child: Text("Ga vanaf hier verder"));
+    return Menu(child: const Text("Ga vanaf hier verder"));
   }
 }

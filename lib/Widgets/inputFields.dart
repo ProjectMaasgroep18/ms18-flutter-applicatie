@@ -1,6 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/config.dart';
 
+String? validation(String? value, bool isRequired,
+    String? Function(String?)? validator, String? labelText) {
+  if (isRequired) {
+    if ((value ?? '') == '') {
+      return "${labelText ?? "Dit veld"} is verplicht";
+    }
+  }
+
+  if (validator != null) {
+    validator(value);
+  }
+}
+
 class InputField extends StatelessWidget {
   final IconData? icon;
   final String? hintText;
@@ -9,6 +22,8 @@ class InputField extends StatelessWidget {
   final bool isUnderlineBorder;
   final bool isPassword;
   final bool isNumeric;
+  final bool isRequired;
+  final String? Function(String?)? validator;
 
   final TextEditingController? controller;
   const InputField({
@@ -18,15 +33,18 @@ class InputField extends StatelessWidget {
     this.labelText,
     this.controller,
     this.textAlign,
-    this.isUnderlineBorder = false,
+    this.isUnderlineBorder = true,
     this.isPassword = false,
     this.isNumeric = false,
+    this.isRequired = true,
+    this.validator,
   });
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return TextFormField(
       controller: controller,
+      validator: (value) => validation(value, isRequired, validator, labelText),
       obscureText: isPassword,
       textAlign: textAlign ?? TextAlign.start,
       keyboardType: isNumeric ? TextInputType.phone : TextInputType.text,
@@ -60,14 +78,17 @@ class InputField extends StatelessWidget {
 }
 
 class InputDropDown extends StatefulWidget {
-  InputDropDown(
-      {super.key,
-      required this.items,
-      this.value,
-      this.onChange,
-      this.hintText,
-      this.isUnderlineBorder = true,
-      this.labelText});
+  InputDropDown({
+    super.key,
+    required this.items,
+    this.value,
+    this.onChange,
+    this.hintText,
+    this.isUnderlineBorder = true,
+    this.labelText,
+    this.isRequired = true,
+    this.validator,
+  });
 
   final List<DropdownMenuItem<String>> items;
   final Function(String? value)? onChange;
@@ -75,6 +96,8 @@ class InputDropDown extends StatefulWidget {
   final String? labelText;
   final bool isUnderlineBorder;
   String? value;
+  final bool isRequired;
+  final String? Function(String?)? validator;
 
   @override
   State<InputDropDown> createState() => _InputDropDownState();
@@ -87,6 +110,8 @@ class _InputDropDownState extends State<InputDropDown> {
       items: widget.items,
       value: widget.value,
       isExpanded: true,
+      validator: (value) => validation(
+          value, widget.isRequired, widget.validator, widget.labelText),
       decoration: InputDecoration(
         contentPadding: EdgeInsets.symmetric(
             vertical: 10, horizontal: widget.isUnderlineBorder ? 0 : 15),

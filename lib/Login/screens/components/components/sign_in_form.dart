@@ -3,7 +3,6 @@ import 'package:ms18_applicatie/Dashboard/dashboard.dart';
 import 'package:ms18_applicatie/Widgets/buttons.dart';
 import 'package:ms18_applicatie/Widgets/inputFields.dart';
 import 'package:ms18_applicatie/Widgets/paddingSpacing.dart';
-import 'package:ms18_applicatie/menu.dart';
 import 'package:rive/rive.dart';
 
 class SignInForm extends StatefulWidget {
@@ -16,7 +15,7 @@ class SignInForm extends StatefulWidget {
 }
 
 class _SignInFormState extends State<SignInForm> {
-  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool isShowLoading = false;
   bool isShowConfetti = false;
 
@@ -38,11 +37,11 @@ class _SignInFormState extends State<SignInForm> {
       isShowLoading = true;
       isShowConfetti = true;
     });
-    Future.delayed(Duration(seconds: 2), () {
+    Future.delayed(const Duration(seconds: 2), () {
       if (_formKey.currentState!.validate()) {
         // show success
         check.fire();
-        Future.delayed(Duration(seconds: 2), () {
+        Future.delayed(const Duration(seconds: 2), () {
           setState(() {
             isShowLoading = false;
           });
@@ -50,7 +49,7 @@ class _SignInFormState extends State<SignInForm> {
         });
       } else {
         error.fire();
-        Future.delayed(Duration(seconds: 2), () {
+        Future.delayed(const Duration(seconds: 2), () {
           setState(() {
             isShowLoading = false;
           });

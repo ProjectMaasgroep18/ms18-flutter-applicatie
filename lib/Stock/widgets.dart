@@ -51,62 +51,67 @@ Future<void> addItemsDialog(
       TextEditingController(text: stockProduct.quantity.toString());
   String icon = stockProduct.product.icon;
 
+  final GlobalKey<FormState> formKey = GlobalKey();
+
   await showInputPopup(context,
       title: "Item ${isChange ? 'wijzigen' : 'toevoegen'}",
       height: 300 + (isChange ? 48 : 0),
-      child: Column(
-        children: [
-          InputField(
-            controller: nameController,
-            labelText: 'Product naam',
-            isUnderlineBorder: true,
-          ),
-          const PaddingSpacing(),
-          InputField(
-            controller: priceController,
-            labelText: 'Prijs',
-            isUnderlineBorder: true,
-          ),
-          const PaddingSpacing(),
-          InputField(
-            controller: countController,
-            labelText: 'Aantal stuks',
-            isUnderlineBorder: true,
-          ),
-          const PaddingSpacing(),
-          InputDropDown(
-            labelText: "Icon",
-            value: productIcons.keys.contains(icon) ? icon : null,
-            items: [
-              for (String item in productIcons.keys)
-                DropdownMenuItem(
-                  value: item,
-                  child: InputDropdownItem(
-                    iconName: item,
-                  ),
-                )
-            ],
-            onChange: (newValue) {
-              icon = newValue ?? '';
-            },
-          ),
-          if (onDelete != null) ...[
+      child: Form(
+        key: formKey,
+        child: Column(
+          children: [
+            InputField(
+              controller: nameController,
+              labelText: 'Product naam',
+            ),
             const PaddingSpacing(),
-            Button(
-              onTap: onDelete,
-              color: dangerColor,
-              text: "Verwijderen",
-              icon: Icons.delete,
-            )
-          ]
-        ],
+            InputField(
+              controller: priceController,
+              labelText: 'Prijs',
+            ),
+            const PaddingSpacing(),
+            InputDropDown(
+              labelText: "Icon",
+              value: productIcons.keys.contains(icon) ? icon : null,
+              items: [
+                for (String item in productIcons.keys)
+                  DropdownMenuItem(
+                    value: item,
+                    child: InputDropdownItem(
+                      iconName: item,
+                    ),
+                  )
+              ],
+              onChange: (newValue) {
+                icon = newValue ?? '';
+              },
+            ),
+            const PaddingSpacing(),
+            InputField(
+              controller: countController,
+              labelText: 'Aantal stuks',
+            ),
+            if (onDelete != null) ...[
+              const PaddingSpacing(),
+              Button(
+                onTap: onDelete,
+                color: dangerColor,
+                text: "Verwijderen",
+                icon: Icons.delete,
+              )
+            ]
+          ],
+        ),
       ), onSave: () {
-    // Updating the product object information
-    stockProduct!.product
-      ..name = nameController.text
-      ..price = double.parse(priceController.text)
-      ..icon = icon;
-    onSave(stockProduct);
+    if (formKey.currentState!.validate()) {
+      // Updating the product object information
+      Navigator.pop(context);
+      stockProduct!.product
+        ..name = nameController.text
+        ..price = double.parse(priceController.text)
+        ..icon = icon;
+      onSave(stockProduct);
+    }
   });
 }
 
@@ -118,7 +123,8 @@ class StockElement extends StatelessWidget {
   final Function() onDelete;
 
   StockElement(
-      {required this.stockProduct,
+      {super.key,
+      required this.stockProduct,
       this.onChange,
       this.onSave,
       required this.onDelete}) {
@@ -198,6 +204,7 @@ class StockElement extends StatelessWidget {
             ),
             Flexible(
               child: InputField(
+                isUnderlineBorder: false,
                 controller: stockController,
                 textAlign: TextAlign.center,
               ),

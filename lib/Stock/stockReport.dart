@@ -10,7 +10,7 @@ import 'package:ms18_applicatie/config.dart';
 import 'package:ms18_applicatie/menu.dart';
 
 class StockReport extends StatelessWidget {
-  StockReport({Key? key}) : super(key: key);
+  const StockReport({Key? key}) : super(key: key);
   static const String url = "api/v1/Product";
 
   String colorToString(Color color) {
@@ -19,7 +19,7 @@ class StockReport extends StatelessWidget {
 
   void reploadPage() {
     navigatorKey.currentState!.pushReplacement(
-        MaterialPageRoute(builder: ((context) => StockReport())));
+        MaterialPageRoute(builder: ((context) => const StockReport())));
   }
 
   Future<List<StockProduct>> getStock() async {
@@ -122,7 +122,7 @@ class StockReport extends StatelessWidget {
                     var stockProducts = snapshot.data ?? [];
                     return Flexible(
                       child: ListView.separated(
-                        padding: const EdgeInsets.all(mobilePadding),
+                        padding: const EdgeInsets.all(mobilePadding).copyWith(top: 0),
                         shrinkWrap: true,
                         itemCount: stockProducts.length,
                         separatorBuilder: (context, index) => const Divider(),
