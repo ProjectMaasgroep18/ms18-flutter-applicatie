@@ -58,11 +58,6 @@ class Menu extends StatelessWidget {
               )),
     ),
     menuItem.MenuItem(
-        text: 'lesTest',
-        icon: Icons.add_chart,
-        page: MaterialPageRoute(builder: (context) => Les()),
-        roles: [Roles.Admin, Roles.Subadmin]),
-    menuItem.MenuItem(
       text: 'Gebruikers',
       icon: Icons.account_circle,
       page: MaterialPageRoute(builder: (context) => const UserList()),
