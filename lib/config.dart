@@ -9,6 +9,7 @@ const Color backgroundColor = Color(0xfffafafa);
 const Color textColor = Colors.black;
 const Color textColorOnSecondColor = Color(0xFFf24300);
 const Color textColorOnMainColor = Colors.white;
+const Color shadowColor = Colors.blueGrey;
 const Color mainButtonColor = mainColor;
 
 // danillo's login
@@ -104,7 +105,7 @@ const Map<RolesNames, int> roles = {
 };
 
 // Base url and headers for the api
-const String apiUrl = "localhost";
+const String apiUrl = "https://api.hr.rspn.io/";
 const Map<String, String> apiHeaders = {
   "Content-Type": "application/json",
   "Accept": "application/json",
