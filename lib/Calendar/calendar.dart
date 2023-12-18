@@ -44,7 +44,7 @@ class CalendarState extends State<Calendar> {
   String source = 'https://localhost:7059/Calendar/all';
   String lastSource = '';
 
-  Future<void> sendDeleteRequest(calendarName, id) async {
+  Future<void> sendDeleteRequest(calendarName, id, contextForm) async {
     var response = await http.delete(
         Uri.parse(restfulUrl).replace(queryParameters: {
           'calendarName': calendarName,
@@ -61,7 +61,8 @@ class CalendarState extends State<Calendar> {
         SnackBar(content: Text('Event is niet verwijderd, probeer opnieuw')),
       );
     }
-    _fetchDataAsync();
+    await _fetchDataAsync(source);
+    Navigator.of(contextForm).pop();
   }
 
   Future<void> sendEditRequest(
@@ -103,7 +104,7 @@ class CalendarState extends State<Calendar> {
       );
       return;
     }
-    await _fetchDataAsync();
+    await _fetchDataAsync(source);
     Navigator.of(contextForm).pop();
   }
 
@@ -137,7 +138,7 @@ class CalendarState extends State<Calendar> {
       );
       return;
     }
-    await _fetchDataAsync();
+    await _fetchDataAsync(source);
     Navigator.of(contextForm).pop();
   }
 
@@ -152,6 +153,10 @@ class CalendarState extends State<Calendar> {
     _location = "";
     shouldShowForm = false;
     super.initState();
+
+    source = 'https://localhost:7059/Calendar/all';
+    lastSource = '';
+    _fetchDataAsync(source);
   }
 
   Future<void> _fetchDataAsync(String source) async {
@@ -208,8 +213,6 @@ class CalendarState extends State<Calendar> {
 
   @override
   Widget build(BuildContext context) {
-    _fetchDataAsync(source);
-
     double imageSize =
         MediaQuery.of(context).size.width > mobileWidth ? 110.0 : 55.0;
 
@@ -227,7 +230,8 @@ class CalendarState extends State<Calendar> {
                       borderRadius: BorderRadius.circular(8),
                       onTap: () {
                         setState(() {
-                          source = 'https://localhost:7059/Calendar/All';
+                          _fetchDataAsync(
+                              'https://localhost:7059/Calendar/All');
                         });
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
@@ -248,7 +252,8 @@ class CalendarState extends State<Calendar> {
                       borderRadius: BorderRadius.circular(8),
                       onTap: () {
                         setState(() {
-                          source = 'https://localhost:7059/Calendar/welpen';
+                          _fetchDataAsync(
+                              'https://localhost:7059/Calendar/welpen');
                         });
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
@@ -269,8 +274,8 @@ class CalendarState extends State<Calendar> {
                       borderRadius: BorderRadius.circular(8),
                       onTap: () {
                         setState(() {
-                          source =
-                              'https://localhost:7059/Calendar/ZeeVerkenners';
+                          _fetchDataAsync(
+                              'https://localhost:7059/Calendar/ZeeVerkenners');
                         });
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
@@ -291,7 +296,8 @@ class CalendarState extends State<Calendar> {
                     child: InkWell(
                       onTap: () {
                         setState(() {
-                          source = 'https://localhost:7059/Calendar/matrozen';
+                          _fetchDataAsync(
+                              'https://localhost:7059/Calendar/matrozen');
                         });
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
@@ -312,7 +318,8 @@ class CalendarState extends State<Calendar> {
                       borderRadius: BorderRadius.circular(8),
                       onTap: () {
                         setState(() {
-                          source = 'https://localhost:7059/Calendar/stam';
+                          _fetchDataAsync(
+                              'https://localhost:7059/Calendar/stam');
                         });
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
@@ -389,7 +396,6 @@ class CalendarState extends State<Calendar> {
             DateFormat('yyyy-MM-dd').format(appointmentDetails.from).toString();
         _startTimeText =
             DateFormat('HH:mm').format(appointmentDetails.from).toString();
-        print(DateFormat('HH:mm:ss').format(appointmentDetails.from));
 
         _endDateText =
             DateFormat('yyyy-MM-dd').format(appointmentDetails.to).toString();
@@ -638,7 +644,8 @@ class CalendarState extends State<Calendar> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    sendDeleteRequest(_calendarId.toString(), _eventId);
+                    sendDeleteRequest(
+                        _calendarId.toString(), _eventId, context);
                   },
                   child: const Text('Verwijderen'),
                 )
