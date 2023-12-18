@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/config.dart';
 import 'package:ms18_applicatie/menu.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:ms18_applicatie/Login/screens/components/onboding_screen.dart';
 
 void main() {
@@ -14,6 +15,13 @@ class Maasgroep18App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      localizationsDelegates: <LocalizationsDelegate<Object>>[
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
+      supportedLocales: <Locale>[
+        Locale('nl', 'NL'),
+      ],
       navigatorKey: navigatorKey,
       title: 'Maasgroep 18 Applicatie',
       theme: ThemeData(
