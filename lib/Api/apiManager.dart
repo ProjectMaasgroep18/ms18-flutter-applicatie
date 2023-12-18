@@ -21,7 +21,7 @@ class ApiManager {
   }
 
   static Future<T> post<T>(String url,
-      [List<dynamic>? apiBody,
+      [Map<String, dynamic>? apiBody,
       Map<String, String>? requestHeaders]) async {
     http.Response response = await http.post(Uri.parse(apiUrl + url),
         headers: requestHeaders ?? apiHeaders, body: jsonEncode(apiBody ?? {}));
@@ -31,7 +31,7 @@ class ApiManager {
   }
 
   static Future<T> put<T>(String url,
-      [List<dynamic>? apiBody,
+      [Map<String, dynamic>? apiBody,
       Map<String, String>? requestHeaders]) async {
     http.Response response = await http.put(Uri.parse(apiUrl + url),
         headers: requestHeaders ?? apiHeaders, body: jsonEncode(apiBody ?? {}));
