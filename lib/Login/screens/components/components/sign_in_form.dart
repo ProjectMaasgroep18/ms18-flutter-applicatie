@@ -38,11 +38,11 @@ class _SignInFormState extends State<SignInForm> {
       isShowLoading = true;
       isShowConfetti = true;
     });
-    Future.delayed(Duration(seconds: 2), () {
+    Future.delayed(Duration(seconds: 0), () {
       if (_formKey.currentState!.validate()) {
         // show success
         check.fire();
-        Future.delayed(Duration(seconds: 2), () {
+        Future.delayed(Duration(seconds: 0), () {
           setState(() {
             isShowLoading = false;
           });
@@ -50,7 +50,7 @@ class _SignInFormState extends State<SignInForm> {
         });
       } else {
         error.fire();
-        Future.delayed(Duration(seconds: 2), () {
+        Future.delayed(Duration(seconds: 0), () {
           setState(() {
             isShowLoading = false;
           });
@@ -115,7 +115,7 @@ class _SignInFormState extends State<SignInForm> {
                         getRiveController(artboard);
                     confetti =
                         controller.findSMI("Trigger explosion") as SMITrigger;
-                    await Future.delayed(const Duration(seconds: 5), () {
+                    await Future.delayed(const Duration(seconds: 0), () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(

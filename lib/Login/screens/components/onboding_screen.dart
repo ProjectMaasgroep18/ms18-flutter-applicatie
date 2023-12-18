@@ -43,7 +43,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           child: const SizedBox(),
         )),
         AnimatedPositioned(
-          duration: Duration(milliseconds: 240),
+          duration: Duration(milliseconds: 0),
           top: isSignInDialogShown ? -50 : 0,
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
@@ -83,7 +83,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     icon: Icons.arrow_forward,
                     onTap: () {
                       _btnAnimationController.isActive = true;
-                      Future.delayed(const Duration(milliseconds: 800), () {
+                      Future.delayed(const Duration(milliseconds: 0), () {
                         setState(() {
                           isSignInDialogShown = true;
                         });

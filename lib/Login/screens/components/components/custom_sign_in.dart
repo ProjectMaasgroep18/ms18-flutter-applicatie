@@ -8,7 +8,7 @@ Future<Object?> customSigninDialog(BuildContext context,
     barrierDismissible: true,
     barrierLabel: "Sign up",
     context: context,
-    transitionDuration: const Duration(milliseconds: 800),
+    transitionDuration: const Duration(milliseconds: 0),
     transitionBuilder: (context, animation, secondaryAnimation, child) {
       Tween<Offset> tween = Tween(begin: const Offset(0, -1), end: Offset.zero);
       return SlideTransition(
