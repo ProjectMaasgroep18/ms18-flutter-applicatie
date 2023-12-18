@@ -43,7 +43,7 @@ class ApiManager {
     http.Response response = await http.get(Uri.parse(apiUrl + url),
         headers: requestHeaders ?? apiHeaders);
 
-    checkStatusCode(response)es
+    checkStatusCode(response);
     return tryJsonDecode(response.body);
   }
 
