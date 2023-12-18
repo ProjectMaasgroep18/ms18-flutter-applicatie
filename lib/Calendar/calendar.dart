@@ -104,32 +104,37 @@ class CalendarState extends State<Calendar> {
   }
 
   Future<void> sendCreateRequest(calendarName, id, startTime, endTime, title,
-      description, location, endDate, startDate, context) async {
-    // var time = endDate + endTime;
-    var tedail = description;
-    // var response = await http.post(
-    //     Uri.parse(restfulUrl).replace(queryParameters: {
-    //       'calendarName': calendarName,
-    //       'StarDateTime': "2023-12-11T07:15:00+01:00",
-    //       'EndDateTime': "2023-12-11T09:45:00+01:00",
-    //       'Title': title,
-    //       'Description': description,
-    //       'id': id,
-    //       'Location': location,
-    //       'CalendarId': calendarName
-    //     }),
-    //     headers: {"Content-Type": "application/json"});
+      description, location, endDate, startDate, contextForm) async {
+    var formattedFromStr =
+        DateTime.parse(startDate + " " + startTime).toIso8601String();
+    var formattedToStr =
+        DateTime.parse(endDate + " " + endTime).toIso8601String();
 
-    // if (response.statusCode == 200) {
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     const SnackBar(content: Text('Event aangemaakt')),
-    //   );
-    // } else {
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     SnackBar(content: Text('Event is niet aangemaakt, probeer opnieuw')),
-    //   );
-    // }
-    Navigator.of(context).pop();
+    var response = await http.post(
+        Uri.parse(restfulUrl).replace(queryParameters: {
+          'calendarName': calendarName,
+          'StarDateTime': formattedFromStr,
+          'EndDateTime': formattedToStr,
+          'Title': title,
+          'Description': description,
+          'id': "",
+          'Location': location,
+          'CalendarId': calendarName
+        }),
+        headers: {"Content-Type": "application/json"});
+
+    if (response.statusCode == 200) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Event aangepast')),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Event is niet aangepast, probeer opnieuw')),
+      );
+      return;
+    }
+    await _fetchDataAsync();
+    Navigator.of(contextForm).pop();
   }
 
   @override
@@ -470,29 +475,17 @@ class CalendarState extends State<Calendar> {
                 // Create new event.
                 ElevatedButton(
                   onPressed: () {
-                    print(_endDateText);
-                    print(_startDateText);
-
-                    print(enddateinput.text);
-                    print(startdateinput.text);
-
-                    print(endTime.text);
-                    print(startTime.text);
-
-                    // sendCreateRequest(
-                    // _calendarId.toString(),
-                    // _eventId,
-                    // _startTimeText,
-                    // _endTimeText,
-                    // _subjectText,
-                    // _description,
-                    // _location,
-                    // _endDateText,
-                    // _startDateText,
-                    // context);
-                    // Navigator.of(context).pop();
-
-                    // TODO: Add actual submission to back-end.
+                    sendCreateRequest(
+                        _calendarId.toString(),
+                        _eventId,
+                        startTime.text,
+                        endTime.text,
+                        _subjectText,
+                        _description,
+                        _location,
+                        startdateinput.text,
+                        enddateinput.text,
+                        context);
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Event toegevoegd')),
                     );
