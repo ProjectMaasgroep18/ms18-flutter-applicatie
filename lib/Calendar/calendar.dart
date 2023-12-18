@@ -54,10 +54,12 @@ class CalendarState extends State<Calendar> {
         SnackBar(content: Text('Event is niet verwijderd, probeer opnieuw')),
       );
     }
+    _fetchDataAsync();
   }
 
   Future<void> sendEditRequest(calendarName, id, startTime, endTime, title,
-      description, location, endDate, startDate) async {
+      description, location, endDate, startDate, contextForm) async {
+    //todo add loading icon of zo iets
     var response = await http.patch(
         Uri.parse(restfulUrl).replace(queryParameters: {
           'calendarName': calendarName,
@@ -79,7 +81,39 @@ class CalendarState extends State<Calendar> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Event is niet aangepast, probeer opnieuw')),
       );
+      return;
     }
+    await _fetchDataAsync();
+    Navigator.of(contextForm).pop();
+  }
+
+  Future<void> sendCreateRequest(calendarName, id, startTime, endTime, title,
+      description, location, endDate, startDate, context) async {
+    // var time = endDate + endTime;
+    var tedail = description;
+    // var response = await http.post(
+    //     Uri.parse(restfulUrl).replace(queryParameters: {
+    //       'calendarName': calendarName,
+    //       'StarDateTime': "2023-12-11T07:15:00+01:00",
+    //       'EndDateTime': "2023-12-11T09:45:00+01:00",
+    //       'Title': title,
+    //       'Description': description,
+    //       'id': id,
+    //       'Location': location,
+    //       'CalendarId': calendarName
+    //     }),
+    //     headers: {"Content-Type": "application/json"});
+
+    // if (response.statusCode == 200) {
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     const SnackBar(content: Text('Event aangemaakt')),
+    //   );
+    // } else {
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     SnackBar(content: Text('Event is niet aangemaakt, probeer opnieuw')),
+    //   );
+    // }
+    Navigator.of(context).pop();
   }
 
   @override
@@ -211,8 +245,12 @@ class CalendarState extends State<Calendar> {
         _timeDetails = '$_startTimeText - $_endTimeText';
 
         // Use existing values.
-        dateinput.text =
+        dateStartInput.text =
             DateFormat('dd MMMM, yyyy').format(appointmentDetails.from);
+
+        dateStopInput.text =
+            DateFormat('dd MMMM, yyyy').format(appointmentDetails.to);
+
         startTime.text = _startTimeText!;
         endTime.text = _endTimeText!;
 
@@ -226,18 +264,18 @@ class CalendarState extends State<Calendar> {
         // _location = appointmentDetails.location;
 
         shouldShowForm = true;
-        _startTimeText = DateFormat('hh:mm a').format(details.date!).toString();
+        _startTimeText = DateFormat('hh:mm').format(details.date!).toString();
 
         DateTime adjustedDateTime = details.date!.add(const Duration(hours: 1));
 
-        _endTimeText = DateFormat('hh:mm a').format(adjustedDateTime);
+        _endTimeText = DateFormat('hh:mm').format(adjustedDateTime);
 
         _subjectText = "Agenda item toevoegen";
 
         dateinput.text =
-            DateFormat('dd MMMM, yyyy').format(details.date!).toString();
-        startTime.text = DateFormat('hh:mm a').format(details.date!).toString();
-        endTime.text = DateFormat('hh:mm a').format(adjustedDateTime);
+            DateFormat('dd MM yyyy').format(details.date!).toString();
+        startTime.text = DateFormat('hh:mm').format(details.date!).toString();
+        endTime.text = DateFormat('hh:mm').format(adjustedDateTime);
 
         _timeDetails = "";
         break;
@@ -284,7 +322,7 @@ class CalendarState extends State<Calendar> {
                                   firstDate: DateTime(2000),
                                   lastDate: DateTime(2101));
                               if (pickedDate != null) {
-                                String formattedDate = DateFormat('dd MM, yyyy')
+                                String formattedDate = DateFormat('dd MM yyyy')
                                     .format(pickedDate)
                                     .toString();
                                 setState(() {
@@ -376,7 +414,7 @@ class CalendarState extends State<Calendar> {
                           decoration: const InputDecoration(
                             hintText: 'Titel',
                           ),
-                          initialValue: isNewEvent ? null : _subjectText,
+                          initialValue: isNewEvent ? "" : _subjectText,
                           onChanged: (String? value) {
                             _subjectText = value;
                           },
@@ -385,7 +423,7 @@ class CalendarState extends State<Calendar> {
                             decoration: const InputDecoration(
                               hintText: 'Locatie',
                             ),
-                            initialValue: isNewEvent ? null : _location,
+                            initialValue: isNewEvent ? "" : _location,
                             onChanged: (String? value) {
                               _location = value;
                             }),
@@ -395,7 +433,7 @@ class CalendarState extends State<Calendar> {
                             decoration: const InputDecoration(
                               hintText: 'Beschrijving',
                             ),
-                            initialValue: isNewEvent ? null : _description,
+                            initialValue: isNewEvent ? "" : _description,
                             onChanged: (String? value) {
                               _description = value;
                             }),
@@ -415,6 +453,19 @@ class CalendarState extends State<Calendar> {
                 // Create new event.
                 ElevatedButton(
                   onPressed: () {
+                    sendCreateRequest(
+                        _calendarId.toString(),
+                        _eventId,
+                        _startTimeText,
+                        _endTimeText,
+                        _subjectText,
+                        _description,
+                        _location,
+                        _endDateText,
+                        _startDateText,
+                        context);
+                    // Navigator.of(context).pop();
+
                     // TODO: Add actual submission to back-end.
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Event toegevoegd')),
@@ -436,7 +487,8 @@ class CalendarState extends State<Calendar> {
                         _description,
                         _location,
                         _endDateText,
-                        _startDateText);
+                        _startDateText,
+                        context);
                   },
                   child: const Text('Aanpassen'),
                 ),
