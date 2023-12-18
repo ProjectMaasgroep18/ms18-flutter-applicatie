@@ -61,7 +61,7 @@ class CalendarState extends State<Calendar> {
         SnackBar(content: Text('Event is niet verwijderd, probeer opnieuw')),
       );
     }
-    _fetchDataAsync();
+    _fetchDataAsync(source);
   }
 
   Future<void> sendEditRequest(
@@ -103,7 +103,7 @@ class CalendarState extends State<Calendar> {
       );
       return;
     }
-    await _fetchDataAsync();
+    await _fetchDataAsync(source);
     Navigator.of(contextForm).pop();
   }
 
@@ -137,7 +137,7 @@ class CalendarState extends State<Calendar> {
       );
       return;
     }
-    await _fetchDataAsync();
+    await _fetchDataAsync(source);
     Navigator.of(contextForm).pop();
   }
 
