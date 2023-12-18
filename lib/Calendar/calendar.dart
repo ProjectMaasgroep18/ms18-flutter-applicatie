@@ -35,6 +35,9 @@ class CalendarState extends State<Calendar> {
   bool shouldShowForm = false;
   final restfulUrl = 'https://localhost:7059/Calendar/Event';
 
+  String source = 'https://localhost:7059/Calendar/all';
+  String lastSource = '';
+
   Future<void> sendDeleteRequest(calendarName, id) async {
     var response = await http.delete(
         Uri.parse(restfulUrl).replace(queryParameters: {
@@ -63,18 +66,21 @@ class CalendarState extends State<Calendar> {
     _location = "";
     shouldShowForm = false;
     super.initState();
-    _fetchDataAsync();
+    // _fetchDataAsync();
   }
 
-  Future<void> _fetchDataAsync() async {
-    final data = await _getDataSourceAsync();
-    setState(() {
-      events = data;
-    });
+  Future<void> _fetchDataAsync(String source) async {
+    if (source != lastSource) {
+      var data = await _getDataSourceAsync(source);
+      setState(() {
+        lastSource = source;
+        events = data;
+      });
+    }
   }
 
-  Future<List<Event>> _getDataSourceAsync() async {
-    final String url = 'https://localhost:7059/Calendar/all';
+  Future<List<Event>> _getDataSourceAsync(String source) async {
+    String url = source;
 
     final response = await http.get(Uri.parse(url));
 
@@ -115,34 +121,155 @@ class CalendarState extends State<Calendar> {
 
   @override
   Widget build(BuildContext context) {
+    _fetchDataAsync(source);
+
     return Menu(
-      child: SfCalendar(
-        view: MediaQuery.of(context).size.width > 768
-            ? CalendarView.week
-            : CalendarView.day,
-        timeSlotViewSettings: const TimeSlotViewSettings(
-          timeFormat: 'HH:mm',
+      child: SizedBox(
+        child: Row(
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Material(
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(8),
+                      onTap: () {
+                        setState(() {
+                          source = 'https://localhost:7059/Calendar/All';
+                        });
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text('Keuze veranderd naar globaal')),
+                        );
+                      },
+                      child: ClipRRect(
+                        child: Image.asset('../assets/groups/globaal.png',
+                            width: 110.0, height: 110.0),
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Material(
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(8),
+                      onTap: () {
+                        setState(() {
+                          source = 'https://localhost:7059/Calendar/welpen';
+                        });
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text('Keuze veranderd naar welpen')),
+                        );
+                      },
+                      child: ClipRRect(
+                        child: Image.asset('../assets/groups/welpen.png',
+                            width: 110.0, height: 110.0),
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Material(
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(8),
+                      onTap: () {
+                        setState(() {
+                          source =
+                              'https://localhost:7059/Calendar/ZeeVerkenners';
+                        });
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content:
+                                  Text('Keuze veranderd naar zee verkenners')),
+                        );
+                      },
+                      child: ClipRRect(
+                        child: Image.asset('../assets/groups/zee_verkenner.png',
+                            width: 110.0, height: 110.0),
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Material(
+                    child: InkWell(
+                      onTap: () {
+                        setState(() {
+                          source = 'https://localhost:7059/Calendar/matrozen';
+                        });
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text('Keuze veranderd naar matrozen')),
+                        );
+                      },
+                      child: ClipRRect(
+                        child: Image.asset('../assets/groups/matrozen.png',
+                            width: 110.0, height: 110.0),
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Material(
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(8),
+                      onTap: () {
+                        setState(() {
+                          source = 'https://localhost:7059/Calendar/stam';
+                        });
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text('Keuze veranderd naar stam')),
+                        );
+                      },
+                      child: ClipRRect(
+                        child: Image.asset('../assets/groups/stam.png',
+                            width: 110.0, height: 110.0),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Expanded(
+              child: SfCalendar(
+                view: MediaQuery.of(context).size.width > 768
+                    ? CalendarView.week
+                    : CalendarView.day,
+                timeSlotViewSettings: const TimeSlotViewSettings(
+                  timeFormat: 'HH:mm',
+                ),
+                dataSource: EventDataSource(events),
+                scheduleViewSettings: scheduleViewSettings,
+                selectionDecoration: BoxDecoration(
+                  color: Colors.transparent,
+                  border: Border.all(color: Colors.blue, width: 2),
+                  borderRadius: const BorderRadius.all(Radius.circular(4)),
+                  shape: BoxShape.rectangle,
+                ),
+                todayHighlightColor: Colors.blue,
+                showNavigationArrow: true,
+                onTap: calendarTapped,
+                cellEndPadding: 40,
+                allowedViews: [
+                  CalendarView.day,
+                  CalendarView.week,
+                  CalendarView.month,
+                  CalendarView.schedule,
+                ],
+                monthViewSettings: const MonthViewSettings(
+                    navigationDirection: MonthNavigationDirection.vertical),
+              ),
+            ),
+          ],
         ),
-        dataSource: EventDataSource(events),
-        scheduleViewSettings: scheduleViewSettings,
-        selectionDecoration: BoxDecoration(
-          color: Colors.transparent,
-          border: Border.all(color: Colors.blue, width: 2),
-          borderRadius: const BorderRadius.all(Radius.circular(4)),
-          shape: BoxShape.rectangle,
-        ),
-        todayHighlightColor: Colors.blue,
-        showNavigationArrow: true,
-        onTap: calendarTapped,
-        cellEndPadding: 40,
-        allowedViews: [
-          CalendarView.day,
-          CalendarView.week,
-          CalendarView.month,
-          CalendarView.schedule,
-        ],
-        monthViewSettings: const MonthViewSettings(
-            navigationDirection: MonthNavigationDirection.vertical),
       ),
     );
   }
