@@ -25,6 +25,7 @@ class _ListPicturesState extends State<ListPictures> {
           date: DateTime(2019, 10, 11),
           uploader: 'Geupload door: Soumaia Mamo',
           likeCount: 107,
+          contentType : "",
         ),
         Photo(
           imageUrl: 'https://picsum.photos/750/300',
@@ -32,6 +33,7 @@ class _ListPicturesState extends State<ListPictures> {
           date: DateTime(2020, 11, 11),
           uploader: 'Geupload door: Rik Smits',
           likeCount: 117,
+          contentType : "",
         ),
         Photo(
           imageUrl: 'https://picsum.photos/750/300',
@@ -39,6 +41,7 @@ class _ListPicturesState extends State<ListPictures> {
           date: DateTime(2020, 10, 11),
           uploader: 'Geupload door: Soumaia Mamo',
           likeCount: 10117,
+          contentType : "",
         ),
         Photo(
           imageUrl: 'https://picsum.photos/750/300',
@@ -46,6 +49,7 @@ class _ListPicturesState extends State<ListPictures> {
           date: DateTime(2023, 10, 11),
           uploader: 'Geupload door: Soumaia Mamo',
           likeCount: 10147,
+          contentType : "",
         ),
         Photo(
           imageUrl: 'https://picsum.photos/750/300',
@@ -53,6 +57,7 @@ class _ListPicturesState extends State<ListPictures> {
           date: DateTime(2021, 10, 11),
           uploader: 'Geupload door: Frits',
           likeCount: 1074,
+          contentType : "",
         ),
         Photo(
           imageUrl: 'https://picsum.photos/750/300',
@@ -60,6 +65,7 @@ class _ListPicturesState extends State<ListPictures> {
           date: DateTime(2022, 10, 11),
           uploader: 'Geupload door: Elder',
           likeCount: 1,
+          contentType : "",
         ),
 
 
@@ -75,6 +81,7 @@ class _ListPicturesState extends State<ListPictures> {
           date: DateTime(2023, 11, 11),
           uploader: 'Geupload door: Rik Smits',
           likeCount: 107,
+          contentType : "",
         ),
         Photo(
           imageUrl: 'https://picsum.photos/750/300',
@@ -82,6 +89,7 @@ class _ListPicturesState extends State<ListPictures> {
           date: DateTime(2023, 10, 11),
           uploader: 'Geupload door: Rik Smits',
           likeCount: 107,
+          contentType : "",
         ),
 
         Photo(
@@ -90,6 +98,7 @@ class _ListPicturesState extends State<ListPictures> {
           date: DateTime(2023, 02, 11),
           uploader: 'Geupload door: Rik Smits',
           likeCount: 107,
+          contentType : "",
         ),
 
         Photo(
@@ -98,6 +107,7 @@ class _ListPicturesState extends State<ListPictures> {
           date: DateTime(2023, 10, 11),
           uploader: 'Geupload door: Rik Smits',
           likeCount: 107,
+          contentType : "",
         ),
       ],
 
@@ -112,6 +122,7 @@ class _ListPicturesState extends State<ListPictures> {
           date: DateTime(2023, 10, 11),
           uploader: 'Geupload door: Rik Smits',
           likeCount: 107,
+          contentType : "",
         ),
         Photo(
           imageUrl: 'https://picsum.photos/750/300',
@@ -119,6 +130,7 @@ class _ListPicturesState extends State<ListPictures> {
           date: DateTime(2022, 10, 11),
           uploader: 'Geupload door: Rik Smits',
           likeCount: 107,
+          contentType : "",
         ),
 
         Photo(
@@ -127,6 +139,7 @@ class _ListPicturesState extends State<ListPictures> {
           date: DateTime(2011, 11, 11),
           uploader: 'Geupload door: Rik Smits',
           likeCount: 107,
+          contentType : "",
         ),
         Photo(
           imageUrl: 'https://picsum.photos/750/300',
@@ -134,6 +147,7 @@ class _ListPicturesState extends State<ListPictures> {
           date: DateTime(2021, 11, 11),
           uploader: 'Geupload door: Rik Smits',
           likeCount: 1017,
+          contentType : "",
         ),
         Photo(
           imageUrl: 'https://picsum.photos/750/300',
@@ -141,6 +155,7 @@ class _ListPicturesState extends State<ListPictures> {
           date: DateTime(2022, 10, 11),
           uploader: 'Geupload door: Rik Smits',
           likeCount: 1097,
+          contentType : "",
         ),
         Photo(
           imageUrl: 'https://picsum.photos/750/300',
@@ -148,6 +163,7 @@ class _ListPicturesState extends State<ListPictures> {
           date: DateTime(2021, 10, 11),
           uploader: 'Geupload door: Rik Smits',
           likeCount: 1087,
+          contentType : "",
         ),
       ],
     ),
