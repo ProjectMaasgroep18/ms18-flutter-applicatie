@@ -32,8 +32,8 @@ class CalendarState extends State<Calendar> {
       _location;
   int? _calendarId;
   final CalendarController _controller = CalendarController();
-  TextEditingController startdateinput = TextEditingController();
-  TextEditingController enddateinput = TextEditingController();
+  TextEditingController startDateInput = TextEditingController();
+  TextEditingController endDateInput = TextEditingController();
   TextEditingController startTime = TextEditingController();
   TextEditingController endTime = TextEditingController();
   bool isNewEvent = false;
@@ -139,8 +139,8 @@ class CalendarState extends State<Calendar> {
 
   @override
   void initState() {
-    startdateinput.text = "";
-    enddateinput.text = "";
+    startDateInput.text = "";
+    endDateInput.text = "";
     startTime.text = "";
     endTime.text = "";
     isNewEvent = false; // Whether form is creating or updating event.
@@ -269,18 +269,12 @@ class CalendarState extends State<Calendar> {
         // Use existing values.
         startTime.text = _startTimeText!;
         endTime.text = _endTimeText!;
-        startdateinput.text = _startDateText!;
-        enddateinput.text = _endDateText!;
+        startDateInput.text = _startDateText!;
+        endDateInput.text = _endDateText!;
 
         break;
       case CalendarElement.calendarCell:
         isNewEvent = true;
-        // final Event appointmentDetails = details.appointments![0];
-        // _eventId = appointmentDetails.eventId;
-        // _calendarId = appointmentDetails.calendarId;
-        // _description = appointmentDetails.description;
-        // _location = appointmentDetails.location;
-
         shouldShowForm = true;
         _startTimeText = DateFormat('HH:mm').format(details.date!).toString();
 
@@ -290,9 +284,9 @@ class CalendarState extends State<Calendar> {
 
         _subjectText = "Agenda item toevoegen";
 
-        startdateinput.text =
+        startDateInput.text =
             DateFormat('yyyy-MM-dd').format(details.date!).toString();
-        enddateinput.text =
+        endDateInput.text =
             DateFormat('yyyy-MM-dd').format(details.date!).toString();
 
         startTime.text = DateFormat('HH:mm').format(details.date!).toString();
@@ -329,7 +323,7 @@ class CalendarState extends State<Calendar> {
 
                         // Create / update event form.
                         TextFormField(
-                            controller: startdateinput,
+                            controller: startDateInput,
                             decoration: const InputDecoration(
                                 labelText: "Vul startdatum in"),
                             readOnly: true,
@@ -347,7 +341,7 @@ class CalendarState extends State<Calendar> {
                                     .format(pickedDate)
                                     .toString();
                                 setState(() {
-                                  startdateinput.text = formattedDate;
+                                  startDateInput.text = formattedDate;
                                 });
                               }
                             },
@@ -355,7 +349,7 @@ class CalendarState extends State<Calendar> {
                               _startDateText = newValue;
                             }),
                         TextFormField(
-                            controller: enddateinput,
+                            controller: endDateInput,
                             decoration: const InputDecoration(
                                 labelText: "Vul einddatum in"),
                             readOnly: true,
@@ -374,7 +368,7 @@ class CalendarState extends State<Calendar> {
                                         .format(pickedDate)
                                         .toString();
                                 setState(() {
-                                  enddateinput.text = formattedEndDate;
+                                  endDateInput.text = formattedEndDate;
                                 });
                               }
                             },
@@ -485,8 +479,8 @@ class CalendarState extends State<Calendar> {
                         _subjectText,
                         _description,
                         _location,
-                        startdateinput.text,
-                        enddateinput.text,
+                        startDateInput.text,
+                        endDateInput.text,
                         context);
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Event toegevoegd')),
@@ -498,7 +492,6 @@ class CalendarState extends State<Calendar> {
                 // Edit existing event.
                 ElevatedButton(
                   onPressed: () {
-                    // TODO: Add actual submission to back-end.
                     sendEditRequest(
                         _calendarId.toString(),
                         _eventId,
@@ -507,8 +500,8 @@ class CalendarState extends State<Calendar> {
                         _subjectText,
                         _description,
                         _location,
-                        startdateinput.text,
-                        enddateinput.text,
+                        startDateInput.text,
+                        endDateInput.text,
                         context);
                   },
                   child: const Text('Aanpassen'),
