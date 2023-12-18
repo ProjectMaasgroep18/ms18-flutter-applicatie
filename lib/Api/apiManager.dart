@@ -5,10 +5,8 @@ import 'package:http/http.dart' as http;
 class ApiManager {
   static T tryJsonDecode<T>(String data) {
     try {
-      
       return json.decode(data) as T;
     } catch (error) {
-
       throw Exception('Failed to decode json');
     }
   }
@@ -19,7 +17,7 @@ class ApiManager {
           'Failed to load data, status code: ${response.statusCode}, body: ${response.body}');
     }
   }
-  
+
   static Future<T> post<T>(String url,
       [Map<String, dynamic>? apiBody,
       Map<String, String>? requestHeaders]) async {
@@ -29,11 +27,8 @@ class ApiManager {
 
     checkStatusCode(response);
     print("RESP: ${response.body}");
-    try {
-      return tryJsonDecode(response.body);
-    } catch (e) {
-      return response.body;
-    }
+
+    return tryJsonDecode(response.body);
   }
 
   static Future<T> put<T>(String url,
@@ -52,7 +47,7 @@ class ApiManager {
         headers: requestHeaders ?? apiHeaders);
 
     // checkStatusCode(response);
-    print( "Response GET : ${response.body}");
+    print("Response GET : ${response.body}");
     return tryJsonDecode(response.body);
   }
 

@@ -18,13 +18,14 @@ File? file;
 
 List<DropdownMenuItem<String>> _costCentres = [
   const DropdownMenuItem(
-  value: "Selecteer een kostencentrum",
-  enabled: false,
-  child: Text("Selecteer een kostencentrum"),
-)];
+    value: "Selecteer een kostencentrum",
+    enabled: false,
+    child: Text("Selecteer een kostencentrum"),
+  )
+];
 String? selectedCostCentre;
 
-ApiManager apiManager = ApiManager();
+// ApiManager apiManager = ApiManager();
 
 TextEditingController nameController = TextEditingController();
 TextEditingController descriptionController = TextEditingController();
@@ -41,13 +42,12 @@ class PickPhotoState extends State<PickPhoto> {
   @override
   void initState() {
     // Retrieve all the costcentres and put them in a list
-    apiManager.get("/api/v1/CostCentre").then((x) {
+    ApiManager.get("/api/v1/CostCentre").then((x) {
       List<dynamic> data = x;
       List<DropdownMenuItem<String>> temp = [];
       // Loop over the data and add the names to the list
       for (var i = 0; i < data.length; i++) {
-        temp.add(
-          DropdownMenuItem(
+        temp.add(DropdownMenuItem(
           value: data[i]['name'].toString(),
           child: Text(data[i]['name'].toString()),
         ));
@@ -100,16 +100,15 @@ class PickPhotoState extends State<PickPhoto> {
               isExpanded: true,
               value: selectedCostCentre,
               iconEnabledColor: mainColor,
-              style: const TextStyle(
-                  color: mainColor, fontSize: 17), underline: Container(
-              decoration: const BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(
-                      color:
-                      mainButtonColor), // Onderstreping kleur
+              style: const TextStyle(color: mainColor, fontSize: 17),
+              underline: Container(
+                decoration: const BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                        color: mainButtonColor), // Onderstreping kleur
+                  ),
                 ),
               ),
-            ),
               items: _costCentres,
               onChanged: (String? value) {
                 setState(() {
@@ -193,7 +192,7 @@ class PickPhotoState extends State<PickPhoto> {
                     );
                     return;
                   } else {
-                    var res = await apiManager.post(
+                    var res = await ApiManager.post(
                       "/api/v1/Receipt",
                       {
                         "amount": amountController.text,
