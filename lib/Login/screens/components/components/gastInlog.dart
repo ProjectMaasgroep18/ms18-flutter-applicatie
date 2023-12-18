@@ -1,22 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Dashboard/dashboard.dart';
-import 'package:ms18_applicatie/Dashboard/guestDashboard.dart';
 import 'package:ms18_applicatie/Widgets/buttons.dart';
 import 'package:ms18_applicatie/Widgets/inputFields.dart';
 import 'package:ms18_applicatie/Widgets/paddingSpacing.dart';
 import 'package:ms18_applicatie/menu.dart';
 import 'package:rive/rive.dart';
 
-class SignInForm extends StatefulWidget {
-  const SignInForm({
+class GastInfrom extends StatefulWidget {
+  const GastInfrom({
     super.key,
   });
 
   @override
-  State<SignInForm> createState() => _SignInFormState();
+  State<GastInfrom> createState() => _GastInfrom();
 }
 
-class _SignInFormState extends State<SignInForm> {
+class _GastInfrom extends State<GastInfrom> {
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool isShowLoading = false;
   bool isShowConfetti = false;
@@ -75,11 +74,6 @@ class _SignInFormState extends State<SignInForm> {
                 ),
                 const PaddingSpacing(),
                 const PaddingSpacing(),
-                const InputField(
-                  labelText: "Password",
-                  isUnderlineBorder: true,
-                  isPassword: true,
-                ),
                 const PaddingSpacing(),
                 const PaddingSpacing(),
                 const PaddingSpacing(),
@@ -120,7 +114,7 @@ class _SignInFormState extends State<SignInForm> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const GuestDashboard(),
+                          builder: (context) => const Dashboard(),
                         ),
                       );
                     });

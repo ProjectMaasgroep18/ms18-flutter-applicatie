@@ -7,16 +7,16 @@ import 'package:ms18_applicatie/Widgets/paddingSpacing.dart';
 import 'package:ms18_applicatie/menu.dart';
 import 'package:rive/rive.dart';
 
-class SignInForm extends StatefulWidget {
-  const SignInForm({
+class GuestSignInForm extends StatefulWidget {
+  const GuestSignInForm({
     super.key,
   });
 
   @override
-  State<SignInForm> createState() => _SignInFormState();
+  State<GuestSignInForm> createState() => _SignInFormState();
 }
 
-class _SignInFormState extends State<SignInForm> {
+class _SignInFormState extends State<GuestSignInForm> {
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool isShowLoading = false;
   bool isShowConfetti = false;
@@ -75,11 +75,6 @@ class _SignInFormState extends State<SignInForm> {
                 ),
                 const PaddingSpacing(),
                 const PaddingSpacing(),
-                const InputField(
-                  labelText: "Password",
-                  isUnderlineBorder: true,
-                  isPassword: true,
-                ),
                 const PaddingSpacing(),
                 const PaddingSpacing(),
                 const PaddingSpacing(),
