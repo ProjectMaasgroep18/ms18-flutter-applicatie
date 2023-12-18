@@ -6,20 +6,23 @@ class Button extends StatelessWidget {
   final String? text;
   final Function() onTap;
   final Color color;
-  const Button(
-      {super.key,
-      this.icon,
-      this.text,
-      required this.onTap,
-      this.color = mainColor});
+  final EdgeInsets padding;
+  const Button({
+    super.key,
+    this.icon,
+    this.text,
+    required this.onTap,
+    this.padding = const EdgeInsets.all(0),
+    this.color = mainColor
+  });
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: onTap,
       style: ElevatedButton.styleFrom(
-        padding: EdgeInsets.zero,
         backgroundColor: color,
+        padding: padding,
         minimumSize: const Size(10, 48),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(

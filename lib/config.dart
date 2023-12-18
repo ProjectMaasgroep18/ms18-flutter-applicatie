@@ -9,6 +9,7 @@ const Color backgroundColor = Color(0xfffafafa);
 const Color textColor = Colors.black;
 const Color textColorOnSecondColor = Color(0xFFf24300);
 const Color textColorOnMainColor = Colors.white;
+const Color shadowColor = Colors.blueGrey;
 const Color mainButtonColor = mainColor;
 
 // danillo's login

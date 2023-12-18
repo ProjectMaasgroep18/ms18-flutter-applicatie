@@ -19,15 +19,21 @@ class ApiManager {
           'Failed to load data, status code: ${response.statusCode}, body: ${response.body}');
     }
   }
-
+  
   static Future<T> post<T>(String url,
       [Map<String, dynamic>? apiBody,
       Map<String, String>? requestHeaders]) async {
+    print("Sending: $apiBody");
     http.Response response = await http.post(Uri.parse(apiUrl + url),
         headers: requestHeaders ?? apiHeaders, body: jsonEncode(apiBody ?? {}));
 
     checkStatusCode(response);
-    return tryJsonDecode(response.body);
+    print("RESP: ${response.body}");
+    try {
+      return tryJsonDecode(response.body);
+    } catch (e) {
+      return response.body;
+    }
   }
 
   static Future<T> put<T>(String url,
@@ -45,7 +51,8 @@ class ApiManager {
     http.Response response = await http.get(Uri.parse(apiUrl + url),
         headers: requestHeaders ?? apiHeaders);
 
-    checkStatusCode(response);
+    // checkStatusCode(response);
+    print( "Response GET : ${response.body}");
     return tryJsonDecode(response.body);
   }
 
