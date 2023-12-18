@@ -21,7 +21,7 @@ class ApiManager {
   static Future<T> post<T>(String url,
       [Map<String, dynamic>? apiBody,
       Map<String, String>? requestHeaders]) async {
-    print("Sending: $apiBody");
+    print("Sending: ${jsonEncode(apiBody)}");
     http.Response response = await http.post(Uri.parse(apiUrl + url),
         headers: requestHeaders ?? apiHeaders, body: jsonEncode(apiBody ?? {}));
 

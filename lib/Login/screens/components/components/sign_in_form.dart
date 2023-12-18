@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:ms18_applicatie/Api/apiManager.dart';
 import 'package:ms18_applicatie/Dashboard/dashboard.dart';
 import 'package:ms18_applicatie/Dashboard/guestDashboard.dart';
 import 'package:ms18_applicatie/Widgets/buttons.dart';
 import 'package:ms18_applicatie/Widgets/inputFields.dart';
 import 'package:ms18_applicatie/Widgets/paddingSpacing.dart';
+import 'package:ms18_applicatie/Widgets/popups.dart';
+import 'package:ms18_applicatie/config.dart';
 import 'package:ms18_applicatie/menu.dart';
 import 'package:rive/rive.dart';
 
@@ -26,6 +29,11 @@ class _SignInFormState extends State<SignInForm> {
   late SMITrigger reset;
 
   late SMITrigger confetti;
+
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+
+  static const String url = "api/v1/User";
 
   StateMachineController getRiveController(Artboard artboard) {
     StateMachineController? controller =
@@ -69,23 +77,44 @@ class _SignInFormState extends State<SignInForm> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const InputField(
+                InputField(
                   labelText: "Email",
                   isUnderlineBorder: true,
+                  controller: emailController,
                 ),
                 const PaddingSpacing(),
                 const PaddingSpacing(),
-                const InputField(
+                InputField(
                   labelText: "Password",
                   isUnderlineBorder: true,
                   isPassword: true,
+                  controller: passwordController,
                 ),
                 const PaddingSpacing(),
                 const PaddingSpacing(),
                 const PaddingSpacing(),
                 Button(
-                  onTap: () {
-                    signIn(context);
+                  onTap: () async {
+                    Map<String, String> body = {
+                      'email': emailController.text,
+                      'password': passwordController.text,
+                    };
+                    PopupAndLoading.showLoading();
+                    await ApiManager.post(url, body).then((value) {
+                      Map<String, dynamic> response = value;
+                      if (response["token"] != null) {
+                        setToken(response["token"]);
+                        setPrefString(response["permissions"][0], "role");
+                        signIn(context);
+                      }
+                    }).catchError((error) {
+                      print(error);
+                      PopupAndLoading.showError(
+                          "Inloggen mislukt probeer het nog eens!");
+                    });
+                    PopupAndLoading.endLoading();
+
+                    // signIn(context);
                   },
                   text: 'Sign in',
                   icon: Icons.arrow_forward,
