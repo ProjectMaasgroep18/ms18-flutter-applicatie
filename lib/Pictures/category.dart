@@ -1,13 +1,16 @@
 import 'photo.dart';
+//Deze pagina voor category model
 
 class Category {
-  final String title;
-  final DateTime date;
-  final List<Photo> photos;
+  String title;
+  DateTime date;
+  List<Photo> photos;
+  List<Category> subAlbums;
 
   Category({
     required this.title,
     required this.date,
-    required this.photos,
+    this.photos = const [],
+    this.subAlbums = const [],
   });
 }

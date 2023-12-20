@@ -1,3 +1,5 @@
+//Deze pagina is de photo model pagina ,
+
 class Photo {
   final String imageUrl;
   final String title;

@@ -37,7 +37,7 @@ class Menu extends StatelessWidget {
     menuItem.MenuItem(
         text: 'Foto\'s',
         icon: Icons.photo,
-        page: MaterialPageRoute(builder: (context) => const ListPictures())),
+        page: MaterialPageRoute(builder: (context) => ListPictures())),
     menuItem.MenuItem(
         text: 'Declaraties',
         icon: Icons.message,

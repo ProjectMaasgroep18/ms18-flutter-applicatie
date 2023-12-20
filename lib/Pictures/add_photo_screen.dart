@@ -7,6 +7,8 @@ import 'editable_file.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
+//Deze pagina voor de knop (Photo toevogen )
+
 Color mainColor = Color(0xFF15233d);
 
 class AddPhotoScreen extends StatefulWidget {
@@ -76,14 +78,6 @@ class _AddPhotoScreenState extends State<AddPhotoScreen> {
     }
   }
 
-  void _removeSelectedFile(int index) {
-    setState(() {
-      _selectedFiles.removeAt(index);
-      _titleControllers[index].dispose();
-      _titleControllers.removeAt(index);
-    });
-  }
-
   void _viewPhoto(int index) {
     Navigator.push(
       context,
@@ -92,6 +86,7 @@ class _AddPhotoScreenState extends State<AddPhotoScreen> {
       ),
     );
   }
+
   Widget _buildWebContent() {
     return Expanded(
       child: Container(
@@ -140,51 +135,36 @@ class _AddPhotoScreenState extends State<AddPhotoScreen> {
     return Column(
       children: [
         SizedBox(height: 20),
-        Center(
-          child: ElevatedButton(
-            onPressed: _takePhoto,
-            style: ElevatedButton.styleFrom(
-              primary: Colors.blue,
-              onPrimary: Colors.white,
-              padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30),
-              ),
-              elevation: 5,
-              textStyle: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+        ElevatedButton(
+          onPressed: _takePhoto,
+          style: ElevatedButton.styleFrom(
+            primary: Colors.blue,
+            onPrimary: Colors.white,
+            padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30),
             ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.camera_alt, color: Colors.white),
-                SizedBox(width: 8),
-                Text("Maak foto", style: TextStyle(color: Colors.white)),
-              ],
+            elevation: 5,
+            textStyle: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
             ),
           ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.camera_alt, color: Colors.white),
+              SizedBox(width: 8),
+              Text("Maak foto", style: TextStyle(color: Colors.white)),
+            ],
+          ),
         ),
-        if (photo != null) ...[
+        if (photo != null)
           Image.file(
             File(photo!.path),
             width: 250,
             height: 250,
           ),
-          Center(
-            child: IconButton(
-              icon: Icon(Icons.cancel),
-              onPressed: () {
-                setState(() {
-                  _selectedFiles.removeWhere((element) => element.file.path == photo!.path);
-                  photo = null;
-                  file = null;
-                });
-              },
-            ),
-          ),
-        ],
         SizedBox(height: 20),
       ],
     );
@@ -203,7 +183,6 @@ class _AddPhotoScreenState extends State<AddPhotoScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            if (isSmallScreen) _buildMobileContent(),
             Padding(
               padding: const EdgeInsets.only(bottom: 20.0),
               child: ElevatedButton.icon(
@@ -218,6 +197,7 @@ class _AddPhotoScreenState extends State<AddPhotoScreen> {
               ),
             ),
             if (!isSmallScreen) _buildWebContent(),
+            if (isSmallScreen) _buildMobileContent(),
             SizedBox(height: 20),
             if (_selectedFiles.isNotEmpty) ...[
               Expanded(
@@ -245,10 +225,6 @@ class _AddPhotoScreenState extends State<AddPhotoScreen> {
                                     border: OutlineInputBorder(),
                                   ),
                                 ),
-                              ),
-                              IconButton(
-                                icon: Icon(Icons.cancel),
-                                onPressed: () => _removeSelectedFile(index),
                               ),
                             ],
                           ),

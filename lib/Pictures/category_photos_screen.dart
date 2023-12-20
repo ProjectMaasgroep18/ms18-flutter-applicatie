@@ -5,6 +5,8 @@ import 'package:intl/intl.dart';
 import 'add_photo_screen.dart';
 import 'photo.dart';
 
+//Deze pagina is de photos pagina binnen een sub album .
+
 Color mainColor = Color(0xFF15233d);
 
 class CategoryPhotosScreen extends StatefulWidget {

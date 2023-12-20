@@ -4,7 +4,7 @@ import 'category.dart';
 import 'category_list_item.dart';
 import 'photo.dart';
 import 'add_category_screen.dart';
-import 'package:intl/intl.dart';
+import 'add_sub_category_screen.dart';
 
 class ListPictures extends StatefulWidget {
   const ListPictures({Key? key}) : super(key: key);
@@ -20,150 +20,334 @@ class _ListPicturesState extends State<ListPictures> {
       date: DateTime(2011, 10, 11),
       photos: [
         Photo(
-          imageUrl: 'https://picsum.photos/750/300',
-          title: 'Familiediner',
-          date: DateTime(2019, 10, 11),
-          uploader: 'Geupload door: Soumaia Mamo',
-          likeCount: 107,
-          contentType : "",
+          imageUrl: 'https://picsum.photos/750/300?random=1',
+          title: 'Nieuwjaarsfeest',
+          date: DateTime(2022, 1, 1),
+          uploader: 'Geupload door: Jan Jansen',
+          likeCount: 150,
+          contentType: "",
         ),
-        Photo(
-          imageUrl: 'https://picsum.photos/750/300',
-          title: 'Familiediner',
-          date: DateTime(2020, 11, 11),
-          uploader: 'Geupload door: Rik Smits',
-          likeCount: 117,
-          contentType : "",
-        ),
-        Photo(
-          imageUrl: 'https://picsum.photos/750/300',
-          title: 'Familiediner',
-          date: DateTime(2020, 10, 11),
-          uploader: 'Geupload door: Soumaia Mamo',
-          likeCount: 10117,
-          contentType : "",
-        ),
-        Photo(
-          imageUrl: 'https://picsum.photos/750/300',
-          title: 'Familiediner',
-          date: DateTime(2023, 10, 11),
-          uploader: 'Geupload door: Soumaia Mamo',
-          likeCount: 10147,
-          contentType : "",
-        ),
-        Photo(
-          imageUrl: 'https://picsum.photos/750/300',
-          title: 'Familiediner',
-          date: DateTime(2021, 10, 11),
-          uploader: 'Geupload door: Frits',
-          likeCount: 1074,
-          contentType : "",
-        ),
-        Photo(
-          imageUrl: 'https://picsum.photos/750/300',
-          title: 'Familiediner',
-          date: DateTime(2022, 10, 11),
-          uploader: 'Geupload door: Elder',
-          likeCount: 1,
-          contentType : "",
-        ),
-
-
-      ],
-    ),
-    Category(
-      title: 'Kerst eten 2',
-      date: DateTime(2023, 10, 10),
-      photos: [
-        Photo(
-          imageUrl: 'https://picsum.photos/750/300',
-          title: 'Familiediner',
-          date: DateTime(2023, 11, 11),
-          uploader: 'Geupload door: Rik Smits',
-          likeCount: 107,
-          contentType : "",
-        ),
-        Photo(
-          imageUrl: 'https://picsum.photos/750/300',
-          title: 'Familiediner',
-          date: DateTime(2023, 10, 11),
-          uploader: 'Geupload door: Rik Smits',
-          likeCount: 107,
-          contentType : "",
-        ),
-
-        Photo(
-          imageUrl: 'https://picsum.photos/750/300',
-          title: 'Familiediner',
-          date: DateTime(2023, 02, 11),
-          uploader: 'Geupload door: Rik Smits',
-          likeCount: 107,
-          contentType : "",
-        ),
-
-        Photo(
-          imageUrl: 'https://picsum.photos/750/300',
-          title: 'Familiediner',
-          date: DateTime(2023, 10, 11),
-          uploader: 'Geupload door: Rik Smits',
-          likeCount: 107,
-          contentType : "",
-        ),
-      ],
-
-    ),
-    Category(
-      title: 'Kerst eten 3',
-      date: DateTime(2021, 10, 10),
-      photos: [
-        Photo(
-          imageUrl: 'https://picsum.photos/750/300',
-          title: 'Familiediner',
-          date: DateTime(2023, 10, 11),
-          uploader: 'Geupload door: Rik Smits',
-          likeCount: 107,
-          contentType : "",
-        ),
-        Photo(
-          imageUrl: 'https://picsum.photos/750/300',
-          title: 'Familiediner',
-          date: DateTime(2022, 10, 11),
-          uploader: 'Geupload door: Rik Smits',
-          likeCount: 107,
-          contentType : "",
-        ),
-
         Photo(
           imageUrl: 'https://picsum.photos/750/300',
           title: 'Familiediner',
           date: DateTime(2011, 11, 11),
           uploader: 'Geupload door: Rik Smits',
           likeCount: 107,
-          contentType : "",
+          contentType: "",
         ),
-        Photo(
-          imageUrl: 'https://picsum.photos/750/300',
-          title: 'Familiediner',
-          date: DateTime(2021, 11, 11),
-          uploader: 'Geupload door: Rik Smits',
-          likeCount: 1017,
-          contentType : "",
+      ],
+      subAlbums: [
+        Category(
+          title: 'Sub Album 1',
+          date: DateTime(2022, 1, 1),
+          photos: [
+            Photo(
+              imageUrl: 'https://picsum.photos/750/300?random=1',
+              title: 'Nieuwjaarsfeest',
+              date: DateTime(2022, 1, 1),
+              uploader: 'Geupload door: Jan Jansen',
+              likeCount: 150,
+              contentType: "",
+            ),
+            Photo(
+              imageUrl: 'https://picsum.photos/750/300',
+              title: 'Familiediner',
+              date: DateTime(2011, 11, 11),
+              uploader: 'Geupload door: Rik Smits',
+              likeCount: 107,
+              contentType: "",
+            ),
+          ],
         ),
-        Photo(
-          imageUrl: 'https://picsum.photos/750/300',
-          title: 'Familiediner',
+        Category(
+          title: 'Sub Album 2',
+          date: DateTime(2022, 2, 14),
+          photos: [
+            Photo(
+              imageUrl: 'https://picsum.photos/750/300?random=2',
+              title: 'Valentijnsdag',
+              date: DateTime(2022, 2, 14),
+              uploader: 'Geupload door: Piet Pietersen',
+              likeCount: 200,
+              contentType: "",
+            ),
+            Photo(
+              imageUrl: 'https://picsum.photos/750/300',
+              title: 'Familiediner',
+              date: DateTime(2021, 11, 11),
+              uploader: 'Geupload door: Rik Smits',
+              likeCount: 1017,
+              contentType: "",
+            ),
+          ],
+        ),
+        Category(
+          title: 'Sub Album 3',
           date: DateTime(2022, 10, 11),
-          uploader: 'Geupload door: Rik Smits',
-          likeCount: 1097,
-          contentType : "",
+          photos: [
+            Photo(
+              imageUrl: 'https://picsum.photos/750/300',
+              title: 'Familiediner',
+              date: DateTime(2022, 10, 11),
+              uploader: 'Geupload door: Rik Smits',
+              likeCount: 1097,
+              contentType: "",
+            ),
+            Photo(
+              imageUrl: 'https://picsum.photos/750/300',
+              title: 'Familiediner',
+              date: DateTime(2021, 10, 11),
+              uploader: 'Geupload door: Rik Smits',
+              likeCount: 1087,
+              contentType: "",
+            ),
+          ],
+        ),
+        Category(
+          title: 'Sub Album 1',
+          date: DateTime(2022, 1, 1),
+          photos: [
+            Photo(
+              imageUrl: 'https://picsum.photos/750/300?random=1',
+              title: 'Nieuwjaarsfeest',
+              date: DateTime(2022, 1, 1),
+              uploader: 'Geupload door: Jan Jansen',
+              likeCount: 150,
+              contentType: "",
+            ),
+            Photo(
+              imageUrl: 'https://picsum.photos/750/300',
+              title: 'Familiediner',
+              date: DateTime(2011, 11, 11),
+              uploader: 'Geupload door: Rik Smits',
+              likeCount: 107,
+              contentType: "",
+            ),
+          ],
+        ),
+        Category(
+          title: 'Sub Album 2',
+          date: DateTime(2022, 2, 14),
+          photos: [
+            Photo(
+              imageUrl: 'https://picsum.photos/750/300?random=2',
+              title: 'Valentijnsdag',
+              date: DateTime(2022, 2, 14),
+              uploader: 'Geupload door: Piet Pietersen',
+              likeCount: 200,
+              contentType: "",
+            ),
+            Photo(
+              imageUrl: 'https://picsum.photos/750/300',
+              title: 'Familiediner',
+              date: DateTime(2021, 11, 11),
+              uploader: 'Geupload door: Rik Smits',
+              likeCount: 1017,
+              contentType: "",
+            ),
+          ],
+        ),
+        Category(
+          title: 'Sub Album 3',
+          date: DateTime(2022, 10, 11),
+          photos: [
+            Photo(
+              imageUrl: 'https://picsum.photos/750/300',
+              title: 'Familiediner',
+              date: DateTime(2022, 10, 11),
+              uploader: 'Geupload door: Rik Smits',
+              likeCount: 1097,
+              contentType: "",
+            ),
+            Photo(
+              imageUrl: 'https://picsum.photos/750/300',
+              title: 'Familiediner',
+              date: DateTime(2021, 10, 11),
+              uploader: 'Geupload door: Rik Smits',
+              likeCount: 1087,
+              contentType: "",
+            ),
+          ],
+        ),
+      ],
+    ),
+    Category(
+      title: 'Kerst eten 1',
+      date: DateTime(2011, 10, 11),
+      photos: [
+        Photo(
+          imageUrl: 'https://picsum.photos/750/300?random=1',
+          title: 'Nieuwjaarsfeest',
+          date: DateTime(2022, 1, 1),
+          uploader: 'Geupload door: Jan Jansen',
+          likeCount: 150,
+          contentType: "",
         ),
         Photo(
           imageUrl: 'https://picsum.photos/750/300',
           title: 'Familiediner',
-          date: DateTime(2021, 10, 11),
+          date: DateTime(2011, 11, 11),
           uploader: 'Geupload door: Rik Smits',
-          likeCount: 1087,
-          contentType : "",
+          likeCount: 107,
+          contentType: "",
+        ),
+      ],
+      subAlbums: [
+        Category(
+          title: 'Sub Album 1',
+          date: DateTime(2022, 1, 1),
+          photos: [
+            Photo(
+              imageUrl: 'https://picsum.photos/750/300?random=1',
+              title: 'Nieuwjaarsfeest',
+              date: DateTime(2022, 1, 1),
+              uploader: 'Geupload door: Jan Jansen',
+              likeCount: 150,
+              contentType: "",
+            ),
+            Photo(
+              imageUrl: 'https://picsum.photos/750/300',
+              title: 'Familiediner',
+              date: DateTime(2011, 11, 11),
+              uploader: 'Geupload door: Rik Smits',
+              likeCount: 107,
+              contentType: "",
+            ),
+          ],
+        ),
+        Category(
+          title: 'Sub Album 2',
+          date: DateTime(2022, 2, 14),
+          photos: [
+            Photo(
+              imageUrl: 'https://picsum.photos/750/300?random=2',
+              title: 'Valentijnsdag',
+              date: DateTime(2022, 2, 14),
+              uploader: 'Geupload door: Piet Pietersen',
+              likeCount: 200,
+              contentType: "",
+            ),
+            Photo(
+              imageUrl: 'https://picsum.photos/750/300',
+              title: 'Familiediner',
+              date: DateTime(2021, 11, 11),
+              uploader: 'Geupload door: Rik Smits',
+              likeCount: 1017,
+              contentType: "",
+            ),
+          ],
+        ),
+        Category(
+          title: 'Sub Album 3',
+          date: DateTime(2022, 10, 11),
+          photos: [
+            Photo(
+              imageUrl: 'https://picsum.photos/750/300',
+              title: 'Familiediner',
+              date: DateTime(2022, 10, 11),
+              uploader: 'Geupload door: Rik Smits',
+              likeCount: 1097,
+              contentType: "",
+            ),
+            Photo(
+              imageUrl: 'https://picsum.photos/750/300',
+              title: 'Familiediner',
+              date: DateTime(2021, 10, 11),
+              uploader: 'Geupload door: Rik Smits',
+              likeCount: 1087,
+              contentType: "",
+            ),
+          ],
+        ),
+      ],
+    ),
+    Category(
+      title: 'Kerst eten 1',
+      date: DateTime(2011, 10, 11),
+      photos: [
+        Photo(
+          imageUrl: 'https://picsum.photos/750/300?random=1',
+          title: 'Nieuwjaarsfeest',
+          date: DateTime(2022, 1, 1),
+          uploader: 'Geupload door: Jan Jansen',
+          likeCount: 150,
+          contentType: "",
+        ),
+        Photo(
+          imageUrl: 'https://picsum.photos/750/300',
+          title: 'Familiediner',
+          date: DateTime(2011, 11, 11),
+          uploader: 'Geupload door: Rik Smits',
+          likeCount: 107,
+          contentType: "",
+        ),
+      ],
+      subAlbums: [
+        Category(
+          title: 'Sub Album 1',
+          date: DateTime(2022, 1, 1),
+          photos: [
+            Photo(
+              imageUrl: 'https://picsum.photos/750/300?random=1',
+              title: 'Nieuwjaarsfeest',
+              date: DateTime(2022, 1, 1),
+              uploader: 'Geupload door: Jan Jansen',
+              likeCount: 150,
+              contentType: "",
+            ),
+            Photo(
+              imageUrl: 'https://picsum.photos/750/300',
+              title: 'Familiediner',
+              date: DateTime(2011, 11, 11),
+              uploader: 'Geupload door: Rik Smits',
+              likeCount: 107,
+              contentType: "",
+            ),
+          ],
+        ),
+        Category(
+          title: 'Sub Album 2',
+          date: DateTime(2022, 2, 14),
+          photos: [
+            Photo(
+              imageUrl: 'https://picsum.photos/750/300?random=2',
+              title: 'Valentijnsdag',
+              date: DateTime(2022, 2, 14),
+              uploader: 'Geupload door: Piet Pietersen',
+              likeCount: 200,
+              contentType: "",
+            ),
+            Photo(
+              imageUrl: 'https://picsum.photos/750/300',
+              title: 'Familiediner',
+              date: DateTime(2021, 11, 11),
+              uploader: 'Geupload door: Rik Smits',
+              likeCount: 1017,
+              contentType: "",
+            ),
+          ],
+        ),
+        Category(
+          title: 'Sub Album 3',
+          date: DateTime(2022, 10, 11),
+          photos: [
+            Photo(
+              imageUrl: 'https://picsum.photos/750/300',
+              title: 'Familiediner',
+              date: DateTime(2022, 10, 11),
+              uploader: 'Geupload door: Rik Smits',
+              likeCount: 1097,
+              contentType: "",
+            ),
+            Photo(
+              imageUrl: 'https://picsum.photos/750/300',
+              title: 'Familiediner',
+              date: DateTime(2021, 10, 11),
+              uploader: 'Geupload door: Rik Smits',
+              likeCount: 1087,
+              contentType: "",
+            ),
+          ],
         ),
       ],
     ),
@@ -216,6 +400,14 @@ class _ListPicturesState extends State<ListPictures> {
     });
   }
 
+  void _navigateToAddSubAlbumScreen(Category parentCategory) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => AddSubAlbumScreen(parentCategory: parentCategory),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     List<DropdownMenuItem<int>> yearItems = [
@@ -244,7 +436,7 @@ class _ListPicturesState extends State<ListPictures> {
                 child: TextField(
                   controller: _searchController,
                   decoration: InputDecoration(
-                    labelText: 'Zoek op Categories',
+                    labelText: 'Zoek op Albums',
                     suffixIcon: IconButton(
                       icon: Icon(Icons.search),
                       onPressed: _performSearch,
@@ -267,36 +459,9 @@ class _ListPicturesState extends State<ListPictures> {
                   return CategoryListItem(
                     category: _filteredCategories[index],
                     onDelete: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text('Delete Category'),
-                            content: Text('Weet u zeker dat u deze categorie wilt verwijderen? '),
-                            actions: <Widget>[
-                              TextButton(
-                                child: Text('Annuleren'),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                              TextButton(
-                                child: Text('verwijderen'),
-                                onPressed: () {
-                                  setState(() {
-                                    _filteredCategories.removeAt(index);
-                                    //Hier moeten we nog de categorie vanuit de database verwijderen .
-                                    });
-
-
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                            ],
-                          );
-                        },
-                      );
+                      // Existing delete logic...
                     },
+                    onAddSubAlbum: () => _navigateToAddSubAlbumScreen(_filteredCategories[index]),
                   );
                 },
               ),
@@ -310,7 +475,7 @@ class _ListPicturesState extends State<ListPictures> {
             );
           },
           child: Icon(Icons.add),
-          tooltip: 'Nieuwe Categorie Toevoegen',
+          tooltip: 'Nieuwe Album Toevoegen',
         ),
       ),
     );

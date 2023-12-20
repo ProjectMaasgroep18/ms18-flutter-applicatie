@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'photo.dart';
-
+//Deze pagina is de photo details pagina , (als jij op een photo klikt)
 Color mainColor = Color(0xFF15233d);
 
 class PhotoDetailScreen extends StatefulWidget {
@@ -87,7 +87,7 @@ class _PhotoDetailScreenState extends State<PhotoDetailScreen> {
                         width: 200,
                         child: ElevatedButton(
                           onPressed: () {
-                            //Opslaan button logic here
+                            //Opslaan  button logic here
                           },
                           style: ElevatedButton.styleFrom(
                             primary: mainColor,

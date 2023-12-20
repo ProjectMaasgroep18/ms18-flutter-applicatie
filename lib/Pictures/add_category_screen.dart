@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'category.dart';
+
+//Deze pagina voor de knop (Album toevogen )
 
 class AddCategoryScreen extends StatefulWidget {
+  final Category? parentCategory;
+
+  AddCategoryScreen({Key? key, this.parentCategory}) : super(key: key);
+
   @override
   _AddCategoryScreenState createState() => _AddCategoryScreenState();
 }
@@ -39,7 +46,7 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add New Category'),
+        title: Text('Add New Album'),
         backgroundColor: mainColor,
       ),
       body: Padding(
@@ -50,7 +57,7 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
             TextField(
               controller: _titleController,
               decoration: InputDecoration(
-                labelText: 'Categorie Titel',
+                labelText: 'Album Titel',
                 border: OutlineInputBorder(),
               ),
             ),
