@@ -235,52 +235,61 @@ class _DeclarationsState extends State<Declarations> {
           actions: <Widget>[
             TextButton(
               onPressed: () async {
-                // Update the status
-                var res = ApiManager
-                    .post("/api/v1/Receipt/${declInfo['id']}/Approve", {
+                // Update the statu
+                var res = ApiManager.post(
+                    "/api/v1/Receipt/${declInfo['id']}/Approve", {
                   "receiptId": declInfo['id'],
                   "note": declInfo['note'],
                   "approved": true,
                 });
-                // Show snackbar
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text("Declaratie goedgekeurd"),
-                  ),
-                );
-                Navigator.pop(context);
-                setState(() {
-                  _future = null;
-                });
-                setState(() {
-                  _future = ApiManager.get("/api/v1/Receipt");
-                });
-                            },
+
+                if (res != null) {
+                  // Show snackbar
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Declaratie goedgekeurd"),
+                    ),
+                  );
+                  Navigator.pop(context);
+                  setState(() {
+                    _future = null;
+                  });
+                  setState(() {
+                    _future = ApiManager.get("/api/v1/Receipt");
+                  });
+                }
+              },
               child: const Text('Goedkeuren'),
             ),
             TextButton(
               onPressed: () {
                 // Update the status
-                var res = ApiManager
-                    .post("/api/v1/Receipt/${declInfo['id']}/Approve", {
+
+                var res = ApiManager.post(
+                    "/api/v1/Receipt/${declInfo['id']}/Approve", {
+
                   "receiptId": declInfo['id'],
                   "note": declInfo['note'],
                   "approved": false,
                 });
-                // Show snackbar
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text("Declaratie afgekeurd"),
-                  ),
-                );
-                Navigator.pop(context);
-                setState(() {
-                  _future = null;
-                });
-                setState(() {
-                  _future = ApiManager.get("/api/v1/Receipt");
-                });
-                            },
+
+                if (res != null) {
+                  // Show snackbar
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Declaratie afgekeurd"),
+                    ),
+                  );
+                  Navigator.pop(context);
+                  setState(() {
+                    _future = null;
+                  });
+                  setState(() {
+                    _future = ApiManager.get("/api/v1/Receipt");
+                  });
+                }
+              },
+
               child: const Text('Afkeuren'),
             ),
             TextButton(

@@ -10,6 +10,7 @@ class ApiManager {
 
     try {
       return json.decode(response.body) as T;
+
     } catch (error) {
       throw Exception('Failed to decode json');
     }
@@ -26,11 +27,14 @@ class ApiManager {
   static Future<T> post<T>(String url,
       [Map<String, dynamic>? apiBody,
       Map<String, String>? requestHeaders]) async {
+    print("Sending: ${jsonEncode(apiBody)}");
     http.Response response = await http.post(Uri.parse(apiUrl + url),
         headers: requestHeaders ?? apiHeaders, body: jsonEncode(apiBody ?? {}));
 
     checkStatusCode(response);
-    return tryJsonDecode(response);
+    print("RESP: ${response.body}");
+
+    return tryJsonDecode(response.body);
   }
 
   static Future<T> put<T>(String url,
@@ -49,7 +53,10 @@ class ApiManager {
         headers: requestHeaders ?? apiHeaders);
 
     checkStatusCode(response);
-    return tryJsonDecode(response);
+    // checkStatusCode(response);
+    print("Response GET : ${response.body}");
+    return tryJsonDecode(response.body);
+
   }
 
   static Future<T> delete<T>(String url,

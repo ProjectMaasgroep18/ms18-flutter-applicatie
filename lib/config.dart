@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 //Colors
 const Color mainColor = Color.fromARGB(255, 23, 32, 58);
@@ -112,3 +113,22 @@ const Map<String, String> apiHeaders = {
   "Accept": "application/json",
   'Authorization': "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTA3MDc0MzcsImlzcyI6ImxvY2FsaG9zdCIsImF1ZCI6ImxvY2FsaG9zdCJ9.QRI6yDHWQNgQg96itDxMMWb9FXUplSuZA4Vo3LvzJ2U"
 };
+
+Future<String?> getToken() async {
+  final prefs = await SharedPreferences.getInstance();
+  final res = prefs.getString('token');
+
+  return res;
+}
+
+setToken(String token) async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.remove('token');
+  await prefs.setString('token', token);
+}
+
+setPrefString(String value, String key) async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.remove(key);
+  await prefs.setString(key, value);
+}
