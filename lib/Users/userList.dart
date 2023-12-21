@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:ms18_applicatie/Api/apiManager.dart';
+import 'package:ms18_applicatie/Models/stock.dart';
 import 'package:ms18_applicatie/Models/user.dart';
+import 'package:ms18_applicatie/Stock/stockReport.dart';
 import 'package:ms18_applicatie/Users/widgets.dart';
 import 'package:ms18_applicatie/Widgets/inputFields.dart';
 import 'package:ms18_applicatie/Widgets/inputPopup.dart';
@@ -16,6 +19,27 @@ class UserList extends StatefulWidget {
 }
 
 class UserListState extends State<UserList> {
+  static const String url = "api/v1/User";
+
+  Future<List<User>> getUsers() async {
+    List<User> userList = [];
+
+    await ApiManager.get<List<dynamic>>(url).then((data) {
+      for (Map<String, dynamic> apiUser in data) {
+        User tempUser = User(
+            firstName: apiUser["name"],
+            lastName: "",
+            email: apiUser["email"],
+            hashedPassword: "",
+            dateOfBirth: DateTime.now(),
+            gender: true);
+        userList.add(tempUser);
+      }
+    });
+
+    return userList;
+  }
+
   final List<User> userListFromApi = [
     User(
       firstName: "Frans",
@@ -66,19 +90,31 @@ class UserListState extends State<UserList> {
               addUser();
             },
           ),
-          Flexible(
-            child: ListView.separated(
-              padding: const EdgeInsets.all(mobilePadding),
-              shrinkWrap: true,
-              itemCount: userListFromApi.length,
-              separatorBuilder: (context, index) => const Divider(),
-              itemBuilder: (context, index) {
-                return UserElement(
-                  user: userListFromApi[index],
-                );
-              },
-            ),
-          ),
+          FutureBuilder(
+              future: getUsers(),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return const Text("Er is iets misgegaan");
+                } else if (snapshot.hasData) {
+                  List<User> users = snapshot.data ?? [];
+                  return Flexible(
+                      child: ListView.separated(
+                    padding: const EdgeInsets.all(mobilePadding),
+                    shrinkWrap: true,
+                    itemCount: users.length,
+                    separatorBuilder: (context, index) => const Divider(),
+                    itemBuilder: (context, index) {
+                      return UserElement(
+                        user: users[index],
+                      );
+                    },
+                  ));
+                } else {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+              }),
         ],
       ),
     ));
