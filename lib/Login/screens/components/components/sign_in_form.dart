@@ -21,10 +21,8 @@ class SignInForm extends StatefulWidget {
 
 class _SignInFormState extends State<SignInForm> {
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  bool isShowLoading = false;
   bool isShowConfetti = false;
 
-  late SMITrigger check;
   late SMITrigger error;
   late SMITrigger reset;
 
@@ -33,7 +31,7 @@ class _SignInFormState extends State<SignInForm> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
-  static const String url = "api/v1/User";
+  static const String url = "api/v1/User/Login";
 
   StateMachineController getRiveController(Artboard artboard) {
     StateMachineController? controller =
@@ -44,28 +42,14 @@ class _SignInFormState extends State<SignInForm> {
 
   void signIn(BuildContext context) {
     setState(() {
-      isShowLoading = true;
       isShowConfetti = true;
     });
-    Future.delayed(Duration(seconds: 2), () {
-      if (_formKey.currentState!.validate()) {
-        // show success
-        check.fire();
-        Future.delayed(Duration(seconds: 2), () {
-          setState(() {
-            isShowLoading = false;
-          });
-          confetti.fire();
-        });
-      } else {
-        error.fire();
-        Future.delayed(Duration(seconds: 2), () {
-          setState(() {
-            isShowLoading = false;
-          });
-        });
-      }
-    });
+    if (_formKey.currentState!.validate()) {
+
+      confetti.fire();
+    } else {
+      error.fire();
+    }
   }
 
   @override
@@ -104,36 +88,22 @@ class _SignInFormState extends State<SignInForm> {
                       Map<String, dynamic> response = value;
                       if (response["token"] != null) {
                         setToken(response["token"]);
-                        setPrefString(response["permissions"][0], "role");
+                        setPrefString(
+                            response["member"]["permissions"][0], "role");
                         signIn(context);
                       }
                     }).catchError((error) {
-                      print(error);
+                      print("ERROR: $error");
                       PopupAndLoading.showError(
                           "Inloggen mislukt probeer het nog eens!");
                     });
                     PopupAndLoading.endLoading();
-
-                    // signIn(context);
                   },
                   text: 'Sign in',
                   icon: Icons.arrow_forward,
                 ),
               ],
             )),
-        isShowLoading
-            ? CustomPositioned(
-                child: RiveAnimation.asset(
-                "assets/RiveAssets/check.riv",
-                onInit: (artboard) {
-                  StateMachineController controller =
-                      getRiveController(artboard);
-                  check = controller.findSMI("Check") as SMITrigger;
-                  error = controller.findSMI("Error") as SMITrigger;
-                  reset = controller.findSMI("Reset") as SMITrigger;
-                },
-              ))
-            : const SizedBox(),
         isShowConfetti
             ? CustomPositioned(
                 child: Transform.scale(
@@ -145,14 +115,12 @@ class _SignInFormState extends State<SignInForm> {
                         getRiveController(artboard);
                     confetti =
                         controller.findSMI("Trigger explosion") as SMITrigger;
-                    await Future.delayed(const Duration(seconds: 5), () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const GuestDashboard(),
-                        ),
-                      );
-                    });
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const GuestDashboard(),
+                      ),
+                    );
                   },
                 ),
               ))
