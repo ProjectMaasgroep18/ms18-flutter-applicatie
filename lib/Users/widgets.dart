@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Models/user.dart';
+import 'package:ms18_applicatie/Users/functions.dart';
 import 'package:ms18_applicatie/Widgets/inputFields.dart';
 import 'package:ms18_applicatie/Widgets/inputPopup.dart';
 import 'package:ms18_applicatie/Widgets/paddingSpacing.dart';
@@ -12,16 +13,18 @@ import '../config.dart';
 Future<void> addUsersDialog(BuildContext context, Function(User user) onSave,
     [Function()? onDelete, User? user]) async {
   bool isChange = user != null;
+  // Check if user is guest, but only if it is not a new user
   bool isGuest = false;
   if (isChange) isGuest = user.guest;
-  final ValueNotifier<bool> checkboxState = ValueNotifier<bool>(false);
+  final ValueNotifier<bool> guestCheckboxState = ValueNotifier<bool>(false);
 
-  user ??= User(id:0, name: "", email: "", hashedPassword: "", guest: false);
+  user ??= User(id: 0, name: "", email: "", password: "", guest: false);
+
   TextEditingController nameController = TextEditingController(text: user.name);
   TextEditingController emailController =
       TextEditingController(text: user.email);
   TextEditingController passwordController =
-      TextEditingController(text: user.hashedPassword);
+      TextEditingController(text: user.password);
 
   await showInputPopup(context,
       title: "Gebruiker ${isChange ? 'wijzigen' : 'toevoegen'}",
@@ -40,28 +43,26 @@ Future<void> addUsersDialog(BuildContext context, Function(User user) onSave,
         ),
         const PaddingSpacing(),
         ValueListenableBuilder(
-          valueListenable: checkboxState,
+          valueListenable: guestCheckboxState,
           builder: (BuildContext context, dynamic value, Widget? child) {
-            return Flexible(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text('Gast gebruiker'),
-                  CupertinoSwitch(
-                    activeColor: mainColor,
-                    value: checkboxState.value,
-                    onChanged: (value) {
-                      isGuest = value;
-                      checkboxState.value = value;
-                    },
-                  ),
-                ],
-              ),
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('Gast gebruiker'),
+                CupertinoSwitch(
+                  activeColor: mainColor,
+                  value: guestCheckboxState.value,
+                  onChanged: (value) {
+                    isGuest = value;
+                    guestCheckboxState.value = value;
+                  },
+                ),
+              ],
             );
           },
         ),
         ValueListenableBuilder(
-            valueListenable: checkboxState,
+            valueListenable: guestCheckboxState,
             builder: (BuildContext context, dynamic value, Widget? child) {
               // If it is a new user, allow a password to be entered
 
@@ -99,10 +100,26 @@ Future<void> addUsersDialog(BuildContext context, Function(User user) onSave,
     user!
       ..name = nameController.text
       ..email = emailController.text
-      ..hashedPassword = passwordController.text
+      ..password = passwordController.text
       ..guest = isGuest;
     onSave(user);
   });
+}
+
+Future<String?> askPasswordConfirmation(BuildContext context) async {
+
+  TextEditingController passwordController = TextEditingController();
+
+  await showInputPopup(context,
+      title: "Wachtwoord ter controle",
+      child: Column(
+        children: [
+          const Align(alignment: Alignment.topLeft, child: Text("Vul je wachtwoord door te gaan")),
+          InputField(isPassword: true,controller: passwordController,)
+        ],
+      ),
+      onSave: () {Navigator.of(context).pop();return passwordController.text;});
+  return null;
 }
 
 class UserElement extends StatelessWidget {
