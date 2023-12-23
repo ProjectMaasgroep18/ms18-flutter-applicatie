@@ -1,21 +1,15 @@
 class User {
-  final String firstName;
-  final String lastName;
-  final String email;
-  final String hashedPassword;
-  final DateTime dateOfBirth;
-  final bool gender;
-  final String ? profilePicture;
-  String get fullName => '$firstName $lastName';
-
+  int id;
+  String name;
+  String email;
+  String hashedPassword;
+  bool guest;
 
   User({
-    required this.firstName,
-    required this.lastName,
+    required this.id,
+    required this.name,
     required this.email,
     required this.hashedPassword,
-    required this.dateOfBirth,
-    required this.gender,
-    this.profilePicture
+    required this.guest
   });
 }
