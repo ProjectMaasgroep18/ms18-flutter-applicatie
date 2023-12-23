@@ -8,7 +8,9 @@ class PageHeader extends StatelessWidget {
   final TextEditingController searchController = TextEditingController();
   final Function() onAdd;
   final String title;
-  PageHeader({super.key, required this.title,required this.onAdd });
+  final Function(String value)? onSearch;
+  PageHeader(
+      {super.key, required this.title, required this.onAdd, this.onSearch});
 
   @override
   Widget build(BuildContext context) {
@@ -19,19 +21,21 @@ class PageHeader extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Expanded(
+              Expanded(
                 flex: 7,
                 child: InputField(
                   isUnderlineBorder: false,
                   icon: Icons.search,
                   hintText: "Search",
+                  onChange: (value) {
+                    if (onSearch != null) {
+                      onSearch!(value ?? '');
+                    }
+                  },
                 ),
               ),
               const PaddingSpacing(),
-              Expanded(
-                flex: 3,
-                child: Button(onTap: onAdd, icon: Icons.add)
-              )
+              Expanded(flex: 3, child: Button(onTap: onAdd, icon: Icons.add))
             ],
           ),
           const PaddingSpacing(),

@@ -111,6 +111,8 @@ Future<void> addItemsDialog(
         ..name = nameController.text
         ..price = double.parse(priceController.text)
         ..icon = icon;
+
+      stockProduct.quantity = int.tryParse(countController.text) ?? 0;  
       onSave(stockProduct);
     }
   });
