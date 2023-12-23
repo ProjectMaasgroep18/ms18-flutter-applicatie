@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Api/apiManager.dart';
 import 'package:ms18_applicatie/Dashboard/dashboard.dart';
@@ -47,25 +49,53 @@ class _SignInFormState extends State<SignInForm> {
       isShowLoading = true;
       isShowConfetti = true;
     });
-    Future.delayed(Duration(seconds: 2), () {
-      if (_formKey.currentState!.validate()) {
-        // show success
-        check.fire();
-        Future.delayed(Duration(seconds: 2), () {
-          setState(() {
-            isShowLoading = false;
-          });
-          confetti.fire();
+
+    if (_formKey.currentState!.validate()) {
+      // show success
+      check.fire();
+      Future.delayed(Duration(seconds: 1), () {
+        setState(() {
+          isShowLoading = false;
         });
-      } else {
-        error.fire();
-        Future.delayed(Duration(seconds: 2), () {
-          setState(() {
-            isShowLoading = false;
-          });
+        confetti.fire();
+        Future.delayed(Duration(seconds: 1), () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const Dashboard(),
+            ),
+          );
         });
+      });
+    } else {
+      error.fire();
+      Future.delayed(Duration(seconds: 2), () {
+        setState(() {
+          isShowLoading = false;
+        });
+      });
+    }
+  }
+
+  Future apiLogin() async {
+    Map<String, String> body = {
+      'email': emailController.text,
+      'password': passwordController.text,
+    };
+    PopupAndLoading.showLoading();
+    await ApiManager.post(url + '/Login', body).then((value) {
+      Map<String, dynamic> response = value;
+
+      if (response["token"] != null) {
+        setToken(response["token"]);
+        signIn(context);
+        setPrefString(response["member"]["permissions"][0], "role");
       }
+    }).catchError((error) {
+      print(error);
+      PopupAndLoading.showError("Inloggen mislukt probeer het nog eens!");
     });
+    PopupAndLoading.endLoading();
   }
 
   @override
@@ -95,25 +125,7 @@ class _SignInFormState extends State<SignInForm> {
                 const PaddingSpacing(),
                 Button(
                   onTap: () async {
-                    Map<String, String> body = {
-                      'email': emailController.text,
-                      'password': passwordController.text,
-                    };
-                    PopupAndLoading.showLoading();
-                    await ApiManager.post(url, body).then((value) {
-                      Map<String, dynamic> response = value;
-                      if (response["token"] != null) {
-                        setToken(response["token"]);
-                        setPrefString(response["permissions"][0], "role");
-                        signIn(context);
-                      }
-                    }).catchError((error) {
-                      print(error);
-                      PopupAndLoading.showError(
-                          "Inloggen mislukt probeer het nog eens!");
-                    });
-                    PopupAndLoading.endLoading();
-
+                    apiLogin();
                     // signIn(context);
                   },
                   text: 'Sign in',
