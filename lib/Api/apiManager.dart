@@ -11,8 +11,9 @@ class ApiManager {
     }
   }
 
-  static void checkStatusCode(var response) {
-    if (response.statusCode != 200) {
+  static void checkStatusCode(http.Response response) {
+    int statusCode = response.statusCode;
+    if (!allowedStatusCodes.contains(statusCode)) {
       throw Exception(
           'Failed to load data, status code: ${response.statusCode}, body: ${response.body}');
     }
@@ -20,7 +21,7 @@ class ApiManager {
 
   static Future<T> post<T>(String url,
       [Map<String, dynamic>? apiBody,
-      Map<String, String>? requestHeaders]) async {
+        Map<String, String>? requestHeaders]) async {
     print("Sending: ${jsonEncode(apiBody)}");
     http.Response response = await http.post(Uri.parse(apiUrl + url),
         headers: requestHeaders ?? apiHeaders, body: jsonEncode(apiBody ?? {}));
@@ -33,7 +34,7 @@ class ApiManager {
 
   static Future<T> put<T>(String url,
       [Map<String, dynamic>? apiBody,
-      Map<String, String>? requestHeaders]) async {
+        Map<String, String>? requestHeaders]) async {
     http.Response response = await http.put(Uri.parse(apiUrl + url),
         headers: requestHeaders ?? apiHeaders, body: jsonEncode(apiBody ?? {}));
 
