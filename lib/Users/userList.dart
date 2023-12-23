@@ -7,6 +7,8 @@ import 'package:ms18_applicatie/Widgets/popups.dart';
 import 'package:ms18_applicatie/config.dart';
 import 'package:ms18_applicatie/menu.dart';
 
+import '../Widgets/search.dart';
+
 class UserList extends StatefulWidget {
   const UserList({Key? key}) : super(key: key);
 
@@ -29,7 +31,7 @@ class UserListState extends State<UserList> {
         User tempUser = User(
             id: apiUser["id"],
             name: apiUser["name"],
-            email: apiUser["email"]?? "",
+            email: apiUser["email"] ?? "",
             hashedPassword: "",
             guest: false);
         userList.add(tempUser);
@@ -71,6 +73,8 @@ class UserListState extends State<UserList> {
     PopupAndLoading.endLoading();
   }
 
+  ValueNotifier<String> searchNotifier = ValueNotifier('');
+
   @override
   Widget build(BuildContext context) {
     return Menu(
@@ -79,6 +83,9 @@ class UserListState extends State<UserList> {
         mainAxisSize: MainAxisSize.min,
         children: [
           PageHeader(
+            onSearch: (value) {
+              searchNotifier.value = value;
+            },
             title: "Gebruiker beheer",
             onAdd: () {
               addUsersDialog(context, (user) async {
@@ -91,23 +98,28 @@ class UserListState extends State<UserList> {
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   return const Text("Er is iets misgegaan");
-                } else if (snapshot.hasData)  {
+                } else if (snapshot.hasData) {
                   List<User> users = snapshot.data ?? [];
                   return Flexible(
-                      child: ListView.separated(
-                    padding: const EdgeInsets.all(mobilePadding),
-                    shrinkWrap: true,
-                    itemCount: users.length,
-                    separatorBuilder: (context, index) => const Divider(),
-                    itemBuilder: (context, index) {
-                      return UserElement(
-                        user: users[index],
-                        onDelete: () async {await deleteUser(users[index].id);},
-                        onSave: (user) async {
-                          await updateUser(user);
-                        }
-                      );
-                    },
+                      child: Search(
+                    searchValue: searchNotifier,
+                    items: users,
+                    getSearchValue: (item) => item.name,
+                    builder: (items) => ListView.separated(
+                        padding: const EdgeInsets.all(mobilePadding).copyWith(top: 0),
+                        shrinkWrap: true,
+                        itemCount: items.length,
+                        separatorBuilder: (context, index) => const Divider(),
+                        itemBuilder: (context, index) {
+                          return UserElement(
+                              user: users[index],
+                              onDelete: () async {
+                                await deleteUser(items[index].id);
+                              },
+                              onSave: (user) async {
+                                await updateUser(user);
+                              });
+                        }),
                   ));
                 } else {
                   return const Center(
