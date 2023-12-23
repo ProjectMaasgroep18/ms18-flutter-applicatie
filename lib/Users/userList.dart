@@ -60,6 +60,17 @@ class UserListState extends State<UserList> {
     PopupAndLoading.endLoading();
   }
 
+  Future updateUser(User user) async {
+    Map<String, dynamic> body = {'name': user.name};
+    await ApiManager.put("$url/${user.id}", body).then((value) {
+      PopupAndLoading.showSuccess("Gebruiker wijzigen gelukt");
+      reloadPage();
+    }).catchError((error) {
+      PopupAndLoading.showError("Gebruiker wijzigen mislukt");
+    });
+    PopupAndLoading.endLoading();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Menu(
@@ -91,7 +102,10 @@ class UserListState extends State<UserList> {
                     itemBuilder: (context, index) {
                       return UserElement(
                         user: users[index],
-                        onDelete: () async {await deleteUser(users[index].id);print("delte");},
+                        onDelete: () async {await deleteUser(users[index].id);},
+                        onSave: (user) async {
+                          await updateUser(user);
+                        }
                       );
                     },
                   ));

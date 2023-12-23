@@ -15,7 +15,6 @@ Future<void> addUsersDialog(BuildContext context, Function(User user) onSave,
   bool isGuest = false;
   if (isChange) isGuest = user.guest;
   final ValueNotifier<bool> checkboxState = ValueNotifier<bool>(false);
-  print("PRINT ${user?.name}");
 
   user ??= User(id:0, name: "", email: "", hashedPassword: "", guest: false);
   TextEditingController nameController = TextEditingController(text: user.name);
@@ -109,17 +108,16 @@ Future<void> addUsersDialog(BuildContext context, Function(User user) onSave,
 class UserElement extends StatelessWidget {
   final User user;
   final Function() onDelete;
+  final Function(User) onSave;
 
-  UserElement({required this.user,
-    required this.onDelete});
+  UserElement(
+      {required this.user, required this.onDelete, required this.onSave});
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
       onTap: () {
-        addUsersDialog(context, (user) async {
-          // await updateUser(user);
-        }, onDelete, user);
+        addUsersDialog(context, onSave, onDelete, user);
       },
       leading: const ProfilePicture(),
       title: Text(user.name),
