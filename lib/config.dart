@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 //Colors
 const Color mainColor = Color.fromARGB(255, 23, 32, 58);
@@ -105,8 +106,27 @@ const Map<RolesNames, int> roles = {
 };
 
 // Base url and headers for the api
-const String apiUrl = "https://api.hr.rspn.io";
+const String apiUrl = "https://api.hr.rspn.io/";
 const Map<String, String> apiHeaders = {
   "Content-Type": "application/json",
   "Accept": "application/json",
 };
+
+Future<String?> getToken() async {
+  final prefs = await SharedPreferences.getInstance();
+  final res = prefs.getString('token');
+
+  return res;
+}
+
+setToken(String token) async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.remove('token');
+  await prefs.setString('token', token);
+}
+
+setPrefString(String value, String key) async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.remove(key);
+  await prefs.setString(key, value);
+}
