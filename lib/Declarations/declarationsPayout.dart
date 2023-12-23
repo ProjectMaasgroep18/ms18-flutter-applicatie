@@ -20,12 +20,10 @@ class DeclarationsPayout extends StatefulWidget {
   State<DeclarationsPayout> createState() => DeclarationsPayoutState();
 }
 
-ApiManager apiManager = ApiManager();
-
 class DeclarationsPayoutState extends State<DeclarationsPayout> {
   @override
   void initState() {
-    _future = apiManager.get("/api/v1/Receipt");
+    _future = ApiManager.get<List<dynamic>>("/api/v1/Receipt");
     super.initState();
   }
 
@@ -65,7 +63,11 @@ class DeclarationsPayoutState extends State<DeclarationsPayout> {
               ),
               child: Column(
                 children: [
-                  showRows(),
+                  if (_future is Future<Map<String, dynamic>>)
+                    const Center(
+                      child: Text("Geen data gevonden wallah"),
+                    )
+                  else showRows(),
                 ],
               ),
             ),
@@ -244,7 +246,7 @@ class DeclarationsPayoutState extends State<DeclarationsPayout> {
             TextButton(
               onPressed: () async {
                 // Update the status
-                var res = apiManager
+                var res = ApiManager
                     .post("/api/v1/Receipt/${declInfo['id']}/Approve", {
                   "receiptId": declInfo['id'],
                   "note": declInfo['note'],
@@ -262,7 +264,7 @@ class DeclarationsPayoutState extends State<DeclarationsPayout> {
                     _future = null;
                   });
                   setState(() {
-                    _future = apiManager.get("/api/v1/Receipt");
+                    _future = ApiManager.get("/api/v1/Receipt");
                   });
                 }
               },
@@ -271,7 +273,7 @@ class DeclarationsPayoutState extends State<DeclarationsPayout> {
             TextButton(
               onPressed: () {
                 // Update the status
-                var res = apiManager
+                var res = ApiManager
                     .post("/api/v1/Receipt/${declInfo['id']}/Approve", {
                   "receiptId": declInfo['id'],
                   "note": declInfo['note'],
@@ -289,7 +291,7 @@ class DeclarationsPayoutState extends State<DeclarationsPayout> {
                     _future = null;
                   });
                   setState(() {
-                    _future = apiManager.get("/api/v1/Receipt");
+                    _future = ApiManager.get("/api/v1/Receipt");
                   });
                 }
               },
