@@ -22,6 +22,7 @@ class PageHeader extends StatelessWidget {
               const Expanded(
                 flex: 7,
                 child: InputField(
+                  isUnderlineBorder: false,
                   icon: Icons.search,
                   hintText: "Search",
                 ),

@@ -11,6 +11,7 @@ Future showInputPopup(BuildContext context,
     context: context,
     builder: (context) {
       return AlertDialog(
+        scrollable: true,
         backgroundColor: Colors.white,
         surfaceTintColor: Colors.white,
         title: Column(
@@ -36,7 +37,7 @@ Future showInputPopup(BuildContext context,
         ),
         content: Container(
           width: double.maxFinite,
-          height: height,
+          // height:  height,
           color: Colors.white,
           child: child,
         ),
@@ -51,7 +52,6 @@ Future showInputPopup(BuildContext context,
             width: 150,
             child: Button(
               onTap: () {
-                Navigator.pop(context);
                 onSave();
               },
               text: 'Opslaan',

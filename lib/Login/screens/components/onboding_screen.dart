@@ -27,6 +27,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
         body: Padding(
       padding: const EdgeInsets.all(0),
       child: Stack(

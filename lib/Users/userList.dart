@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Models/user.dart';
 import 'package:ms18_applicatie/Users/widgets.dart';
-import 'package:ms18_applicatie/Widgets/inputFields.dart';
 import 'package:ms18_applicatie/Widgets/inputPopup.dart';
-import 'package:ms18_applicatie/Widgets/paddingSpacing.dart';
 import 'package:ms18_applicatie/Widgets/pageHeader.dart';
 import 'package:ms18_applicatie/config.dart';
 import 'package:ms18_applicatie/menu.dart';
@@ -68,7 +66,7 @@ class UserListState extends State<UserList> {
           ),
           Flexible(
             child: ListView.separated(
-              padding: const EdgeInsets.all(mobilePadding),
+              padding: const EdgeInsets.all(mobilePadding).copyWith(top: 0),
               shrinkWrap: true,
               itemCount: userListFromApi.length,
               separatorBuilder: (context, index) => const Divider(),

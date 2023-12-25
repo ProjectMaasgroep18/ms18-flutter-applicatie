@@ -1,6 +1,4 @@
-import 'dart:ui';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Profile/profile.dart';
 import 'package:ms18_applicatie/menu.dart';
@@ -31,7 +29,6 @@ class _OnboardingScreenState extends State<Dashboard> {
          Menu(
           appBarHeight: 70,
           centerTitle: false,
-          child: const SizedBox(),
           title: const Text(
             "Dashboard",
             textAlign: TextAlign.left,
@@ -55,6 +52,7 @@ class _OnboardingScreenState extends State<Dashboard> {
               ),
             ),
           ],
+          child: const SizedBox(),
         ),
         Positioned(
           width: MediaQuery.of(context).size.width * 1.7,

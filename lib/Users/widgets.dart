@@ -10,7 +10,7 @@ class UserElement extends StatelessWidget {
   final User user;
   final Function(String)? onChange;
 
-  const UserElement({
+  const UserElement({super.key, 
     required this.user,
     this.onChange,
   });
@@ -18,6 +18,7 @@ class UserElement extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      contentPadding: EdgeInsets.zero,
       leading: const ProfilePicture(),
       title: Text(user.fullName),
       subtitle: Text(user.email),
@@ -35,48 +36,54 @@ class UserForm extends StatefulWidget {
 class _UserFormState extends State<UserForm> {
   bool isGuest = false;
 
+  final GlobalKey<FormState> formKey = GlobalKey();
+
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const InputField(
-          labelText: "Email",
-          isUnderlineBorder: true,
-        ),
-        const PaddingSpacing(),
-        const InputField(
-          labelText: "Voornaam",
-          isUnderlineBorder: true,
-        ),
-        const PaddingSpacing(),
-        const InputField(
-          labelText: "Achternaam",
-          isUnderlineBorder: true,
-        ),
-        const PaddingSpacing(),
-        Flexible(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text('Gast gebruiker'),
-              CupertinoSwitch(
-                activeColor: mainColor,
-                value: isGuest,
-                onChanged: (value) {
-                  setState(() {
-                    isGuest = !isGuest;
-                  });
-                },
-              ),
-            ],
-          ),
-        ),
-        if (!isGuest)
+    return Form(
+      key: formKey,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
           const InputField(
-            labelText: "Wachtwoord",
+            labelText: "Email",
             isUnderlineBorder: true,
           ),
-      ],
+          const PaddingSpacing(),
+          const InputField(
+            labelText: "Voornaam",
+            isUnderlineBorder: true,
+          ),
+          const PaddingSpacing(),
+          const InputField(
+            labelText: "Achternaam",
+            isUnderlineBorder: true,
+          ),
+          const PaddingSpacing(),
+          Flexible(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('Gast gebruiker'),
+                CupertinoSwitch(
+                  activeColor: mainColor,
+                  value: isGuest,
+                  onChanged: (value) {
+                    setState(() {
+                      isGuest = !isGuest;
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+          if (!isGuest)
+            const InputField(
+              labelText: "Wachtwoord",
+              isUnderlineBorder: true,
+            ),
+        ],
+      ),
     );
   }
 }
