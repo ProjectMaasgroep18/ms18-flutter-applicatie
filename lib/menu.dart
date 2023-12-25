@@ -33,7 +33,7 @@ class Menu extends StatelessWidget {
         text: 'Voorraad',
         icon: Icons.add_chart,
         page: MaterialPageRoute(builder: (context) => StockReport()),
-        roles: [Roles.Admin, Roles.Subadmin]),
+        roles: [Roles.Admin,]),
     menuItem.MenuItem(
         text: 'Foto\'s',
         icon: Icons.photo,
@@ -42,7 +42,7 @@ class Menu extends StatelessWidget {
         text: 'Declaraties',
         icon: Icons.message,
         page: MaterialPageRoute(builder: (context) => const DeclarationsMenu()),
-        roles: [Roles.Admin, Roles.Subadmin]),
+        roles: [Roles.Admin, Roles.Receipt, Roles.ReceiptApprove, Roles.ReceiptPay]),
     menuItem.MenuItem(
       text: 'Agenda',
       icon: Icons.calendar_month,

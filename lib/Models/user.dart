@@ -1,15 +1,17 @@
+import 'package:ms18_applicatie/roles.dart';
+
 class User {
   int id;
   String name;
   String email;
   String password;
-  bool guest;
+  Roles role;
 
   User({
     required this.id,
     required this.name,
     required this.email,
     required this.password,
-    required this.guest
+    required this.role
   });
 }

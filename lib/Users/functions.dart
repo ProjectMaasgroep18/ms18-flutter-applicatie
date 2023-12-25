@@ -7,6 +7,7 @@ import '../Api/apiManager.dart';
 import '../Models/user.dart';
 import '../Widgets/popups.dart';
 import '../config.dart';
+import '../roles.dart';
 
 const String url = "api/v1/User";
 
@@ -29,12 +30,31 @@ Future<List<User>> getUsers() async {
   List<User> userList = [];
   await ApiManager.get<List<dynamic>>(url, await getHeaders()).then((data) {
     for (Map<String, dynamic> apiUser in data) {
+      Roles userRole;
+      switch (apiUser["permissions"][0]) {
+        case "admin":
+          userRole = Roles.Admin;
+        case "order.view":
+          userRole = Roles.OrderView;
+        case "order.product":
+          userRole = Roles.OrderProduct;
+        case "receipt":
+          userRole = Roles.Receipt;
+        case "receipt.approve":
+          userRole = Roles.ReceiptApprove;
+        case "receipt.pay":
+          userRole = Roles.ReceiptPay;
+        default:
+          userRole = Roles.Guest;
+      };
+
       User tempUser = User(
           id: apiUser["id"],
           name: apiUser["name"],
           email: apiUser["email"] ?? "",
           password: "",
-          guest: false);
+          role: userRole,
+      );
       userList.add(tempUser);
     }
   });
@@ -66,20 +86,31 @@ Future deleteUser(int userID) async {
 Future updateUser(User user, BuildContext context) async {
 
   // Ask for confirmation via password
-  String currentUserPassword = await askPasswordConfirmation(context) ?? "";
+  String currentUserPassword = await askPasswordConfirmation(context);
+
+  // Convert Roles to string to use in database
+  String userRole = rolesToDB.keys.firstWhere((element) => rolesToDB[element] == user.role);
 
   Map<String, dynamic> body = {
     'name': user.name,
-    'currentPassword': "123456",
+    'currentPassword': currentUserPassword,
     'newEmail': user.email,
-    'newPassword': user.password,
-    'newPermissions': ['admin']
+    //'newPermissions': ["\"${userRole.toLowerCase()}\""],
+    'newPermissions': [userRole.toLowerCase()]
   };
+
+  if(user.password != ""){
+    body["newPassword"] = user.password;
+  }
+
+  print("BODYBODYBODY: $body, ${user.id}");
+
   await ApiManager.put("$url/${user.id}/Credentials", body, await getHeaders())
       .then((value) {
     PopupAndLoading.showSuccess("Gebruiker wijzigen gelukt");
     reloadPage();
   }).catchError((error) {
+    print("ERROR: $error");
     PopupAndLoading.showError("Gebruiker wijzigen mislukt");
   });
   PopupAndLoading.endLoading();
