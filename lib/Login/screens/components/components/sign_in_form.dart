@@ -7,7 +7,7 @@ import 'package:ms18_applicatie/Widgets/inputFields.dart';
 import 'package:ms18_applicatie/Widgets/paddingSpacing.dart';
 import 'package:ms18_applicatie/Widgets/popups.dart';
 import 'package:ms18_applicatie/config.dart';
-import 'package:ms18_applicatie/menu.dart';
+import 'package:ms18_applicatie/main.dart';
 import 'package:rive/rive.dart';
 
 class SignInForm extends StatefulWidget {
@@ -106,6 +106,7 @@ class _SignInFormState extends State<SignInForm> {
                         setToken(response["token"]);
                         setPrefString(response["member"]["permissions"][0], "role");
                         signIn(context);
+                        loadLocalUser(response["member"]);
                       }
                     }).catchError((error) {
                       print(error);

@@ -4,26 +4,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Models/user.dart';
-import 'package:ms18_applicatie/Users/functions.dart';
 import 'package:ms18_applicatie/Widgets/inputFields.dart';
 import 'package:ms18_applicatie/Widgets/inputPopup.dart';
 import 'package:ms18_applicatie/Widgets/paddingSpacing.dart';
-import 'package:ms18_applicatie/Widgets/profilePicture.dart';
-import 'package:ms18_applicatie/menu.dart';
 import 'package:ms18_applicatie/roles.dart';
 
 import '../Widgets/buttons.dart';
 import '../config.dart';
 
-const Map<String, Roles> roles = {
-  "Admin": Roles.Admin,
-  "Orders maken": Roles.Order,
-  "Orders bekijken": Roles.OrderView,
-  "Order product": Roles.OrderProduct,
-  "Declaraties aanmaken": Roles.Receipt,
-  "Declaraties goedkeuren": Roles.ReceiptApprove,
-  "Declaraties betalen": Roles.ReceiptPay,
-};
 
 Future<void> addUsersDialog(BuildContext context, Function(User user) onSave,
     [Function()? onDelete, User? user]) async {
@@ -158,7 +146,7 @@ Future<void> addUsersDialog(BuildContext context, Function(User user) onSave,
                               onChanged: (value) {
                                 item.value.value = value;
 
-                                Roles? role = roles[item.key];
+                                Roles? role = rolesDescription[item.key];
                                 if (user!.roles.contains(role)) {
                                   user.roles.remove(role);
                                 } else {
@@ -192,7 +180,7 @@ Future<void> addUsersDialog(BuildContext context, Function(User user) onSave,
       ..password = passwordController.text
       ..roles = userRole
       ..guest = isGuest
-      ..color = Colors.primaries[Random().nextInt(Colors.primaries.length)];
+      ..color = user.color;
     onSave(user);
   });
 }

@@ -120,10 +120,12 @@ Future updateUser(User user, BuildContext context,
     dbRoles.add(userRole);
   }
 
+  String color = "#${user.color.value.toRadixString(16).substring(2)}";
   Map<String, dynamic> body = {
     'name': user.name,
     'currentPassword': currentUserPassword,
     'newEmail': user.email,
+    'color': color,
     'newPermissions': dbRoles
   };
 

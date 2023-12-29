@@ -17,3 +17,13 @@ const Map<String, Roles> rolesToDB = {
   "receipt.approve": Roles.ReceiptApprove,
   "receipt.pay": Roles.ReceiptPay,
 };
+
+const Map<String, Roles> rolesDescription = {
+  "Admin": Roles.Admin,
+  "Orders maken": Roles.Order,
+  "Orders bekijken": Roles.OrderView,
+  "Order product": Roles.OrderProduct,
+  "Declaraties aanmaken": Roles.Receipt,
+  "Declaraties goedkeuren": Roles.ReceiptApprove,
+  "Declaraties betalen": Roles.ReceiptPay,
+};
