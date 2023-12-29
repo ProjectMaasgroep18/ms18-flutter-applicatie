@@ -22,6 +22,12 @@ class UserListState extends State<UserList> {
   @override
   Widget build(BuildContext context) {
     return Menu(
+      title: const Text(
+        "Gebruikers beheer",
+        style: TextStyle(
+          color: Colors.white,
+        ),
+      ),
         child: SafeArea(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -30,7 +36,6 @@ class UserListState extends State<UserList> {
             onSearch: (value) {
               searchNotifier.value = value;
             },
-            title: "Gebruiker beheer",
             onAdd: () {
               addUsersDialog(context, (user) async {
                 await addUser(user, context);
@@ -54,7 +59,7 @@ class UserListState extends State<UserList> {
                 } else if (snapshot.hasData) {
                   List<User> users = snapshot.data ?? [];
                   return Flexible(
-                      child: Search(
+                      child: Search<User>(
                     searchValue: searchNotifier,
                     items: users,
                     getSearchValue: (item) => item.name,
@@ -66,7 +71,7 @@ class UserListState extends State<UserList> {
                         separatorBuilder: (context, index) => const Divider(),
                         itemBuilder: (context, index) {
                           return UserElement(
-                              user: users[index],
+                              user: items[index],
                               onDelete: () async {
                                 await deleteUser(items[index].id);
                               },

@@ -107,6 +107,9 @@ class _SignInFormState extends State<SignInForm> {
                         setPrefString(response["member"]["permissions"][0], "role");
                         signIn(context);
                         loadLocalUser(response["member"]);
+                      }else {
+                        // Required until response codes are fixed
+                        throw Exception("Login failed, check creds");
                       }
                     }).catchError((error) {
                       print(error);

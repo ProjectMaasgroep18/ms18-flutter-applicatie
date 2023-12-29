@@ -29,15 +29,14 @@ class _OnboardingScreenState extends State<Dashboard> {
         body: Stack(
       children: [
          Menu(
+           title: const Text(
+             "Dashboard",
+             style: TextStyle(
+               color: Colors.white,
+             ),
+           ),
           appBarHeight: 70,
-          centerTitle: false,
           child: const SizedBox(),
-          title: const Text(
-            "Dashboard",
-            textAlign: TextAlign.left,
-            style: TextStyle(
-                color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
-          ),
           actions: [
             // profile picture in appbar
             Padding(
@@ -47,11 +46,9 @@ class _OnboardingScreenState extends State<Dashboard> {
                   Navigator.push(context,
                       MaterialPageRoute(builder: ((context) => Profile())));
                 },
-                child: const CircleAvatar(
+                child: CircleAvatar(
                   radius: 22,
-                  backgroundImage: NetworkImage(
-                      "https://avatars.githubusercontent.com/u/55942632?v=4"),
-                ),
+                  backgroundImage: Image.asset('assets/avatars/Avatar Default.png').image),
               ),
             ),
           ],

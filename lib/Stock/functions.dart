@@ -6,6 +6,7 @@ import 'package:ms18_applicatie/Models/stock.dart';
 import 'package:ms18_applicatie/Stock/stockReport.dart';
 import 'package:ms18_applicatie/Widgets/popups.dart';
 import 'package:ms18_applicatie/config.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 String colorToString(Color color) {
   return "#${color.value.toRadixString(16).substring(2)}";
@@ -16,10 +17,20 @@ void reploadPage() {
       MaterialPageRoute(builder: ((context) => StockReport())));
 }
 
+Future<Map<String, String>> getHeaders() async {
+  final prefs = await SharedPreferences.getInstance();
+  final res = prefs.getString('token');
+  String bearerToken = "Bearer $res";
+  return {
+    ...apiHeaders,
+    ...{"Authorization": bearerToken}
+  };
+}
+
 Future<List<StockProduct>> getStock() async {
   List<StockProduct> stockItems = [];
 
-  await ApiManager.get<List<dynamic>>(StockReport.url).then((data) {
+  await ApiManager.get<List<dynamic>>(StockReport.url, await getHeaders()).then((data) {
     for (Map<String, dynamic> product in data) {
       Map<String, dynamic> map = product;
 
@@ -61,7 +72,7 @@ Future addProduct(StockProduct stockProduct) async {
       Colors.primaries[Random().nextInt(Colors.primaries.length)];
 
   PopupAndLoading.showLoading();
-  await ApiManager.post(StockReport.url, getBody(stockProduct)).then((value) {
+  await ApiManager.post(StockReport.url, getBody(stockProduct), await getHeaders()).then((value) {
     PopupAndLoading.showSuccess("Product toevoegen gelukt");
     reploadPage();
   }).catchError((error) {
@@ -73,7 +84,8 @@ Future addProduct(StockProduct stockProduct) async {
 Future updateProduct(StockProduct stockProduct) async {
   PopupAndLoading.showLoading();
   await ApiManager.put("${StockReport.url}/${stockProduct.product.id}",
-          getBody(stockProduct, true))
+          getBody(stockProduct, true),
+      await getHeaders())
       .then((value) {
     PopupAndLoading.showSuccess("Product wijzigen gelukt");
     reploadPage();
@@ -86,7 +98,7 @@ Future updateProduct(StockProduct stockProduct) async {
 
 Future deleteProduct(int productId) async {
   PopupAndLoading.showLoading();
-  await ApiManager.delete("${StockReport.url}/$productId").then((value) {
+  await ApiManager.delete("${StockReport.url}/$productId", await getHeaders()).then((value) {
     PopupAndLoading.showSuccess("Product verwijderen gelukt");
     reploadPage();
   }).catchError((error) {
@@ -116,5 +128,5 @@ Future updateAllStock(Set<StockProduct> changedProducts,
 Future updateStock(StockProduct stockProduct) async {
   Map<String, dynamic> body = {'quantity': stockProduct.quantity};
   await ApiManager.put(
-      "${StockReport.url}/${stockProduct.product.id}/Stock", body);
+      "${StockReport.url}/${stockProduct.product.id}/Stock", body, await getHeaders());
 }
