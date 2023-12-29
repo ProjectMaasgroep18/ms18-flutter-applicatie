@@ -33,7 +33,7 @@ class UserListState extends State<UserList> {
             title: "Gebruiker beheer",
             onAdd: () {
               addUsersDialog(context, (user) async {
-                await addUser(user);
+                await addUser(user, context);
               });
             },
           ),

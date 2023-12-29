@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/roles.dart';
 
 class User {
@@ -5,13 +6,17 @@ class User {
   String name;
   String email;
   String password;
-  Roles role;
+  List<Roles> roles;
+  bool guest;
+  Color color;
 
   User({
     required this.id,
     required this.name,
     required this.email,
     required this.password,
-    required this.role
+    required this.roles,
+    required this.guest,
+    required this.color,
   });
 }

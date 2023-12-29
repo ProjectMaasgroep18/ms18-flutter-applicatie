@@ -26,7 +26,9 @@ class ApiManager {
     http.Response response = await http.post(Uri.parse(apiUrl + url),
         headers: requestHeaders ?? apiHeaders, body: jsonEncode(apiBody ?? {}));
 
-    checkStatusCode(response);
+    // Disabled until status codes are handled properly
+    // Necessary for addUser function, which needs the userID from returned JSON
+    // checkStatusCode(response);
     print("RESP: ${response.body}");
 
     return tryJsonDecode(response.body);

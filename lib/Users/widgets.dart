@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Models/user.dart';
 import 'package:ms18_applicatie/Users/functions.dart';
@@ -14,6 +17,7 @@ import '../config.dart';
 
 const Map<String, Roles> roles = {
   "Admin": Roles.Admin,
+  "Orders maken": Roles.Order,
   "Orders bekijken": Roles.OrderView,
   "Order product": Roles.OrderProduct,
   "Declaraties aanmaken": Roles.Receipt,
@@ -24,19 +28,43 @@ const Map<String, Roles> roles = {
 Future<void> addUsersDialog(BuildContext context, Function(User user) onSave,
     [Function()? onDelete, User? user]) async {
   bool isChange = user != null;
+
   // Check if user is guest, but only if it is not a new user
   bool isGuest = false;
-  if (isChange) isGuest = user.role == Roles.Guest;
-  final ValueNotifier<bool> guestCheckboxState = ValueNotifier<bool>(false);
+  if (isChange) isGuest = user.guest;
+  final ValueNotifier<bool> guestCheckboxState = ValueNotifier<bool>(isGuest);
 
-  user ??= User(id: 0, name: "", email: "", password: "", role: Roles.Guest);
+  user ??= User(
+      id: 0,
+      name: "",
+      email: "",
+      password: "",
+      roles: [Roles.Order],
+      guest: true,
+      color: Colors.primaries[Random().nextInt(Colors.primaries.length)]);
+
+  // Values for the roles checkboxes
+  Map<String, ValueNotifier<bool>> rolesCheckboxValues = {
+    "Admin": ValueNotifier<bool>(user.roles.contains(Roles.Admin)),
+    "Orders maken": ValueNotifier<bool>(user.roles.contains(Roles.Order)),
+    "Orders bekijken":
+        ValueNotifier<bool>(user.roles.contains(Roles.OrderView)),
+    "Order product":
+        ValueNotifier<bool>(user.roles.contains(Roles.OrderProduct)),
+    "Declaraties aanmaken":
+        ValueNotifier<bool>(user.roles.contains(Roles.Receipt)),
+    "Declaraties goedkeuren":
+        ValueNotifier<bool>(user.roles.contains(Roles.ReceiptApprove)),
+    "Declaraties betalen":
+        ValueNotifier<bool>(user.roles.contains(Roles.ReceiptPay))
+  };
 
   TextEditingController nameController = TextEditingController(text: user.name);
   TextEditingController emailController =
       TextEditingController(text: user.email);
   TextEditingController passwordController =
       TextEditingController(text: user.password);
-  Roles userRole = user.role;
+  List<Roles> userRole = user.roles;
 
   await showInputPopup(context,
       title: "Gebruiker ${isChange ? 'wijzigen' : 'toevoegen'}",
@@ -61,14 +89,23 @@ Future<void> addUsersDialog(BuildContext context, Function(User user) onSave,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text('Gast gebruiker'),
-                CupertinoSwitch(
-                  activeColor: mainColor,
-                  value: guestCheckboxState.value,
-                  onChanged: (value) {
-                    isGuest = value;
-                    guestCheckboxState.value = value;
-                  },
-                ),
+                // Disable switch if it is not a new user
+                if (isChange)
+                  CupertinoSwitch(
+                    activeColor: mainColor,
+                    value: guestCheckboxState.value,
+                    onChanged: (value) {},
+                  )
+                else
+                  CupertinoSwitch(
+                    activeColor: mainColor,
+                    value: guestCheckboxState.value,
+                    onChanged: (value) {
+                      isGuest = value;
+                      isGuest ? user?.roles = [Roles.Order] : null;
+                      guestCheckboxState.value = value;
+                    },
+                  ),
               ],
             );
           },
@@ -78,72 +115,62 @@ Future<void> addUsersDialog(BuildContext context, Function(User user) onSave,
             builder: (BuildContext context, dynamic value, Widget? child) {
               // If it is a new user, allow a password to be entered and role to be assigned
               if (isGuest) {
-                return Visibility(
-                  maintainSize: true,
-                  maintainAnimation: true,
-                  maintainState: true,
-                  visible: false,
-                  child: Column(
-                    children: [
-                      InputField(
-                        controller: passwordController,
-                        labelText: "Wachtwoord",
-                        isUnderlineBorder: true,
-                        isPassword: true,
-                      ),
-                      const PaddingSpacing(),
-                      InputDropDown(
-                        labelText: "Rol",
-                        value: roles.keys.firstWhere(
-                                (element) => roles[element] == userRole,
-                            orElse: () => roles.keys.first),
-                        items: [
-                          for (String role in roles.keys)
-                            DropdownMenuItem(
-                              value: role,
-                              child: Row(
-                                  children: [
-                                    const PaddingSpacing(),
-                                    Text(role)
-                                  ]),
-                            )
-                        ],
-                      )
-                    ],
-                  )
-                );
+                return const PaddingSpacing();
               } else {
-                return Column(
-                  children: [
+                return Column(children: [
+
+                  // Show password is not required when it is not a new user
+                  if (isChange)
+                    InputField(
+                      controller: passwordController,
+                      labelText: "Wachtwoord (laat leeg om niet te veranderen)",
+                      isUnderlineBorder: true,
+                      isPassword: true,
+                    )
+                  else
                     InputField(
                       controller: passwordController,
                       labelText: "Wachtwoord",
                       isUnderlineBorder: true,
                       isPassword: true,
+                      isRequired: true,
                     ),
-                    const PaddingSpacing(),
-                    InputDropDown(
-                      labelText: "Rol",
-                      value: roles.keys.firstWhere(
-                          (element) => roles[element] == userRole,
-                          orElse: () => roles.keys.first),
-                      items: [
-                        for (String role in roles.keys)
-                          DropdownMenuItem(
-                            value: role,
-                            child: Row(
-                                children: [
-                                  const PaddingSpacing(),
-                                  Text(role)
-                                ]),
-                          )
-                      ],
-                      onChange: (newValue) {
-                        userRole = roles[newValue] ?? Roles.Guest;
+
+                  const PaddingSpacing(),
+
+                  // For each Role in rolesCheckboxValues, create a checkbox with ValueNotifier
+                  for (MapEntry<String, ValueNotifier<bool>> item
+                      in rolesCheckboxValues.entries)
+                    ValueListenableBuilder(
+                      // item.key = Text for checkbox
+                      // item.value = ValueNotifier
+                      // item.value.value = bool value from the ValueNotifier
+                      valueListenable: item.value,
+                      builder:
+                          (BuildContext context, dynamic value, Widget? child) {
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(item.key),
+                            CupertinoSwitch(
+                              activeColor: mainColor,
+                              value: item.value.value,
+                              onChanged: (value) {
+                                item.value.value = value;
+
+                                Roles? role = roles[item.key];
+                                if (user!.roles.contains(role)) {
+                                  user.roles.remove(role);
+                                } else {
+                                  user.roles.add(role!);
+                                }
+                              },
+                            ),
+                          ],
+                        );
                       },
-                    )
-                  ],
-                );
+                    ),
+                ]);
               }
             }),
         if (onDelete != null) ...[
@@ -155,12 +182,17 @@ Future<void> addUsersDialog(BuildContext context, Function(User user) onSave,
               icon: Icons.delete)
         ]
       ]), onSave: () {
-    if(isGuest) userRole = Roles.Guest;
+    // Ensure that guest user has the right role
+    if (isGuest) userRole = [Roles.Order];
+
+
     user!
       ..name = nameController.text
       ..email = emailController.text
       ..password = passwordController.text
-      ..role = userRole;
+      ..roles = userRole
+      ..guest = isGuest
+      ..color = Colors.primaries[Random().nextInt(Colors.primaries.length)];
     onSave(user);
   });
 }
@@ -174,7 +206,7 @@ Future<String> askPasswordConfirmation(BuildContext context) async {
         children: [
           const Align(
               alignment: Alignment.topLeft,
-              child: Text("Vul je wachtwoord door te gaan")),
+              child: Text("Vul je eigen wachtwoord door te gaan")),
           InputField(
             isPassword: true,
             controller: passwordController,
@@ -183,7 +215,33 @@ Future<String> askPasswordConfirmation(BuildContext context) async {
       ), onSave: () {
     Navigator.of(context).pop();
   });
-  return passwordController.text;;
+  return passwordController.text;
+}
+
+Widget rolesCheckboxes(Map<String, ValueNotifier<bool>> rolesCheckboxValues) {
+  List<Widget> widgetList = [];
+
+  for (MapEntry<String, ValueNotifier<bool>> item
+      in rolesCheckboxValues.entries) {
+    Widget tempWidget = ValueListenableBuilder(
+        valueListenable: item.value,
+        builder: (BuildContext context, dynamic value, Widget? child) {
+          return Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(item.key),
+                CupertinoSwitch(
+                  activeColor: mainColor,
+                  value: item.value.value,
+                  onChanged: (value) {
+                    item.value.value;
+                  },
+                )
+              ]);
+        });
+    widgetList.add(tempWidget);
+  }
+  return Column(children: widgetList);
 }
 
 class UserElement extends StatelessWidget {
@@ -200,7 +258,30 @@ class UserElement extends StatelessWidget {
       onTap: () {
         addUsersDialog(context, onSave, onDelete, user);
       },
-      leading: const ProfilePicture(),
+      leading: SizedBox(
+        width: 45,
+        height: 45,
+        child: Stack(clipBehavior: Clip.none, children: [
+          Container(
+            width: 45,
+            height: 45,
+            decoration: BoxDecoration(
+              color: user.color,
+              borderRadius: BorderRadius.circular(
+                borderRadius,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.5),
+                  spreadRadius: 1,
+                  blurRadius: 4,
+                  offset: const Offset(2, 2), // changes position of shadow
+                ),
+              ],
+            ),
+          ),
+        ]),
+      ),
       title: Text(user.name),
       subtitle: Text(user.email),
       contentPadding: EdgeInsets.zero,

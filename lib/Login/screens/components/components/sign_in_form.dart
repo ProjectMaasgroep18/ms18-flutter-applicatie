@@ -33,7 +33,7 @@ class _SignInFormState extends State<SignInForm> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
-  static const String url = "api/v1/User";
+  static const String url = "api/v1/User/Login";
 
   StateMachineController getRiveController(Artboard artboard) {
     StateMachineController? controller =
@@ -104,7 +104,7 @@ class _SignInFormState extends State<SignInForm> {
                       Map<String, dynamic> response = value;
                       if (response["token"] != null) {
                         setToken(response["token"]);
-                        setPrefString(response["permissions"][0], "role");
+                        setPrefString(response["member"]["permissions"][0], "role");
                         signIn(context);
                       }
                     }).catchError((error) {

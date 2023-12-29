@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Users/userList.dart';
 import 'package:ms18_applicatie/Users/widgets.dart';
@@ -30,30 +32,40 @@ Future<List<User>> getUsers() async {
   List<User> userList = [];
   await ApiManager.get<List<dynamic>>(url, await getHeaders()).then((data) {
     for (Map<String, dynamic> apiUser in data) {
-      Roles userRole;
-      switch (apiUser["permissions"][0]) {
-        case "admin":
-          userRole = Roles.Admin;
-        case "order.view":
-          userRole = Roles.OrderView;
-        case "order.product":
-          userRole = Roles.OrderProduct;
-        case "receipt":
-          userRole = Roles.Receipt;
-        case "receipt.approve":
-          userRole = Roles.ReceiptApprove;
-        case "receipt.pay":
-          userRole = Roles.ReceiptPay;
-        default:
-          userRole = Roles.Guest;
-      };
+      List<Roles> userRole = [];
+
+      for (String role in apiUser["permissions"]) {
+        switch (role) {
+          case "admin":
+            userRole.add(Roles.Admin);
+          case "order.view":
+            userRole.add(Roles.OrderView);
+          case "order.product":
+            userRole.add(Roles.OrderProduct);
+          case "receipt":
+            userRole.add(Roles.Receipt);
+          case "receipt.approve":
+            userRole.add(Roles.ReceiptApprove);
+          case "receipt.pay":
+            userRole.add(Roles.ReceiptPay);
+          default:
+            userRole.add(Roles.Order);
+        }
+      }
+
+      // Convert the color string from DB to Color
+      String hexColor =
+          "FF${((apiUser["color"] ?? "") as String).replaceAll('#', '')}";
+      Color color = Color(int.tryParse(hexColor, radix: 16) ?? 0xFFFFFFFF);
 
       User tempUser = User(
-          id: apiUser["id"],
-          name: apiUser["name"],
-          email: apiUser["email"] ?? "",
-          password: "",
-          role: userRole,
+        id: apiUser["id"],
+        name: apiUser["name"],
+        email: apiUser["email"] ?? "",
+        password: "",
+        roles: userRole,
+        guest: apiUser["isGuest"],
+        color: color,
       );
       userList.add(tempUser);
     }
@@ -61,13 +73,25 @@ Future<List<User>> getUsers() async {
   return userList;
 }
 
-Future addUser(User user) async {
-  Map<String, dynamic> body = {'name': user.name};
+Future addUser(User user, BuildContext context) async {
+  String color = "#${user.color.value.toRadixString(16).substring(2)}";
+  Map<String, dynamic> body = {
+    'name': user.name,
+    'email': user.email,
+    'color': color
+  };
+
   PopupAndLoading.showLoading();
-  await ApiManager.post(url, body, await getHeaders()).then((value) {
-    PopupAndLoading.showSuccess("Gebruiker toevoegen gelukt");
+  await ApiManager.post(url, body, await getHeaders()).then((value) async {
+    /* value is all user info, including ID. This is required to update the user
+    /  Creating only allow to send name, email and color so a second request is
+    /  required to change any permissions, password, etc.  */
+    user.id = value["id"];
+    PopupAndLoading.endLoading();
+    await updateUser(user, context, isChange: false);
     reloadPage();
   }).catchError((error) {
+    print(error);
     PopupAndLoading.showError("Gebruiker toevoegen mislukt");
   });
   PopupAndLoading.endLoading();
@@ -83,35 +107,39 @@ Future deleteUser(int userID) async {
   PopupAndLoading.endLoading();
 }
 
-Future updateUser(User user, BuildContext context) async {
-
+Future updateUser(User user, BuildContext context,
+    {bool isChange = true}) async {
   // Ask for confirmation via password
   String currentUserPassword = await askPasswordConfirmation(context);
 
   // Convert Roles to string to use in database
-  String userRole = rolesToDB.keys.firstWhere((element) => rolesToDB[element] == user.role);
+  List<String> dbRoles = [];
+  for (Roles role in user.roles) {
+    String userRole =
+        rolesToDB.keys.firstWhere((element) => rolesToDB[element] == role);
+    dbRoles.add(userRole);
+  }
 
   Map<String, dynamic> body = {
     'name': user.name,
     'currentPassword': currentUserPassword,
     'newEmail': user.email,
-    //'newPermissions': ["\"${userRole.toLowerCase()}\""],
-    'newPermissions': [userRole.toLowerCase()]
+    'newPermissions': dbRoles
   };
 
-  if(user.password != ""){
+  // Only send a new password if it is given in the prompt
+  if (user.password != "") {
     body["newPassword"] = user.password;
   }
 
-  print("BODYBODYBODY: $body, ${user.id}");
-
   await ApiManager.put("$url/${user.id}/Credentials", body, await getHeaders())
       .then((value) {
-    PopupAndLoading.showSuccess("Gebruiker wijzigen gelukt");
+    PopupAndLoading.showSuccess(
+        "Gebruiker ${isChange ? "wijzigen" : "toevoegen"} gelukt");
     reloadPage();
   }).catchError((error) {
-    print("ERROR: $error");
-    PopupAndLoading.showError("Gebruiker wijzigen mislukt");
+    PopupAndLoading.showError(
+        "Gebruiker ${isChange ? "wijzigen" : "toevoegen"} mislukt");
   });
   PopupAndLoading.endLoading();
 }
