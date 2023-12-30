@@ -246,6 +246,7 @@ class _DeclarationsState extends State<Declarations> {
                   "receiptId": declInfo['id'],
                   "note": declInfo['note'],
                   "approved": true,
+                  "paid": false
                 });
                 if (res != null) {
                   // Show snackbar

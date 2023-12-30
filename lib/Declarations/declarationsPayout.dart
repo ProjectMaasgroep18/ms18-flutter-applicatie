@@ -251,6 +251,7 @@ class DeclarationsPayoutState extends State<DeclarationsPayout> {
                   "receiptId": declInfo['id'],
                   "note": declInfo['note'],
                   "approved": true,
+                  "paid": true,
                 });
                 if (res != null) {
                   // Show snackbar

@@ -174,9 +174,7 @@ class PickPhotoState extends State<PickPhoto> {
                     width: 250,
                     height: 250,
                   )
-                : Container(
-                    child: const PaddingSpacing(),
-                  ),
+                : const PaddingSpacing(),
             const PaddingSpacing(),
             // Upload the photo
             Button(
@@ -192,13 +190,6 @@ class PickPhotoState extends State<PickPhoto> {
                         "name": nameController.text,
                         "note": descriptionController.text,
                         "costCentre": selectedCostCentre,
-                        // "photos": [
-                        //   {
-                        //     "fileName": file!.path.split("/").last,
-                        //     "fileExtension": file!.path.split(".").last,
-                        //     "base64Image": await imageToBase64(file!),
-                        //   }
-                        // ],
                       },
                       {
                         "Authorization": "Bearer ${await getToken()}",
@@ -209,10 +200,26 @@ class PickPhotoState extends State<PickPhoto> {
                       PopupAndLoading.showError("Er is iets fout gegaan");
                       return;
                     }
-                    PopupAndLoading.showSuccess("De foto is geupload");
-                    Future.delayed(const Duration(seconds: 2), () {
-                      Navigator.pop(context);
-                    });
+                    var photoRes = await ApiManager.post(
+                      "api/v1/Receipt/$res/Photo",
+                      {
+                            "fileName": file!.path.split("/").last,
+                            "fileExtension": file!.path.split(".").last,
+                            "base64Image": await imageToBase64(file!),
+                            "receiptId": res
+                      },
+                      {
+                        "Authorization": "Bearer ${await getToken()}",
+                      },
+                    );
+                    if (photoRes != null) {
+                      PopupAndLoading.showSuccess("De foto is geupload");
+                      Future.delayed(const Duration(seconds: 2), () {
+                        Navigator.pop(context);
+                      });
+                    } else {
+                      PopupAndLoading.showError("Er is iets fout gegaan");
+                    }
                   }
                 },
                 text: "Uploaden")
