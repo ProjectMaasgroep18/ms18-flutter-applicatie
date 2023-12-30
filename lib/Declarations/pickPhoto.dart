@@ -11,6 +11,7 @@ import '../../menu.dart';
 import '../Widgets/buttons.dart';
 import '../Widgets/inputFields.dart';
 import '../Widgets/paddingSpacing.dart';
+import '../Widgets/popups.dart';
 
 final ImagePicker picker = ImagePicker();
 XFile? photo;
@@ -149,11 +150,7 @@ class PickPhotoState extends State<PickPhoto> {
                   icon: Icons.photo,
                   onTap: () async {
                     if (amountController.text.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text("Vul alle velden in"),
-                        ),
-                      );
+                      PopupAndLoading.showError("Vul alle velden in");
                       return;
                     } else {
                       var res = await picker.pickImage(
@@ -185,42 +182,37 @@ class PickPhotoState extends State<PickPhoto> {
             Button(
                 onTap: () async {
                   if (photo == null) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text("Kies een foto en vul alle velden in"),
-                      ),
-                    );
+                    PopupAndLoading.showError("Kies een foto en vul alle velden in");
                     return;
                   } else {
                     var res = await ApiManager.post(
-                      "/api/v1/Receipt",
+                      "api/v1/Receipt",
                       {
                         "amount": amountController.text,
                         "name": nameController.text,
                         "note": descriptionController.text,
                         "costCentre": selectedCostCentre,
-                        "photos": [
-                          {
-                            "fileName": file!.path.split("/").last,
-                            "fileExtension": file!.path.split(".").last,
-                            "base64Image": await imageToBase64(file!),
-                          }
-                        ],
+                        // "photos": [
+                        //   {
+                        //     "fileName": file!.path.split("/").last,
+                        //     "fileExtension": file!.path.split(".").last,
+                        //     "base64Image": await imageToBase64(file!),
+                        //   }
+                        // ],
+                      },
+                      {
+                        "Authorization": "Bearer ${await getToken()}",
                       },
                     );
+                    print(res);
                     if (res == null) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text("Er is iets fout gegaan"),
-                        ),
-                      );
+                      PopupAndLoading.showError("Er is iets fout gegaan");
                       return;
                     }
-                    SnackBar snackBar = const SnackBar(
-                      content: Text("Succesvol geupload"),
-                    );
-                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                    Navigator.pop(context);
+                    PopupAndLoading.showSuccess("De foto is geupload");
+                    Future.delayed(const Duration(seconds: 2), () {
+                      Navigator.pop(context);
+                    });
                   }
                 },
                 text: "Uploaden")
