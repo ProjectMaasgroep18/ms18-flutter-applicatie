@@ -55,16 +55,24 @@ class _ShoppingCartState extends State<ShoppingCart> {
     List<Product> productList = [];
 
     await ApiManager.get<List<dynamic>>("api/v1/Product").then((data) {
+      print(data);
       for (Map<String, dynamic> product in data) {
         Map<String, dynamic> map = product as Map<String, dynamic>;
+        final String hexColor =
+            "FF${(map["color"] as String).replaceAll('#', '')}";
+        final int color = int.tryParse(hexColor, radix: 16) ?? 0xFFFFFFFF;
+
         Product tempProduct = Product(
-                color: Colors.blue,
-                name: map["name"],
-                price: 1,
-                priceQuantity: 1,
-                icon: Icons.import_contacts_sharp);
+              color: Color(color),
+              name: map["name"],
+              price: double.tryParse(map["price"].toString()) ?? 0.0,
+              priceQuantity: (map["priceQuantity"]), // Explicitly cast to int
+              icon: map["icon"],
+            );
             productList.add(tempProduct);
       }
+    }).catchError((error) {
+      print(error);
     });
     return productList;
   }
@@ -393,7 +401,7 @@ class DetailedOrderScreen extends StatelessWidget {
 }
 
 class Product {
-  final double priceQuantity;
+  final int priceQuantity;
   final Color color;
   final String name;
   final double price;
