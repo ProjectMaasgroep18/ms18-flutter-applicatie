@@ -55,25 +55,28 @@ class _ShoppingCartState extends State<ShoppingCart> {
     List<Product> productList = [];
 
     await ApiManager.get<List<dynamic>>("api/v1/Product").then((data) {
-      print(data);
       for (Map<String, dynamic> product in data) {
-        Map<String, dynamic> map = product as Map<String, dynamic>;
+        Map<String, dynamic> map = product;
+
+        // Parsing the color from the db
         final String hexColor =
             "FF${(map["color"] as String).replaceAll('#', '')}";
         final int color = int.tryParse(hexColor, radix: 16) ?? 0xFFFFFFFF;
 
         Product tempProduct = Product(
-              color: Color(color),
-              name: map["name"],
-              price: double.tryParse(map["price"].toString()) ?? 0.0,
-              priceQuantity: (map["priceQuantity"]), // Explicitly cast to int
-              icon: map["icon"],
-            );
-            productList.add(tempProduct);
+          color: Color(color),
+          name: map["name"],
+          price: double.tryParse(map["price"].toString()) ?? 0.0,
+          icon: map["icon"],
+          // Assuming "priceQuantity" is an int, if not, you may need to adjust
+          priceQuantity: map["priceQuantity"] as int,
+        );
+        productList.add(tempProduct);
       }
     }).catchError((error) {
       print(error);
     });
+
     return productList;
   }
 
