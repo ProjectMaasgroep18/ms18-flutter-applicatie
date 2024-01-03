@@ -1,13 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:ms18_applicatie/Login/screens/components/onboding_screen.dart';
 import 'package:ms18_applicatie/Widgets/buttons.dart';
 import 'package:ms18_applicatie/Widgets/inputFields.dart';
 import 'package:ms18_applicatie/Widgets/paddingSpacing.dart';
 import 'package:ms18_applicatie/Widgets/profilePicture.dart';
 import 'package:ms18_applicatie/config.dart';
 import 'package:ms18_applicatie/menu.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../Api/apiManager.dart';
 
 class Profile extends StatelessWidget {
   Profile({super.key});
+
+  Future<void> logout() async {
+    final prefs = await SharedPreferences.getInstance();
+    final res = prefs.getString('token');
+    String bearerToken = "Bearer $res";
+    Map<String, String> headers = {
+      ...apiHeaders,
+      ...{"Authorization": bearerToken}
+    };
+    await ApiManager.get("api/v1/User/Logout", headers);
+    prefs.remove('token');
+  }
+
   final TextEditingController emailController =
       TextEditingController(text: "test@test.nl");
   final TextEditingController firstNameController =
@@ -92,7 +109,11 @@ class Profile extends StatelessWidget {
             const PaddingSpacing(),
             const PaddingSpacing(),
             Button(
-              onTap: () {},
+              onTap: () {
+                logout();
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => const OnboardingScreen()));
+              },
               text: "Uitloggen",
               icon: Icons.logout,
             ),
