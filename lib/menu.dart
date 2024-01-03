@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Calendar/calendar.dart';
 import 'package:ms18_applicatie/Dashboard/dashboard.dart';
-import 'package:ms18_applicatie/Models/stock.dart';
 import 'package:ms18_applicatie/Pictures/listPictures.dart';
-import 'package:ms18_applicatie/Profile/profile.dart';
 import 'package:ms18_applicatie/Stock/stockReport.dart';
 import 'package:ms18_applicatie/Users/userList.dart';
 import 'package:ms18_applicatie/roles.dart';
@@ -27,7 +25,7 @@ class Menu extends StatelessWidget {
     menuItem.MenuItem(
       text: 'Home',
       icon: Icons.home,
-      page: MaterialPageRoute(builder: (context) => Dashboard()),
+      page: MaterialPageRoute(builder: (context) => const Dashboard()),
     ),
     menuItem.MenuItem(
         text: 'Voorraad',
@@ -63,7 +61,7 @@ class Menu extends StatelessWidget {
     ),
   ];
 
-  Menu({
+  Menu({super.key, 
     required this.child,
     this.title,
     this.actions,
@@ -218,9 +216,9 @@ class Menu extends StatelessWidget {
                     ),
                   ),
                 )
-              : SizedBox(),
+              : const SizedBox(),
           Expanded(
-            child: child!,
+            child: child,
           ),
         ],
       ),
@@ -237,12 +235,12 @@ class MenuItemDesktop extends StatelessWidget {
   final IconData? icon;
   final bool? selected;
 
-  MenuItemDesktop({this.text, this.icon, this.selected});
+  const MenuItemDesktop({super.key, this.text, this.icon, this.selected});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 25, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
       child: Row(
         children: [
           Icon(
@@ -250,7 +248,7 @@ class MenuItemDesktop extends StatelessWidget {
             size: 25,
             color: selected! ? secondColor : textColorOnMainColor,
           ),
-          SizedBox(width: 20),
+          const SizedBox(width: 20),
           Text(
             text!,
             style: TextStyle(
@@ -270,13 +268,13 @@ class MenuItemtabletWidth extends StatelessWidget {
   final IconData icon;
   final bool selected;
 
-  MenuItemtabletWidth(
-      {required this.text, required this.icon, required this.selected});
+  const MenuItemtabletWidth(
+      {super.key, required this.text, required this.icon, required this.selected});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.all(5),
+      padding: const EdgeInsets.all(5),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -285,7 +283,7 @@ class MenuItemtabletWidth extends StatelessWidget {
             size: 30,
             color: selected ? secondColor : textColorOnMainColor,
           ),
-          SizedBox(width: 25),
+          const SizedBox(width: 25),
           Text(
             text,
             style: TextStyle(
@@ -306,7 +304,7 @@ class MenuItemBase extends StatelessWidget {
   final Widget? child;
   final Route? page;
 
-  MenuItemBase({required this.index, required this.child, required this.page});
+  const MenuItemBase({super.key, required this.index, required this.child, required this.page});
 
   @override
   Widget build(BuildContext context) {
@@ -317,7 +315,7 @@ class MenuItemBase extends StatelessWidget {
         alignment: Alignment.center,
         backgroundColor:
             index == MenuIndex.index! ? mainColor : Colors.transparent,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
       ),
       onPressed: () {
         MenuIndex.index = index;
@@ -333,11 +331,11 @@ class MobileWidthMenuItem extends StatelessWidget {
   final String? text;
   final bool? selected;
 
-  MobileWidthMenuItem({this.text, this.icon, this.selected});
+  const MobileWidthMenuItem({super.key, this.text, this.icon, this.selected});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: double.infinity,
       height: 48,
       child: Column(
