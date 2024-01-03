@@ -1,44 +1,26 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:ms18_applicatie/Login/screens/components/onboding_screen.dart';
 import 'package:ms18_applicatie/Widgets/buttons.dart';
 import 'package:ms18_applicatie/Widgets/inputFields.dart';
 import 'package:ms18_applicatie/Widgets/paddingSpacing.dart';
 import 'package:ms18_applicatie/Widgets/profilePicture.dart';
 import 'package:ms18_applicatie/config.dart';
+import 'package:ms18_applicatie/globals.dart';
 import 'package:ms18_applicatie/menu.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-import '../Api/apiManager.dart';
+import 'package:ms18_applicatie/roles.dart';
 
 class Profile extends StatelessWidget {
   Profile({super.key});
-
-  Future<void> logout() async {
-    final prefs = await SharedPreferences.getInstance();
-    final res = prefs.getString('token');
-    String bearerToken = "Bearer $res";
-    Map<String, String> headers = {
-      ...apiHeaders,
-      ...{"Authorization": bearerToken}
-    };
-    await ApiManager.get("api/v1/User/Logout", headers);
-    prefs.remove('token');
-  }
-
   final TextEditingController emailController =
-      TextEditingController(text: "test@test.nl");
-  final TextEditingController firstNameController =
-      TextEditingController(text: "Danillo");
-  final TextEditingController lastNameController =
-      TextEditingController(text: "Van Kesteren");
-  final TextEditingController dateOfBirthController =
-      TextEditingController(text: "23-12-1942");
+      TextEditingController(text: globalLoggedInUserValues?.email);
+  final TextEditingController nameController =
+      TextEditingController(text: globalLoggedInUserValues?.name);
 
   @override
   Widget build(BuildContext context) {
     return Menu(
       title: const Text(
-        "Profile",
+        "Profiel",
         style: TextStyle(
           color: Colors.white,
           fontWeight: FontWeight.bold,
@@ -48,73 +30,43 @@ class Profile extends StatelessWidget {
         padding: const EdgeInsets.all(mobilePadding),
         child: Column(
           children: [
+            ListTile(
+              title: const Text("Naam:"),
+              subtitle: Text(globalLoggedInUserValues?.name ?? ""),
+              contentPadding: EdgeInsets.zero,
+            ),
+            ListTile(
+              title: const Text("E-mail:"),
+              subtitle: Text(globalLoggedInUserValues?.email ?? ""),
+              contentPadding: EdgeInsets.zero,
+            ),
             const PaddingSpacing(),
-            const Row(
-              children: [
-                ProfilePicture(
-                  size: 60,
+            const Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                "Toegekende rechten",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
                 ),
-                PaddingSpacing(),
-                Flexible(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Danillo",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: mainColor,
-                          fontSize: 22,
-                        ),
-                      ),
-                      Text(
-                        "Online",
-                        style: TextStyle(
-                          color: mainColor,
-                          fontSize: 18,
-                        ),
-                      ),
-                    ],
-                  ),
-                )
-              ],
+              ),
             ),
-            const PaddingSpacing(),
-            const PaddingSpacing(),
-            const PaddingSpacing(),
-            InputField(
-              isUnderlineBorder: true,
-              labelText: "Email",
-              controller: emailController,
-            ),
-            const PaddingSpacing(),
-            InputField(
-              isUnderlineBorder: true,
-              labelText: "Voornaam",
-              controller: firstNameController,
-            ),
-            const PaddingSpacing(),
-            InputField(
-              isUnderlineBorder: true,
-              labelText: "Achternaam",
-              controller: lastNameController,
-            ),
-            const PaddingSpacing(),
-            InputField(
-              isUnderlineBorder: true,
-              labelText: "Geboorte datum",
-              controller: dateOfBirthController,
-            ),
-            const PaddingSpacing(),
-            const PaddingSpacing(),
+            for (MapEntry<String, Roles> item in rolesDescription.entries)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(item.key),
+                  CupertinoSwitch(
+                      value:
+                          globalLoggedInUserValues!.roles.contains(item.value),
+                      onChanged: (onChanged) {}
+                  )
+                ],
+              ),
             const PaddingSpacing(),
             Button(
-              onTap: () {
-                logout();
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => const OnboardingScreen()));
-              },
+              onTap: () {},
               text: "Uitloggen",
+              color: dangerColor,
               icon: Icons.logout,
             ),
           ],

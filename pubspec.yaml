@@ -71,8 +71,8 @@ flutter:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
   assets:
-    - assets/avaters/Avatar Default.png
-    - assets/avaters/
+    - assets/avatars/Avatar Default.png
+    - assets/avatars/
     - assets/Backgrounds/
     - assets/icons/
     - assets/RiveAssets/

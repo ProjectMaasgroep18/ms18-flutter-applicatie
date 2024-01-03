@@ -21,6 +21,12 @@ class StockReport extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Menu(
+      title: const Text(
+        "Voorraad beheer",
+        style: TextStyle(
+          color: Colors.white,
+        ),
+      ),
       child: SafeArea(
         child: Stack(
           children: [
@@ -31,7 +37,6 @@ class StockReport extends StatelessWidget {
                   onSearch: (value) {
                     searchNotifier.value = value;
                   },
-                  title: "Voorraad beheer",
                   onAdd: () {
                     addItemsDialog(context, (stockProduct) async {
                       await addProduct(stockProduct);
