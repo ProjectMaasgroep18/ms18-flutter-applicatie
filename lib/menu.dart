@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Calendar/calendar.dart';
 import 'package:ms18_applicatie/Dashboard/dashboard.dart';
-import 'package:ms18_applicatie/Declarations/declarations.dart';
 import 'package:ms18_applicatie/Models/stock.dart';
 import 'package:ms18_applicatie/Pictures/listPictures.dart';
 import 'package:ms18_applicatie/Profile/profile.dart';
 import 'package:ms18_applicatie/Shoppingcart/Shoppingcart.dart';
 import 'package:ms18_applicatie/Stock/stockReport.dart';
 import 'package:ms18_applicatie/Users/userList.dart';
+import 'package:ms18_applicatie/globals.dart';
 import 'package:ms18_applicatie/roles.dart';
+import 'package:ms18_applicatie/team-c/Declarations/declarationsMenu.dart';
 import 'config.dart';
 import 'menuItem.dart' as menuItem;
 
@@ -28,27 +29,32 @@ class Menu extends StatelessWidget {
     menuItem.MenuItem(
       text: 'Home',
       icon: Icons.home,
-      page: MaterialPageRoute(builder: (context) => Dashboard()),
+      page: MaterialPageRoute(builder: (context) => const Dashboard()),
+        roles: Roles.values
     ),
     menuItem.MenuItem(
         text: 'Voorraad',
         icon: Icons.add_chart,
         page: MaterialPageRoute(builder: (context) => StockReport()),
-        roles: [Roles.Admin, Roles.Subadmin]),
+        roles: [Roles.Admin]),
     menuItem.MenuItem(
         text: 'Foto\'s',
         icon: Icons.photo,
-        page: MaterialPageRoute(builder: (context) => const ListPictures())),
+        page: MaterialPageRoute(builder: (context) => const ListPictures()),
+        roles: Roles.values
+    ),
     menuItem.MenuItem(
         text: 'Declaraties',
         icon: Icons.message,
-        page: MaterialPageRoute(builder: (context) => const Declarations()),
-        roles: [Roles.Admin, Roles.Subadmin]),
+        page: MaterialPageRoute(builder: (context) => const DeclarationsMenu()),
+        roles: [Roles.Admin, Roles.Receipt, Roles.ReceiptApprove, Roles.ReceiptPay]),
     menuItem.MenuItem(
       text: 'Agenda',
       icon: Icons.calendar_month,
       page: MaterialPageRoute(builder: (context) => const Calendar()),
+      roles: Roles.values
     ),
+  /*
     menuItem.MenuItem(
       text: 'Google Maps',
       icon: Icons.map_outlined,
@@ -57,10 +63,12 @@ class Menu extends StatelessWidget {
                 child: Container(),
               )),
     ),
+    */
     menuItem.MenuItem(
       text: 'Gebruikers',
       icon: Icons.account_circle,
       page: MaterialPageRoute(builder: (context) => const UserList()),
+      roles: [Roles.Admin,]
     ),
     menuItem.MenuItem(
       text: 'Bar',
@@ -95,7 +103,7 @@ class Menu extends StatelessWidget {
         ),
       );
       for (menuItem.MenuItem menuitem in menuItems) {
-        if (menuitem.roles.contains(UserData.role)) {
+        if (menuitem.roles.indexWhere((e) => UserData.roles!.contains(e)) > -1) {
           items.add(
             MenuItemBase(
               page: menuitem.page,
@@ -107,22 +115,22 @@ class Menu extends StatelessWidget {
               ),
             ),
           );
+          i++;
         }
-        i++;
       }
     } else if (screenWidth > mobileWidth) {
       items.add(
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 20),
           child: Image.asset(
-            "",
+            "assets/logo.jpg",
             height: 30,
             width: 30,
           ),
         ),
       );
       for (menuItem.MenuItem menuitem in menuItems) {
-        if (menuitem.roles.contains(UserData.role)) {
+        if (menuitem.roles.indexWhere((e) => UserData.roles!.contains(e)) > -1) {
           items.add(
             MenuItemBase(
               page: menuitem.page,
@@ -134,8 +142,8 @@ class Menu extends StatelessWidget {
               ),
             ),
           );
+          i++;
         }
-        i++;
       }
     }
 
@@ -148,7 +156,7 @@ class Menu extends StatelessWidget {
     int i = 0;
 
     for (menuItem.MenuItem menuitem in menuItems) {
-      if (menuitem.roles.contains(UserData.role)) {
+      if (menuitem.roles.indexWhere((e) => UserData.roles!.contains(e)) > -1) {
         bool selected = MenuIndex.index == i;
         items.add(
           BottomNavigationBarItem(
@@ -167,8 +175,8 @@ class Menu extends StatelessWidget {
             ),
           ),
         );
+        i++;
       }
-      i++;
     }
 
     return items;
@@ -235,7 +243,7 @@ class Menu extends StatelessWidget {
 }
 
 class UserData {
-  static Roles? role = Roles.Admin;
+  static List<Roles>? roles = globalLoggedInUserValues?.roles ?? [Roles.Order];
 }
 
 class MenuItemDesktop extends StatelessWidget {

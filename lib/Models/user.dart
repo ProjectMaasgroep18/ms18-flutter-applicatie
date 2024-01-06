@@ -1,21 +1,22 @@
-class User {
-  final String firstName;
-  final String lastName;
-  final String email;
-  final String hashedPassword;
-  final DateTime dateOfBirth;
-  final bool gender;
-  final String ? profilePicture;
-  String get fullName => '$firstName $lastName';
+import 'package:flutter/material.dart';
+import 'package:ms18_applicatie/roles.dart';
 
+class User {
+  int id;
+  String name;
+  String email;
+  String password;
+  List<Roles> roles;
+  bool guest;
+  Color color;
 
   User({
-    required this.firstName,
-    required this.lastName,
+    required this.id,
+    required this.name,
     required this.email,
-    required this.hashedPassword,
-    required this.dateOfBirth,
-    required this.gender,
-    this.profilePicture
+    required this.password,
+    required this.roles,
+    required this.guest,
+    required this.color,
   });
 }
