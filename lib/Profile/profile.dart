@@ -1,9 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Widgets/buttons.dart';
-import 'package:ms18_applicatie/Widgets/inputFields.dart';
 import 'package:ms18_applicatie/Widgets/paddingSpacing.dart';
-import 'package:ms18_applicatie/Widgets/profilePicture.dart';
 import 'package:ms18_applicatie/config.dart';
 import 'package:ms18_applicatie/globals.dart';
 import 'package:ms18_applicatie/menu.dart';
@@ -46,6 +44,7 @@ class Profile extends StatelessWidget {
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(mobilePadding),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ListTile(
               title: const Text("Naam:"),
@@ -89,6 +88,7 @@ class Profile extends StatelessWidget {
               text: "Uitloggen",
               color: dangerColor,
               icon: Icons.logout,
+              isFullWidth: false,
             ),
           ],
         ),

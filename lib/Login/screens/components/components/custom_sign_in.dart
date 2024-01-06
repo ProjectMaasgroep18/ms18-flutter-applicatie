@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Login/screens/components/components/gastInlog.dart';
 import 'package:ms18_applicatie/Login/screens/components/components/guestSigninForm.dart';
+import 'package:ms18_applicatie/Widgets/responsiveness.dart';
 import 'package:ms18_applicatie/config.dart';
 import 'sign_in_form.dart';
 
@@ -21,6 +22,7 @@ Future<Object?> customSigninDialog(BuildContext context,
     pageBuilder: (context, _, __) => Center(
       child: Container(
         height: 520,
+        width: getResponsifeWidth(context, width: desktopPopupWidth),
         margin: const EdgeInsets.symmetric(horizontal: 16),
         padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 46),
         decoration: BoxDecoration(
@@ -89,6 +91,7 @@ Future<Object?> customGuestLogin(BuildContext context,
     pageBuilder: (context, _, __) => Center(
       child: Container(
         height: 520,
+        width: getResponsifeWidth(context, width: desktopPopupWidth),
         margin: const EdgeInsets.symmetric(horizontal: 16),
         padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 46),
         decoration: BoxDecoration(

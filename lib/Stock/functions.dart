@@ -1,12 +1,11 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Api/apiManager.dart';
 import 'package:ms18_applicatie/Models/stock.dart';
 import 'package:ms18_applicatie/Stock/stockReport.dart';
 import 'package:ms18_applicatie/Widgets/popups.dart';
+import 'package:ms18_applicatie/Widgets/stringToColor.dart';
 import 'package:ms18_applicatie/config.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 String colorToString(Color color) {
   return "#${color.value.toRadixString(16).substring(2)}";
@@ -17,39 +16,39 @@ void reploadPage() {
       MaterialPageRoute(builder: ((context) => StockReport())));
 }
 
-Future<Map<String, String>> getHeaders() async {
-  final prefs = await SharedPreferences.getInstance();
-  final res = prefs.getString('token');
-  String bearerToken = "Bearer $res";
-  return {
-    ...apiHeaders,
-    ...{"Authorization": bearerToken}
-  };
-}
-
 Future<List<StockProduct>> getStock() async {
   List<StockProduct> stockItems = [];
 
-  await ApiManager.get<List<dynamic>>(StockReport.url, await getHeaders()).then((data) {
-    for (Map<String, dynamic> product in data) {
-      Map<String, dynamic> map = product;
-
-      //Parsing the color from the db
-      final String hexColor =
-          "FF${(map["color"] as String).replaceAll('#', '')}";
-      final int color = int.tryParse(hexColor, radix: 16) ?? 0xFFFFFFFF;
-
-      StockProduct tempProduct = StockProduct(
-          product: Product(
-              color: Color(color),
-              name: map["name"],
-              price: double.tryParse(map["price"].toString()) ?? 0,
-              icon: map["icon"],
-              id: map['id']),
-          quantity: map['stock'] ?? 0);
-      stockItems.add(tempProduct);
-    }
+  await ApiManager.get<List<dynamic>>(StockReport.url, await getHeaders())
+      .then((data) {
+    stockItems = castListDynamicToStockProducts(data);
   });
+  return stockItems;
+}
+
+StockProduct castMapToStockProduct(Map<String, dynamic> apiStockProduct) {
+  //Parsing the color from the db
+  StockProduct stockProduct = StockProduct(
+    product: Product(
+        color: Color(stringToColor(apiStockProduct['color'])),
+        name: apiStockProduct["name"] ?? '',
+        price:
+            double.tryParse((apiStockProduct["price"] ?? '').toString()) ?? 0,
+        icon: apiStockProduct["icon"] ?? '',
+        id: apiStockProduct['id'] ?? ''),
+    quantity: apiStockProduct['stock'] ?? apiStockProduct['quantity'] ?? 0,
+  );
+
+  return stockProduct;
+}
+
+List<StockProduct> castListDynamicToStockProducts(List<dynamic> data) {
+  List<StockProduct> stockItems = [];
+  for (Map<String, dynamic> product in data) {
+    Map<String, dynamic> map = product;
+
+    stockItems.add(castMapToStockProduct(map));
+  }
   return stockItems;
 }
 
@@ -72,7 +71,9 @@ Future addProduct(StockProduct stockProduct) async {
       Colors.primaries[Random().nextInt(Colors.primaries.length)];
 
   PopupAndLoading.showLoading();
-  await ApiManager.post(StockReport.url, getBody(stockProduct), await getHeaders()).then((value) {
+  await ApiManager.post(
+          StockReport.url, getBody(stockProduct), await getHeaders())
+      .then((value) {
     PopupAndLoading.showSuccess("Product toevoegen gelukt");
     reploadPage();
   }).catchError((error) {
@@ -84,8 +85,7 @@ Future addProduct(StockProduct stockProduct) async {
 Future updateProduct(StockProduct stockProduct) async {
   PopupAndLoading.showLoading();
   await ApiManager.put("${StockReport.url}/${stockProduct.product.id}",
-          getBody(stockProduct, true),
-      await getHeaders())
+          getBody(stockProduct, true), await getHeaders())
       .then((value) {
     PopupAndLoading.showSuccess("Product wijzigen gelukt");
     reploadPage();
@@ -98,7 +98,8 @@ Future updateProduct(StockProduct stockProduct) async {
 
 Future deleteProduct(int productId) async {
   PopupAndLoading.showLoading();
-  await ApiManager.delete("${StockReport.url}/$productId", await getHeaders()).then((value) {
+  await ApiManager.delete("${StockReport.url}/$productId", await getHeaders())
+      .then((value) {
     PopupAndLoading.showSuccess("Product verwijderen gelukt");
     reploadPage();
   }).catchError((error) {
@@ -127,6 +128,6 @@ Future updateAllStock(Set<StockProduct> changedProducts,
 
 Future updateStock(StockProduct stockProduct) async {
   Map<String, dynamic> body = {'quantity': stockProduct.quantity};
-  await ApiManager.put(
-      "${StockReport.url}/${stockProduct.product.id}/Stock", body, await getHeaders());
+  await ApiManager.put("${StockReport.url}/${stockProduct.product.id}/Stock",
+      body, await getHeaders());
 }
