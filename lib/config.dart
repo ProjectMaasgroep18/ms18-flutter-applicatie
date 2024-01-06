@@ -79,6 +79,9 @@ const double verticalButtonSpacing = 10;
 
 //Button height
 const double buttonHeight = 35;
+const double desktopButtonWidth = 300;
+
+const double desktopPopupWidth = 500;
 
 //Border Radius
 const double borderRadius = 10;

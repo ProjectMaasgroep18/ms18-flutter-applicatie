@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Widgets/buttons.dart';
+import 'package:ms18_applicatie/Widgets/responsiveness.dart';
 import 'package:ms18_applicatie/config.dart';
 
 Future showInputPopup(BuildContext context,
@@ -10,35 +11,39 @@ Future showInputPopup(BuildContext context,
   await showDialog(
     context: context,
     builder: (context) {
+      double popupWidth = getResponsifeWidth(context, width: desktopPopupWidth);
+      if (popupWidth == double.infinity) popupWidth = double.maxFinite;
+
       return AlertDialog(
         scrollable: true,
         backgroundColor: Colors.white,
         surfaceTintColor: Colors.white,
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-                fontSize: 20,
+        title: SizedBox(
+          width: popupWidth,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                  fontSize: 20,
+                ),
               ),
-            ),
-            const Divider(
-              color: secondColor,
-            )
-          ],
+              const Divider(
+                color: secondColor,
+              )
+            ],
+          ),
         ),
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(
             Radius.circular(borderRadius),
           ),
         ),
-        content: Container(
-          width: double.maxFinite,
-          // height:  height,
-          color: Colors.white,
+        content: SizedBox(
+          width: popupWidth,
           child: child,
         ),
         actions: <Widget>[

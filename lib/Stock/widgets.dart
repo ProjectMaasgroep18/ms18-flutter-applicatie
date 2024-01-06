@@ -4,7 +4,6 @@ import 'package:ms18_applicatie/Widgets/buttons.dart';
 import 'package:ms18_applicatie/Widgets/inputFields.dart';
 import 'package:ms18_applicatie/Widgets/inputPopup.dart';
 import 'package:ms18_applicatie/Widgets/paddingSpacing.dart';
-import 'package:ms18_applicatie/Widgets/statusIndicator.dart';
 import '../config.dart';
 
 const Map<String, IconData> productIcons = {
@@ -54,7 +53,7 @@ Future<void> addItemsDialog(
   final GlobalKey<FormState> formKey = GlobalKey();
 
   await showInputPopup(context,
-      title: "Item ${isChange ? 'wijzigen' : 'toevoegen'}",
+      title: "Product ${isChange ? 'wijzigen' : 'toevoegen'}",
       height: 300 + (isChange ? 48 : 0),
       child: Form(
         key: formKey,
@@ -112,7 +111,7 @@ Future<void> addItemsDialog(
         ..price = double.parse(priceController.text)
         ..icon = icon;
 
-      stockProduct.quantity = int.tryParse(countController.text) ?? 0;  
+      stockProduct.quantity = int.tryParse(countController.text) ?? 0;
       onSave(stockProduct);
     }
   });
@@ -164,34 +163,28 @@ class StockElement extends StatelessWidget {
       leading: SizedBox(
         width: 45,
         height: 45,
-        child: Stack(clipBehavior: Clip.none, children: [
-          Container(
-            width: 45,
-            height: 45,
-            decoration: BoxDecoration(
-              color: stockProduct.product.color,
-              borderRadius: BorderRadius.circular(
-                borderRadius,
+        child: Container(
+          width: 45,
+          height: 45,
+          decoration: BoxDecoration(
+            color: stockProduct.product.color,
+            borderRadius: BorderRadius.circular(
+              borderRadius,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 1,
+                blurRadius: 4,
+                offset: const Offset(2, 2), // changes position of shadow
               ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.5),
-                  spreadRadius: 1,
-                  blurRadius: 4,
-                  offset: const Offset(2, 2), // changes position of shadow
-                ),
-              ],
-            ),
-            child: Icon(
-              productIcons[stockProduct.product.icon],
-              color: Colors.white,
-            ),
+            ],
           ),
-          const Positioned(
-              bottom: 0,
-              right: -3,
-              child: StatusIndicator(color: successColor)),
-        ]),
+          child: Icon(
+            productIcons[stockProduct.product.icon],
+            color: Colors.white,
+          ),
+        ),
       ),
       title: Text(stockProduct.product.name),
       subtitle: Text('€${stockProduct.product.price}'),

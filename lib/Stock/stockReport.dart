@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Models/stock.dart';
 import 'package:ms18_applicatie/Stock/functions.dart';
 import 'package:ms18_applicatie/Stock/widgets.dart';
+import 'package:ms18_applicatie/Widgets/listState.dart';
 import 'package:ms18_applicatie/Widgets/pageHeader.dart';
 import 'package:ms18_applicatie/Widgets/search.dart';
 import 'package:ms18_applicatie/config.dart';
@@ -47,15 +48,7 @@ class StockReport extends StatelessWidget {
                   future: getStock(),
                   builder: (context, snapshot) {
                     if (snapshot.hasError) {
-                      return const Expanded(
-                        child: Center(
-                          child: Icon(
-                            Icons.error,
-                            color: dangerColor,
-                            size: 50,
-                          ),
-                        ),
-                      );
+                      return const ListErrorIndicator();
                     } else if (snapshot.hasData) {
                       var stockProducts = snapshot.data ?? [];
                       return Flexible(
@@ -96,11 +89,7 @@ class StockReport extends StatelessWidget {
                         ),
                       );
                     } else {
-                      return const Expanded(
-                        child: Center(
-                          child: CircularProgressIndicator(),
-                        ),
-                      );
+                      return const ListLoadingIndicator();
                     }
                   },
                 ),

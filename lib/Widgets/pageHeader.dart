@@ -25,7 +25,7 @@ class PageHeader extends StatelessWidget {
                 child: InputField(
                   isUnderlineBorder: false,
                   icon: Icons.search,
-                  hintText: "Search",
+                  hintText: "Zoeken",
                   onChange: (value) {
                     if (onSearch != null) {
                       onSearch!(value ?? '');
