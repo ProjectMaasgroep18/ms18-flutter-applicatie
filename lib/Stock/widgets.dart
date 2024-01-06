@@ -122,14 +122,17 @@ class StockElement extends StatelessWidget {
   final Function(String?)? onChange;
   late TextEditingController stockController;
   final Function(StockProduct)? onSave;
-  final Function() onDelete;
+  final Function()? onDelete;
+  final bool isReadOnly;
 
-  StockElement(
-      {super.key,
-      required this.stockProduct,
-      this.onChange,
-      this.onSave,
-      required this.onDelete}) {
+  StockElement({
+    super.key,
+    required this.stockProduct,
+    this.onChange,
+    this.onSave,
+    this.onDelete,
+    this.isReadOnly = false,
+  }) {
     stockController =
         TextEditingController(text: stockProduct.quantity.toString());
   }
@@ -153,86 +156,88 @@ class StockElement extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      onTap: () {
-        addItemsDialog(context, (stockProduct) {
-          if (onSave != null) {
-            onSave!(stockProduct);
-          }
-        }, onDelete, stockProduct);
-      },
-      leading: SizedBox(
-        width: 45,
-        height: 45,
-        child: Container(
-          width: 45,
-          height: 45,
-          decoration: BoxDecoration(
-            color: stockProduct.product.color,
-            borderRadius: BorderRadius.circular(
-              borderRadius,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.5),
-                spreadRadius: 1,
-                blurRadius: 4,
-                offset: const Offset(2, 2), // changes position of shadow
+      onTap: isReadOnly
+          ? null
+          : () {
+              addItemsDialog(context, (stockProduct) {
+                if (onSave != null) {
+                  onSave!(stockProduct);
+                }
+              }, onDelete, stockProduct);
+            },
+      leading: isReadOnly
+          ? null
+          : Container(
+              width: 45,
+              height: 45,
+              decoration: BoxDecoration(
+                color: stockProduct.product.color,
+                borderRadius: BorderRadius.circular(
+                  borderRadius,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 1,
+                    blurRadius: 4,
+                    offset: const Offset(2, 2), // changes position of shadow
+                  ),
+                ],
               ),
-            ],
-          ),
-          child: Icon(
-            productIcons[stockProduct.product.icon],
-            color: Colors.white,
-          ),
-        ),
-      ),
+              child: Icon(
+                productIcons[stockProduct.product.icon],
+                color: Colors.white,
+              ),
+            ),
       title: Text(stockProduct.product.name),
-      subtitle: Text('€${stockProduct.product.price}'),
+      subtitle: Text('€${priceFormat.format(stockProduct.product.price)}'),
       contentPadding: EdgeInsets.zero,
-      trailing: SizedBox(
-        width: 160,
-        child: Row(
-          children: [
-            SizedBox(
-              width: 44,
-              height: 44,
-              child: Button(
-                onTap: () {
-                  changeNumber(-1);
-                },
-                icon: Icons.remove,
+      trailing: isReadOnly
+          ? Text(stockProduct.quantity.toString())
+          : SizedBox(
+              width: 160,
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 44,
+                    height: 44,
+                    child: Button(
+                      onTap: () {
+                        changeNumber(-1);
+                      },
+                      icon: Icons.remove,
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 5,
+                  ),
+                  Flexible(
+                    child: InputField(
+                      isUnderlineBorder: false,
+                      isInt: true,
+                      controller: stockController,
+                      textAlign: TextAlign.center,
+                      onChange: (value) {
+                        updateInput();
+                      },
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 5,
+                  ),
+                  SizedBox(
+                    width: 44,
+                    height: 44,
+                    child: Button(
+                      onTap: () {
+                        changeNumber(1);
+                      },
+                      icon: Icons.add,
+                    ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(
-              width: 5,
-            ),
-            Flexible(
-              child: InputField(
-                isUnderlineBorder: false,
-                isInt: true,
-                controller: stockController,
-                textAlign: TextAlign.center,
-                onChange: (value) {
-                  updateInput();
-                },
-              ),
-            ),
-            const SizedBox(
-              width: 5,
-            ),
-            SizedBox(
-              width: 44,
-              height: 44,
-              child: Button(
-                onTap: () {
-                  changeNumber(1);
-                },
-                icon: Icons.add,
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

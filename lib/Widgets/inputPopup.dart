@@ -6,7 +6,7 @@ import 'package:ms18_applicatie/config.dart';
 Future showInputPopup(BuildContext context,
     {required String title,
     required Widget child,
-    required Function() onSave,
+    Function()? onSave,
     double height = 220}) async {
   await showDialog(
     context: context,
@@ -53,15 +53,16 @@ Future showInputPopup(BuildContext context,
             },
             child: const Text('Terug'),
           ),
-          SizedBox(
-            width: 150,
-            child: Button(
-              onTap: () {
-                onSave();
-              },
-              text: 'Opslaan',
-            ),
-          )
+          if (onSave != null)
+            SizedBox(
+              width: 150,
+              child: Button(
+                onTap: () {
+                  onSave();
+                },
+                text: 'Opslaan',
+              ),
+            )
         ],
       );
     },

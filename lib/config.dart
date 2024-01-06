@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 //Colors
@@ -92,6 +93,9 @@ const double itemHeight = 11;
 //Navigator key
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
+//Price formatter
+var priceFormat = NumberFormat("###.0#", "nl_NL");
+
 //From here down you got stuff for roles
 
 // enum of the roles so you can make a spelling error
@@ -134,4 +138,14 @@ setPrefString(String value, String key) async {
   final prefs = await SharedPreferences.getInstance();
   await prefs.remove(key);
   await prefs.setString(key, value);
+}
+
+Future<Map<String, String>> getHeaders() async {
+  final prefs = await SharedPreferences.getInstance();
+  final res = prefs.getString('token');
+  String bearerToken = "Bearer $res";
+  return {
+    ...apiHeaders,
+    ...{"Authorization": bearerToken}
+  };
 }
