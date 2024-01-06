@@ -5,7 +5,7 @@ import 'package:ms18_applicatie/Declarations/declarations.dart';
 import 'package:ms18_applicatie/Models/stock.dart';
 import 'package:ms18_applicatie/Pictures/listPictures.dart';
 import 'package:ms18_applicatie/Profile/profile.dart';
-import 'package:ms18_applicatie/Stock/Shoppingcart.dart';
+import 'package:ms18_applicatie/Shoppingcart/Shoppingcart.dart';
 import 'package:ms18_applicatie/Stock/stockReport.dart';
 import 'package:ms18_applicatie/Users/userList.dart';
 import 'package:ms18_applicatie/roles.dart';
