@@ -40,7 +40,7 @@ class ApiManager {
 
     print("RESP: ${response.body}");
 
-    return tryJsonDecode(response.body);
+    return tryJsonDecode(response);
 
   }
 
@@ -62,7 +62,7 @@ class ApiManager {
 
     // checkStatusCode(response);
     print("Response GET : ${response.body}");
-    return tryJsonDecode(response.body);
+    return tryJsonDecode(response);
 
   }
 
