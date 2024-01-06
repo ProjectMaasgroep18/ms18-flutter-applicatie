@@ -108,4 +108,5 @@ const String apiUrl = "https://api.hr.rspn.io/";
 const Map<String, String> apiHeaders = {
   "Content-Type": "application/json",
   "Accept": "application/json",
+  "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTIzMTk1NTksImlzcyI6ImxvY2FsaG9zdCIsImF1ZCI6ImxvY2FsaG9zdCJ9.ypP-3tAN_ktckhmI8yBSvx_DIOgpaKMWTrgdmSPKffA",
 };

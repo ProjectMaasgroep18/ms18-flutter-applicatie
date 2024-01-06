@@ -21,7 +21,7 @@ class StockReport extends StatelessWidget {
                 name: map["name"],
                 price: 1,
                 priceQuantity: 1),
-            quantity: 1);
+                quantity: 1);
         stockItems.add(tempProduct);
       }
     });
