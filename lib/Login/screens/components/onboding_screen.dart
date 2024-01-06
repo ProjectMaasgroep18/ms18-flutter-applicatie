@@ -27,7 +27,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
         body: Padding(
       padding: const EdgeInsets.all(0),
       child: Stack(
@@ -37,22 +36,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             child: SizedBox(
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height,
-                // bottom: -5350,
-                // left: -2760,
                 child: Image.asset('assets/Backgrounds/Shapes.png', fit: BoxFit.fill)),
           ),
           Positioned.fill(
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 0, sigmaY: 0),
               )),
-          // const RiveAnimation.asset('assets/RiveAssets/shapes.riv'),
-          // Positioned.fill(
-          //     child: BackdropFilter(
-          //   filter: ImageFilter.blur(sigmaX: 20, sigmaY: 10),
-          //   child: const SizedBox(),
-          // )),
           AnimatedPositioned(
-            duration: Duration(milliseconds: 240),
+            duration: const Duration(milliseconds: 240),
             top: isSignInDialogShown ? -50 : 0,
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
@@ -62,7 +53,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Spacer(),
+                    const Spacer(),
                     Image.asset(
                       "assets/logo.jpg",
                       width: 50,
@@ -120,7 +111,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             });
                           });
                         },
-                        child: Text(
+                        child: const Text(
                           "Gast Login",
                           style: TextStyle(
                               color: Colors.lightBlue,

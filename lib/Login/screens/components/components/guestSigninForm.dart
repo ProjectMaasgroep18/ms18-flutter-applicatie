@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:ms18_applicatie/Dashboard/dashboard.dart';
+import 'package:ms18_applicatie/Api/apiManager.dart';
 import 'package:ms18_applicatie/Dashboard/guestDashboard.dart';
 import 'package:ms18_applicatie/Widgets/buttons.dart';
 import 'package:ms18_applicatie/Widgets/inputFields.dart';
 import 'package:ms18_applicatie/Widgets/paddingSpacing.dart';
-import 'package:ms18_applicatie/menu.dart';
+import 'package:ms18_applicatie/Widgets/popups.dart';
+import 'package:ms18_applicatie/config.dart';
+import 'package:ms18_applicatie/main.dart';
 import 'package:rive/rive.dart';
 
 class GuestSignInForm extends StatefulWidget {
@@ -26,6 +28,10 @@ class _SignInFormState extends State<GuestSignInForm> {
   late SMITrigger reset;
 
   late SMITrigger confetti;
+
+  TextEditingController emailController = TextEditingController();
+
+  static const String url = "api/v1/User/Login";
 
   StateMachineController getRiveController(Artboard artboard) {
     StateMachineController? controller =
@@ -69,9 +75,10 @@ class _SignInFormState extends State<GuestSignInForm> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const InputField(
+                InputField(
                   labelText: "Email",
                   isUnderlineBorder: true,
+                  controller: emailController,
                 ),
                 const PaddingSpacing(),
                 const PaddingSpacing(),
@@ -79,8 +86,29 @@ class _SignInFormState extends State<GuestSignInForm> {
                 const PaddingSpacing(),
                 const PaddingSpacing(),
                 Button(
-                  onTap: () {
-                    signIn(context);
+                  onTap: () async {
+                    PopupAndLoading.showLoading();
+
+                    Map<String, String> body = {
+                      'email': emailController.text,
+                      'password': ''
+                    };
+                    await ApiManager.post(url, body).then((value) {
+                      Map<String, dynamic> response = value;
+                      if(response["token"] != null) {
+                        setToken(response["token"]);
+                        setPrefString(response["member"]["permissions"][0], "role");
+                        signIn(context);
+                        loadLocalUser(response["member"]);
+                      }else{
+                        throw Exception("Login failed, check creds");
+                      }
+                    }).catchError((error) {
+                      print(error);
+                      PopupAndLoading.showError("Inloggen mislukt, probeer het nog eens");
+                    });
+                    PopupAndLoading.endLoading();
+
                   },
                   text: 'Sign in',
                   icon: Icons.arrow_forward,
