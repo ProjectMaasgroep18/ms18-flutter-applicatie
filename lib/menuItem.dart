@@ -7,7 +7,7 @@ class MenuItem {
   final List<Roles> roles;
   final String text;
   final IconData icon;
-  final Route page;
+  Route page;
 
 
 }

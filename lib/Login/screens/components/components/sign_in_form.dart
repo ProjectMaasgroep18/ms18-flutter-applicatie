@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Api/apiManager.dart';
 import 'package:ms18_applicatie/Dashboard/dashboard.dart';
-import 'package:ms18_applicatie/Dashboard/guestDashboard.dart';
 import 'package:ms18_applicatie/Widgets/buttons.dart';
 import 'package:ms18_applicatie/Widgets/inputFields.dart';
 import 'package:ms18_applicatie/Widgets/paddingSpacing.dart';
@@ -150,10 +149,10 @@ class _SignInFormState extends State<SignInForm> {
                     confetti =
                         controller.findSMI("Trigger explosion") as SMITrigger;
                     await Future.delayed(const Duration(seconds: 5), () {
-                      Navigator.push(
+                      Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const GuestDashboard(),
+                          builder: (context) => const Dashboard(),
                         ),
                       );
                     });
