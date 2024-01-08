@@ -10,6 +10,7 @@ import '../../menu.dart';
 import '../Widgets/buttons.dart';
 import '../Widgets/inputFields.dart';
 import '../Widgets/paddingSpacing.dart';
+import '../Widgets/popups.dart';
 
 final ImagePicker picker = ImagePicker();
 XFile? photo;
@@ -39,7 +40,7 @@ class PickPhotoState extends State<PickPhoto> {
   @override
   void initState() {
     // Retrieve all the costcentres and put them in a list
-    ApiManager.get("/api/v1/CostCentre").then((x) {
+    ApiManager.get("api/v1/CostCentre").then((x) {
       List<dynamic> data = x;
       List<DropdownMenuItem<String>> temp = [];
       // Loop over the data and add the names to the list
@@ -146,11 +147,7 @@ class PickPhotoState extends State<PickPhoto> {
                   icon: Icons.photo,
                   onTap: () async {
                     if (amountController.text.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text("Vul alle velden in"),
-                        ),
-                      );
+                      PopupAndLoading.showError("Vul alle velden in");
                       return;
                     } else {
                       var res = await picker.pickImage(
@@ -174,50 +171,52 @@ class PickPhotoState extends State<PickPhoto> {
                     width: 250,
                     height: 250,
                   )
-                : Container(
-                    child: const PaddingSpacing(),
-                  ),
+                : const PaddingSpacing(),
             const PaddingSpacing(),
             // Upload the photo
             Button(
                 onTap: () async {
-                  if (photo == null || amountController.text.isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text("Kies een foto en vul alle velden in"),
-                      ),
-                    );
+                  if (photo == null) {
+                    PopupAndLoading.showError("Kies een foto en vul alle velden in");
                     return;
                   } else {
                     var res = await ApiManager.post(
-                      "/api/v1/Receipt",
+                      "api/v1/Receipt",
                       {
                         "amount": amountController.text,
                         "name": nameController.text,
                         "note": descriptionController.text,
                         "costCentre": selectedCostCentre,
-                        "photos": [
-                          {
+                      },
+                      {
+                        "Authorization": "Bearer ${await getToken()}",
+                      },
+                    );
+                    print(res);
+                    if (res == null) {
+                      PopupAndLoading.showError("Er is iets fout gegaan");
+                      return;
+                    }
+                    var photoRes = await ApiManager.post(
+                      "api/v1/Receipt/$res/Photo",
+                      {
                             "fileName": file!.path.split("/").last,
                             "fileExtension": file!.path.split(".").last,
                             "base64Image": await imageToBase64(file!),
-                          }
-                        ],
+                            "receiptId": res
+                      },
+                      {
+                        "Authorization": "Bearer ${await getToken()}",
                       },
                     );
-                    if (res == null) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text("Er is iets fout gegaan"),
-                        ),
-                      );
-                      return;
+                    if (photoRes != null) {
+                      PopupAndLoading.showSuccess("De foto is geupload");
+                      Future.delayed(const Duration(seconds: 2), () {
+                        Navigator.pop(context);
+                      });
+                    } else {
+                      PopupAndLoading.showError("Er is iets fout gegaan");
                     }
-                    SnackBar snackBar = const SnackBar(
-                      content: Text("Succesvol geupload"),
-                    );
-                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                    Navigator.pop(context);
                   }
                 },
                 text: "Uploaden")

@@ -1,6 +1,11 @@
 import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:ms18_applicatie/Models/declaration.dart';
+import 'package:ms18_applicatie/Widgets/inputFields.dart';
 import 'package:ms18_applicatie/config.dart';
+
 import '../Api/apiManager.dart';
 import '../Widgets/paddingSpacing.dart';
 import '../menu.dart';
@@ -8,17 +13,17 @@ import '../menu.dart';
 Future<dynamic>? _future;
 TextEditingController remarkController = TextEditingController();
 
-class Declarations extends StatefulWidget {
-  const Declarations({super.key});
+class DeclarationsPayout extends StatefulWidget {
+  const DeclarationsPayout({super.key});
 
   @override
-  State<Declarations> createState() => _DeclarationsState();
+  State<DeclarationsPayout> createState() => DeclarationsPayoutState();
 }
 
-class _DeclarationsState extends State<Declarations> {
+class DeclarationsPayoutState extends State<DeclarationsPayout> {
   @override
   void initState() {
-    _future = ApiManager.get("api/v1/Receipt");
+    _future = ApiManager.get<List<dynamic>>("api/v1/Receipt");
     super.initState();
   }
 
@@ -58,7 +63,11 @@ class _DeclarationsState extends State<Declarations> {
               ),
               child: Column(
                 children: [
-                  showRows(),
+                  if (_future is Future<Map<String, dynamic>>)
+                    const Center(
+                      child: Text("Geen data gevonden wallah"),
+                    )
+                  else showRows(),
                 ],
               ),
             ),
@@ -83,6 +92,7 @@ class _DeclarationsState extends State<Declarations> {
                   } else {
                     if (snapshot.hasData) {
                       List<dynamic> data = snapshot.data;
+                      data = data.where((element) => element['statusString'] == "Goedgekeurd").toList();
                       return ListView.builder(
                         physics: const NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
@@ -235,17 +245,14 @@ class _DeclarationsState extends State<Declarations> {
           actions: <Widget>[
             TextButton(
               onPressed: () async {
-
                 // Update the status
                 var res = ApiManager
-                    .post("/api/v1/Receipt/${declInfo['id']}/Approve", {
-
+                    .post("api/v1/Receipt/${declInfo['id']}/Approve", {
                   "receiptId": declInfo['id'],
                   "note": declInfo['note'],
                   "approved": true,
-                  "paid": false
+                  "paid": true,
                 });
-
                 if (res != null) {
                   // Show snackbar
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -268,12 +275,11 @@ class _DeclarationsState extends State<Declarations> {
               onPressed: () {
                 // Update the status
                 var res = ApiManager
-                    .post("/api/v1/Receipt/${declInfo['id']}/Approve", {
+                    .post("api/v1/Receipt/${declInfo['id']}/Approve", {
                   "receiptId": declInfo['id'],
                   "note": declInfo['note'],
                   "approved": false,
                 });
-
                 if (res != null) {
                   // Show snackbar
                   ScaffoldMessenger.of(context).showSnackBar(
