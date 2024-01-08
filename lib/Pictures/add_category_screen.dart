@@ -20,8 +20,8 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode(<String, String>{
-          'name': _titleController.text,
-          'year': (_selectedDate?.year).toString(),
+          'Name': _titleController.text,
+          'Year': (_selectedDate?.year).toString(),
         })
     );
   }
