@@ -20,7 +20,8 @@ class DeclarationsMenuState extends State<DeclarationsMenu> {
           ImageButton(
             subTitle: "Uitbetalen van declaraties",
             title: "Uitbetalen",
-            onClick: () {
+            onClick: () async {
+              globToken = await getToken();
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -34,11 +35,12 @@ class DeclarationsMenuState extends State<DeclarationsMenu> {
           image: 'assets/declarations/uploadtruck.png',
           subTitle: "Uploaden van declaraties voor goedkeuring",
           title: "Uploaden",
-          onClick: () {
+          onClick: () async {
+            globToken = await getToken();
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const PickPhoto(),
+                builder: (context) => PickPhoto(),
               ),
             );
           },
@@ -49,7 +51,8 @@ class DeclarationsMenuState extends State<DeclarationsMenu> {
             image: 'assets/declarations/approvetruck.png',
             subTitle: "Declaraties goedkeuren voor uitbetaling",
             title: "Goedkeuren",
-            onClick: () {
+            onClick: () async {
+              globToken = await getToken();
               Navigator.push(
                 context,
                 MaterialPageRoute(

@@ -107,6 +107,7 @@ class _SignInFormState extends State<SignInForm> {
                         setPrefString(response["member"]["permissions"][0], "role");
                         signIn(context);
                         loadLocalUser(response["member"]);
+                        globToken = response["token"];
                       }else {
                         // Required until response codes are fixed
                         throw Exception("Login failed, check creds");
