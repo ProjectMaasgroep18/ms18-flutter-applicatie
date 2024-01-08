@@ -8,6 +8,7 @@ import 'package:ms18_applicatie/config.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import '../menu.dart';
 import 'package:ms18_applicatie/roles.dart';
+import 'package:ms18_applicatie/Widgets/popups.dart';
 
 class Calendar extends StatefulWidget {
   const Calendar({Key? key}) : super(key: key);
@@ -16,13 +17,12 @@ class Calendar extends StatefulWidget {
   State<Calendar> createState() => CalendarState();
 }
 
-const String apiUrl = "https://localhost:7059/";
-
 var StamFilter = false;
 var MatrozenFilter = false;
 var WelpenFilter = false;
 var ZeeVerkennersFilter = false;
 var GlobalFilter = true;
+var GlobalSource = apiUrl + 'Calendar/all';
 
 const scheduleViewSettings = ScheduleViewSettings(
   monthHeaderSettings:
@@ -59,6 +59,7 @@ class CalendarState extends State<Calendar> {
   String lastSource = '';
 
   Future<void> sendDeleteRequest(calendarName, id, contextForm) async {
+    PopupAndLoading.showLoading();
     var response = await http.delete(
         Uri.parse(restfulUrl).replace(queryParameters: {
           'calendarName': calendarName,
@@ -66,16 +67,13 @@ class CalendarState extends State<Calendar> {
         }),
         headers: {"Content-Type": "application/json"});
 
+    PopupAndLoading.endLoading();
     if (response.statusCode == 200) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Event verwijderd')),
-      );
+      PopupAndLoading.showSuccess("Event verwijderd");
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Event is niet verwijderd, probeer opnieuw')),
-      );
+      PopupAndLoading.showError("Event is niet verwijderd, probeer opnieuw");
     }
-    await _fetchDataAsync(source);
+    await _fetchDataAsync(GlobalSource);
     Navigator.of(contextForm).pop();
   }
 
@@ -90,6 +88,8 @@ class CalendarState extends State<Calendar> {
       String startDate,
       String endDate,
       contextForm) async {
+    PopupAndLoading.showLoading();
+
     var formattedFromStr =
         DateTime.parse(startDate + " " + startTime).toIso8601String();
     var formattedToStr =
@@ -108,22 +108,21 @@ class CalendarState extends State<Calendar> {
         }),
         headers: {"Content-Type": "application/json"});
 
+    PopupAndLoading.endLoading();
     if (response.statusCode == 200) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Event aangepast')),
-      );
+      print("1");
+      PopupAndLoading.showSuccess("Event aangepast");
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Event is niet aangepast, probeer opnieuw')),
-      );
+      PopupAndLoading.showError("Event is niet aangepast, probeer opnieuw");
       return;
     }
-    await _fetchDataAsync(source);
+    await _fetchDataAsync(GlobalSource);
     Navigator.of(contextForm).pop();
   }
 
   Future<void> sendCreateRequest(calendarName, id, startTime, endTime, title,
       description, location, endDate, startDate, contextForm) async {
+    PopupAndLoading.showLoading();
     var formattedFromStr =
         DateTime.parse(startDate + " " + startTime).toIso8601String();
     var formattedToStr =
@@ -142,17 +141,14 @@ class CalendarState extends State<Calendar> {
         }),
         headers: {"Content-Type": "application/json"});
 
+    PopupAndLoading.endLoading();
     if (response.statusCode == 200) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Event aangepast')),
-      );
+      PopupAndLoading.showSuccess('Event aangemaakt');
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Event is niet aangepast, probeer opnieuw')),
-      );
+      PopupAndLoading.showError('Event is niet aangemaakt, probeer opnieuw');
       return;
     }
-    await _fetchDataAsync(source);
+    await _fetchDataAsync(GlobalSource);
     Navigator.of(contextForm).pop();
   }
 
@@ -173,13 +169,15 @@ class CalendarState extends State<Calendar> {
   }
 
   Future<void> _fetchDataAsync(String source) async {
-    if (source != lastSource) {
-      var data = await _getDataSourceAsync(source);
-      setState(() {
-        lastSource = source;
-        events = data;
-      });
-    }
+    print("2");
+    GlobalSource = source;
+    PopupAndLoading.showLoading();
+    var data = await _getDataSourceAsync(source);
+    setState(() {
+      lastSource = source;
+      events = data;
+    });
+    PopupAndLoading.endLoading();
   }
 
   Future<List<Event>> _getDataSourceAsync(String source) async {
@@ -267,10 +265,6 @@ class CalendarState extends State<Calendar> {
                         setState(() {
                           _fetchDataAsync(apiUrl + 'Calendar/All');
                         });
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text('Keuze veranderd naar globaal')),
-                        );
                       },
                       child: ClipRRect(
                         child: Image.asset('../assets/groups/globaal.png',
@@ -296,10 +290,6 @@ class CalendarState extends State<Calendar> {
                         setState(() {
                           _fetchDataAsync(apiUrl + 'Calendar/welpen');
                         });
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text('Keuze veranderd naar welpen')),
-                        );
                       },
                       child: ClipRRect(
                         child: Image.asset('../assets/groups/welpen.png',
@@ -326,11 +316,6 @@ class CalendarState extends State<Calendar> {
                         WelpenFilter = false;
                         ZeeVerkennersFilter = true;
                         MatrozenFilter = false;
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content:
-                                  Text('Keuze veranderd naar zee verkenners')),
-                        );
                       },
                       child: ClipRRect(
                         child: Image.asset('../assets/groups/zee_verkenner.png',
@@ -356,10 +341,6 @@ class CalendarState extends State<Calendar> {
                         WelpenFilter = false;
                         ZeeVerkennersFilter = false;
                         MatrozenFilter = true;
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text('Keuze veranderd naar matrozen')),
-                        );
                       },
                       child: ClipRRect(
                         child: Container(
@@ -390,10 +371,6 @@ class CalendarState extends State<Calendar> {
                         setState(() {
                           _fetchDataAsync(apiUrl + 'Calendar/stam');
                         });
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text('Keuze veranderd naar stam')),
-                        );
                       },
                       child: ClipRRect(
                         child: Image.asset('../assets/groups/stam.png',
@@ -701,9 +678,6 @@ class CalendarState extends State<Calendar> {
                           startDateInput.text,
                           endDateInput.text,
                           context);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Event toegevoegd')),
-                      );
                     },
                     child: const Text('Toevoegen'),
                   ),
