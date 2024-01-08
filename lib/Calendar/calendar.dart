@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/config.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import '../menu.dart';
+import 'package:ms18_applicatie/roles.dart';
 
 class Calendar extends StatefulWidget {
   const Calendar({Key? key}) : super(key: key);
@@ -17,10 +18,20 @@ class Calendar extends StatefulWidget {
 
 const String apiUrl = "https://localhost:7059/";
 
+var StamFilter = false;
+var MatrozenFilter = false;
+var WelpenFilter = false;
+var ZeeVerkennersFilter = false;
+var GlobalFilter = true;
+
 const scheduleViewSettings = ScheduleViewSettings(
   monthHeaderSettings:
       MonthHeaderSettings(backgroundColor: Color.fromARGB(255, 227, 233, 255)),
 );
+
+class UserData {
+  static Roles? role = Roles.Admin;
+}
 
 class CalendarState extends State<Calendar> {
   List<Event> events = [];
@@ -40,7 +51,8 @@ class CalendarState extends State<Calendar> {
   TextEditingController startTime = TextEditingController();
   TextEditingController endTime = TextEditingController();
   bool isNewEvent = false;
-  bool shouldShowForm = false;
+  bool isReadOnly = false;
+
   final restfulUrl = apiUrl + 'Calendar/Event';
 
   String source = apiUrl + 'Calendar/all';
@@ -153,7 +165,6 @@ class CalendarState extends State<Calendar> {
     isNewEvent = false; // Whether form is creating or updating event.
     _description = "";
     _location = "";
-    shouldShowForm = false;
     super.initState();
 
     source = apiUrl + 'Calendar/all';
@@ -242,9 +253,17 @@ class CalendarState extends State<Calendar> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Material(
+                    color:
+                        GlobalFilter ? backgroundColorDark : Colors.transparent,
+                    borderRadius: BorderRadius.circular(8),
                     child: InkWell(
                       borderRadius: BorderRadius.circular(8),
                       onTap: () {
+                        StamFilter = false;
+                        GlobalFilter = true;
+                        WelpenFilter = false;
+                        ZeeVerkennersFilter = false;
+                        MatrozenFilter = false;
                         setState(() {
                           _fetchDataAsync(apiUrl + 'Calendar/All');
                         });
@@ -263,9 +282,17 @@ class CalendarState extends State<Calendar> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Material(
+                    borderRadius: BorderRadius.circular(8),
+                    color:
+                        WelpenFilter ? backgroundColorDark : Colors.transparent,
                     child: InkWell(
                       borderRadius: BorderRadius.circular(8),
                       onTap: () {
+                        StamFilter = false;
+                        GlobalFilter = false;
+                        WelpenFilter = true;
+                        ZeeVerkennersFilter = false;
+                        MatrozenFilter = false;
                         setState(() {
                           _fetchDataAsync(apiUrl + 'Calendar/welpen');
                         });
@@ -284,12 +311,21 @@ class CalendarState extends State<Calendar> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Material(
+                    borderRadius: BorderRadius.circular(8),
+                    color: ZeeVerkennersFilter
+                        ? backgroundColorDark
+                        : Colors.transparent,
                     child: InkWell(
                       borderRadius: BorderRadius.circular(8),
                       onTap: () {
                         setState(() {
                           _fetchDataAsync(apiUrl + 'Calendar/ZeeVerkenners');
                         });
+                        StamFilter = false;
+                        GlobalFilter = false;
+                        WelpenFilter = false;
+                        ZeeVerkennersFilter = true;
+                        MatrozenFilter = false;
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                               content:
@@ -306,19 +342,33 @@ class CalendarState extends State<Calendar> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Material(
+                    borderRadius: BorderRadius.circular(8),
+                    color: MatrozenFilter
+                        ? backgroundColorDark
+                        : Colors.transparent,
                     child: InkWell(
                       onTap: () {
                         setState(() {
                           _fetchDataAsync(apiUrl + 'Calendar/matrozen');
                         });
+                        StamFilter = false;
+                        GlobalFilter = false;
+                        WelpenFilter = false;
+                        ZeeVerkennersFilter = false;
+                        MatrozenFilter = true;
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                               content: Text('Keuze veranderd naar matrozen')),
                         );
                       },
                       child: ClipRRect(
-                        child: Image.asset('../assets/groups/matrozen.png',
-                            width: imageSize, height: imageSize),
+                        child: Container(
+                          child: Image.asset(
+                            '../assets/groups/matrozen.png',
+                            width: imageSize,
+                            height: imageSize,
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -326,9 +376,17 @@ class CalendarState extends State<Calendar> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Material(
+                    borderRadius: BorderRadius.circular(8),
+                    color:
+                        StamFilter ? backgroundColorDark : Colors.transparent,
                     child: InkWell(
                       borderRadius: BorderRadius.circular(8),
                       onTap: () {
+                        StamFilter = true;
+                        GlobalFilter = false;
+                        WelpenFilter = false;
+                        ZeeVerkennersFilter = false;
+                        MatrozenFilter = false;
                         setState(() {
                           _fetchDataAsync(apiUrl + 'Calendar/stam');
                         });
@@ -365,7 +423,6 @@ class CalendarState extends State<Calendar> {
                 todayHighlightColor: Colors.blue,
                 showNavigationArrow: true,
                 onTap: calendarTapped,
-                cellEndPadding: 40,
                 allowedViews: [
                   CalendarView.day,
                   CalendarView.week,
@@ -397,6 +454,9 @@ class CalendarState extends State<Calendar> {
     switch (details.targetElement) {
       case CalendarElement.appointment:
       case CalendarElement.agenda:
+        if (UserData.role != Roles.Admin) {
+          isReadOnly = true;
+        }
         isNewEvent = false;
         final Event appointmentDetails = details.appointments![0];
         _subjectText = appointmentDetails.eventName;
@@ -423,8 +483,11 @@ class CalendarState extends State<Calendar> {
 
         break;
       case CalendarElement.calendarCell:
+        if (UserData.role != Roles.Admin) {
+          isNewEvent = false;
+          return;
+        }
         isNewEvent = true;
-        shouldShowForm = true;
         _startTimeText = DateFormat('HH:mm').format(details.date!).toString();
 
         DateTime adjustedDateTime = details.date!.add(const Duration(hours: 1));
@@ -460,38 +523,33 @@ class CalendarState extends State<Calendar> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Summary if updating existing.
-                        if (!isNewEvent) ...[
-                          Text(
-                            _startDateText!,
-                          ),
-                          Text(
-                            _timeDetails!,
-                          ),
-                        ],
-
                         // Create / update event form.
                         TextFormField(
                             controller: startDateInput,
-                            decoration: const InputDecoration(
-                                labelText: "Vul startdatum in"),
                             readOnly: true,
+                            decoration: InputDecoration(
+                                labelText: isReadOnly
+                                    ? "Startdatum"
+                                    : "Vul startdatum in"),
                             onTap: () async {
-                              DateTime? pickedDate = await showDatePicker(
-                                  locale: const Locale('nl', 'NL'),
-                                  context: context,
-                                  initialDate: isNewEvent
-                                      ? DateTime.now()
-                                      : DateTime.parse(_startDateText!),
-                                  firstDate: DateTime(2000),
-                                  lastDate: DateTime(2101));
-                              if (pickedDate != null) {
-                                String formattedDate = DateFormat('yyyy-MM-dd')
-                                    .format(pickedDate)
-                                    .toString();
-                                setState(() {
-                                  startDateInput.text = formattedDate;
-                                });
+                              if (!isReadOnly) {
+                                DateTime? pickedDate = await showDatePicker(
+                                    locale: const Locale('nl', 'NL'),
+                                    context: context,
+                                    initialDate: isNewEvent
+                                        ? DateTime.now()
+                                        : DateTime.parse(_startDateText!),
+                                    firstDate: DateTime(2000),
+                                    lastDate: DateTime(2101));
+                                if (pickedDate != null) {
+                                  String formattedDate =
+                                      DateFormat('yyyy-MM-dd')
+                                          .format(pickedDate)
+                                          .toString();
+                                  setState(() {
+                                    startDateInput.text = formattedDate;
+                                  });
+                                }
                               }
                             },
                             onChanged: (String? newValue) {
@@ -499,26 +557,30 @@ class CalendarState extends State<Calendar> {
                             }),
                         TextFormField(
                             controller: endDateInput,
-                            decoration: const InputDecoration(
-                                labelText: "Vul einddatum in"),
+                            decoration: InputDecoration(
+                                labelText: isReadOnly
+                                    ? "Einddatum"
+                                    : "Vul einddatum in"),
                             readOnly: true,
                             onTap: () async {
-                              DateTime? pickedDate = await showDatePicker(
-                                  locale: const Locale('nl', 'NL'),
-                                  context: context,
-                                  initialDate: isNewEvent
-                                      ? DateTime.now()
-                                      : DateTime.parse(_endDateText!),
-                                  firstDate: DateTime(2000),
-                                  lastDate: DateTime(2101));
-                              if (pickedDate != null) {
-                                String formattedEndDate =
-                                    DateFormat('yyyy-MM-dd')
-                                        .format(pickedDate)
-                                        .toString();
-                                setState(() {
-                                  endDateInput.text = formattedEndDate;
-                                });
+                              if (!isReadOnly) {
+                                DateTime? pickedDate = await showDatePicker(
+                                    locale: const Locale('nl', 'NL'),
+                                    context: context,
+                                    initialDate: isNewEvent
+                                        ? DateTime.now()
+                                        : DateTime.parse(_endDateText!),
+                                    firstDate: DateTime(2000),
+                                    lastDate: DateTime(2101));
+                                if (pickedDate != null) {
+                                  String formattedEndDate =
+                                      DateFormat('yyyy-MM-dd')
+                                          .format(pickedDate)
+                                          .toString();
+                                  setState(() {
+                                    endDateInput.text = formattedEndDate;
+                                  });
+                                }
                               }
                             },
                             onChanged: (String? newValue) {
@@ -531,22 +593,25 @@ class CalendarState extends State<Calendar> {
                               labelText: "Start tijd"),
                           readOnly: true,
                           onTap: () async {
-                            TimeOfDay? pickedStartTime = await showTimePicker(
-                              context: context,
-                              initialTime: _startTimeText == ""
-                                  ? TimeOfDay.now()
-                                  : TimeOfDay(
-                                      hour: int.parse(
-                                          _startTimeText!.split(":")[0]),
-                                      minute: int.parse(_startTimeText!
-                                          .split(":")[1]
-                                          .split(" ")[0])),
-                            );
-                            if (pickedStartTime != null) {
-                              setState(() {
-                                startTime.text =
-                                    pickedStartTime.format(context).toString();
-                              });
+                            if (!isReadOnly) {
+                              TimeOfDay? pickedStartTime = await showTimePicker(
+                                context: context,
+                                initialTime: _startTimeText == ""
+                                    ? TimeOfDay.now()
+                                    : TimeOfDay(
+                                        hour: int.parse(
+                                            _startTimeText!.split(":")[0]),
+                                        minute: int.parse(_startTimeText!
+                                            .split(":")[1]
+                                            .split(" ")[0])),
+                              );
+                              if (pickedStartTime != null) {
+                                setState(() {
+                                  startTime.text = pickedStartTime
+                                      .format(context)
+                                      .toString();
+                                });
+                              }
                             }
                           },
                         ),
@@ -558,49 +623,53 @@ class CalendarState extends State<Calendar> {
                               labelText: "Eind tijd"),
                           readOnly: true,
                           onTap: () async {
-                            TimeOfDay? pickedEndTime = await showTimePicker(
-                              context: context,
-                              initialTime: _endTimeText == ""
-                                  ? TimeOfDay.now()
-                                  : TimeOfDay(
-                                      hour: int.parse(
-                                          _endTimeText!.split(":")[0]),
-                                      minute: int.parse(_endTimeText!
-                                          .split(":")[1]
-                                          .split(" ")[0])),
-                            );
-                            if (pickedEndTime != null) {
-                              setState(() {
-                                endTime.text =
-                                    pickedEndTime.format(context).toString();
-                              });
+                            if (!isReadOnly) {
+                              TimeOfDay? pickedEndTime = await showTimePicker(
+                                context: context,
+                                initialTime: _endTimeText == ""
+                                    ? TimeOfDay.now()
+                                    : TimeOfDay(
+                                        hour: int.parse(
+                                            _endTimeText!.split(":")[0]),
+                                        minute: int.parse(_endTimeText!
+                                            .split(":")[1]
+                                            .split(" ")[0])),
+                              );
+                              if (pickedEndTime != null) {
+                                setState(() {
+                                  endTime.text =
+                                      pickedEndTime.format(context).toString();
+                                });
+                              }
                             }
                           },
                         ),
-                        TextFormField(
-                          decoration: const InputDecoration(
-                            hintText: 'Titel',
-                          ),
-                          initialValue: isNewEvent ? "" : _subjectText,
-                          onChanged: (String? value) {
-                            _subjectText = value;
-                          },
-                        ),
-                        TextFormField(
+                        if (!isReadOnly) ...[
+                          TextFormField(
                             decoration: const InputDecoration(
-                              hintText: 'Locatie',
+                              hintText: 'Titel',
                             ),
+                            initialValue: isNewEvent ? "" : _subjectText,
+                            readOnly: isReadOnly,
+                            onChanged: (String? value) {
+                              _subjectText = value;
+                            },
+                          ),
+                        ],
+                        TextFormField(
+                            decoration: InputDecoration(labelText: "Locatie"),
                             initialValue: isNewEvent ? "" : _location,
+                            readOnly: isReadOnly,
                             onChanged: (String? value) {
                               _location = value;
                             }),
                         TextFormField(
                             maxLines: 4,
                             keyboardType: TextInputType.multiline,
-                            decoration: const InputDecoration(
-                              hintText: 'Beschrijving',
-                            ),
+                            decoration:
+                                InputDecoration(labelText: "Beschrijving"),
                             initialValue: isNewEvent ? "" : _description,
+                            readOnly: isReadOnly,
                             onChanged: (String? value) {
                               _description = value;
                             }),
@@ -616,52 +685,54 @@ class CalendarState extends State<Calendar> {
                     Navigator.of(context).pop();
                   },
                   child: const Text('Sluiten')),
-              if (isNewEvent) ...[
-                // Create new event.
-                ElevatedButton(
-                  onPressed: () {
-                    sendCreateRequest(
-                        _calendarId.toString(),
-                        _eventId,
-                        startTime.text,
-                        endTime.text,
-                        _subjectText,
-                        _description,
-                        _location,
-                        startDateInput.text,
-                        endDateInput.text,
-                        context);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Event toegevoegd')),
-                    );
-                  },
-                  child: const Text('Toevoegen'),
-                ),
-              ] else ...[
-                // Edit existing event.
-                ElevatedButton(
-                  onPressed: () {
-                    sendEditRequest(
-                        _calendarId.toString(),
-                        _eventId,
-                        startTime.text,
-                        endTime.text,
-                        _subjectText,
-                        _description,
-                        _location,
-                        startDateInput.text,
-                        endDateInput.text,
-                        context);
-                  },
-                  child: const Text('Aanpassen'),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    sendDeleteRequest(
-                        _calendarId.toString(), _eventId, context);
-                  },
-                  child: const Text('Verwijderen'),
-                )
+              if (!isReadOnly) ...[
+                if (isNewEvent) ...[
+                  // Create new event.
+                  ElevatedButton(
+                    onPressed: () {
+                      sendCreateRequest(
+                          _calendarId.toString(),
+                          _eventId,
+                          startTime.text,
+                          endTime.text,
+                          _subjectText,
+                          _description,
+                          _location,
+                          startDateInput.text,
+                          endDateInput.text,
+                          context);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Event toegevoegd')),
+                      );
+                    },
+                    child: const Text('Toevoegen'),
+                  ),
+                ] else ...[
+                  // Edit existing event.
+                  ElevatedButton(
+                    onPressed: () {
+                      sendEditRequest(
+                          _calendarId.toString(),
+                          _eventId,
+                          startTime.text,
+                          endTime.text,
+                          _subjectText,
+                          _description,
+                          _location,
+                          startDateInput.text,
+                          endDateInput.text,
+                          context);
+                    },
+                    child: const Text('Aanpassen'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      sendDeleteRequest(
+                          _calendarId.toString(), _eventId, context);
+                    },
+                    child: const Text('Verwijderen'),
+                  )
+                ],
               ],
             ],
           );
