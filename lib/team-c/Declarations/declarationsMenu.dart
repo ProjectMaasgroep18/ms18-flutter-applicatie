@@ -16,7 +16,7 @@ class DeclarationsMenu extends StatefulWidget {
 
 class DeclarationsMenuState extends State<DeclarationsMenu> {
   List<Widget> getButtons(BuildContext context) => [
-        if (UserData.role == Roles.Admin)
+        if (UserData.roles == Roles.Admin)
           ImageButton(
             subTitle: "Uitbetalen van declaraties",
             title: "Uitbetalen",
@@ -44,7 +44,7 @@ class DeclarationsMenuState extends State<DeclarationsMenu> {
           },
         ),
         const PaddingSpacing(),
-        if (UserData.role == Roles.Admin)
+        if (UserData.roles == Roles.Admin)
           ImageButton(
             image: 'assets/declarations/approvetruck.png',
             subTitle: "Declaraties goedkeuren voor uitbetaling",

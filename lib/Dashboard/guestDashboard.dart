@@ -9,6 +9,8 @@ import 'package:ms18_applicatie/config.dart';
 import 'package:ms18_applicatie/menu.dart';
 import 'package:rive/rive.dart';
 
+import '../Shoppingcart/Shoppingcart.dart';
+
 class GuestDashboard extends StatefulWidget {
   const GuestDashboard({super.key});
 
@@ -31,34 +33,32 @@ class _OnboardingScreenState extends State<GuestDashboard> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: Stack(
-      children: [
-        Container(
-          height: 230,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(20),
-              bottomRight: Radius.circular(20),
-            ),
-          ),
-          child: AppBar(
-            backgroundColor: mainColor,
-            automaticallyImplyLeading: false,
-            titleSpacing: lerpDouble(0, 0, 0),
-            toolbarHeight: 180,
-            shape: RoundedRectangleBorder(
+        children: [
+          Container(
+            height: 230,
+            decoration: BoxDecoration(
               borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(40),
-                bottomRight: Radius.circular(40),
+                bottomLeft: Radius.circular(20),
+                bottomRight: Radius.circular(20),
               ),
             ),
-            title: Container(
-              height: 160, // Set the same height as the AppBar
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Positioned(
-                    top: 0,
-                    child: Center(
+            child: AppBar(
+              backgroundColor: mainColor,
+              automaticallyImplyLeading: false,
+              titleSpacing: lerpDouble(0, 0, 0),
+              toolbarHeight: 180,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(40),
+                  bottomRight: Radius.circular(40),
+                ),
+              ),
+              title: Container(
+                height: 160, // Set the same height as the AppBar
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Center(
                       child: Text(
                         "Dashboard",
                         style: TextStyle(
@@ -68,42 +68,53 @@ class _OnboardingScreenState extends State<GuestDashboard> {
                         ),
                       ),
                     ),
-                  ),
-                  Positioned(
-                    bottom: 0,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(top: 10),
-                          child: Text(
-                            "Openstaande uitgaven",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 22,
-                              fontWeight: FontWeight.w300,
+                    Positioned(
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => ShoppingCart()),
+                          );
+                        },
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(top: 10),
+                              child: Text(
+                                "Openstaande uitgaven",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.w300,
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(top: 10),
-                          child: Text(
-                            "€ 0,00",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
+                            Padding(
+                              padding: EdgeInsets.only(top: 10),
+                              child: Text(
+                                "€ 0,00",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
-                          ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
-                  ),
-                ],
+
+                  ],
+                ),
               ),
             ),
           ),
-        ),
+
         Positioned(
           top: kToolbarHeight + 205,
           left: 16.0,
@@ -213,7 +224,7 @@ class _OnboardingScreenState extends State<GuestDashboard> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => StockReport()),
+                    MaterialPageRoute(builder: (context) => ShoppingCart()),
                   );
                 },
                 child: Padding(
@@ -226,7 +237,7 @@ class _OnboardingScreenState extends State<GuestDashboard> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           Text(
-                            "Bekijk mijn \nbestellingen",
+                            "Bar", textAlign: TextAlign.center,
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 24,
