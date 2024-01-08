@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 //Colors
@@ -64,6 +65,7 @@ final InputDecoration inputFieldStyleDropdown = inputFieldStyle.copyWith(
 
 //error messages
 String fieldNotfound = 'This field does not exist';
+String? globToken;
 
 //Screen sizes
 const int mobileWidth = 600;
@@ -79,6 +81,9 @@ const double verticalButtonSpacing = 10;
 
 //Button height
 const double buttonHeight = 35;
+const double desktopButtonWidth = 300;
+
+const double desktopPopupWidth = 500;
 
 //Border Radius
 const double borderRadius = 10;
@@ -88,6 +93,9 @@ const double itemHeight = 11;
 
 //Navigator key
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
+//Price formatter
+var priceFormat = NumberFormat("###.0#", "nl_NL");
 
 //From here down you got stuff for roles
 
@@ -106,6 +114,7 @@ const Map<RolesNames, int> roles = {
 };
 
 // Base url and headers for the api
+const Set<int> allowedStatusCodes = {200, 204, 201};
 const String apiUrl = "https://api.hr.rspn.io/";
 const Map<String, String> apiHeaders = {
   "Content-Type": "application/json",
@@ -129,4 +138,14 @@ setPrefString(String value, String key) async {
   final prefs = await SharedPreferences.getInstance();
   await prefs.remove(key);
   await prefs.setString(key, value);
+}
+
+Map<String, String> getHeaders() {
+  // final prefs = await SharedPreferences.getInstance();
+  // final res = prefs.getString('token');
+  String bearerToken = "Bearer $globToken";
+  return {
+    ...apiHeaders,
+    ...{"Authorization": bearerToken}
+  };
 }

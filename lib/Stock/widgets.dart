@@ -4,7 +4,6 @@ import 'package:ms18_applicatie/Widgets/buttons.dart';
 import 'package:ms18_applicatie/Widgets/inputFields.dart';
 import 'package:ms18_applicatie/Widgets/inputPopup.dart';
 import 'package:ms18_applicatie/Widgets/paddingSpacing.dart';
-import 'package:ms18_applicatie/Widgets/statusIndicator.dart';
 import '../config.dart';
 
 const Map<String, IconData> productIcons = {
@@ -13,7 +12,7 @@ const Map<String, IconData> productIcons = {
   "Local Bar": Icons.local_bar,
   "Local Cafe": Icons.local_cafe,
   "Liquor": Icons.liquor,
-  "Local Pizaa": Icons.local_pizza,
+  "Local Pizza": Icons.local_pizza,
   "Icecream": Icons.icecream,
   "Bakery Dinding": Icons.bakery_dining,
   "Soup Kitchen": Icons.soup_kitchen,
@@ -51,173 +50,194 @@ Future<void> addItemsDialog(
       TextEditingController(text: stockProduct.quantity.toString());
   String icon = stockProduct.product.icon;
 
+  final GlobalKey<FormState> formKey = GlobalKey();
+
   await showInputPopup(context,
-      title: "Item ${isChange ? 'wijzigen' : 'toevoegen'}",
+      title: "Product ${isChange ? 'wijzigen' : 'toevoegen'}",
       height: 300 + (isChange ? 48 : 0),
-      child: Column(
-        children: [
-          InputField(
-            controller: nameController,
-            labelText: 'Product naam',
-            isUnderlineBorder: true,
-          ),
-          const PaddingSpacing(),
-          InputField(
-            controller: priceController,
-            labelText: 'Prijs',
-            isUnderlineBorder: true,
-          ),
-          const PaddingSpacing(),
-          InputField(
-            controller: countController,
-            labelText: 'Aantal stuks',
-            isUnderlineBorder: true,
-          ),
-          const PaddingSpacing(),
-          InputDropDown(
-            labelText: "Icon",
-            value: productIcons.keys.contains(icon) ? icon : null,
-            items: [
-              for (String item in productIcons.keys)
-                DropdownMenuItem(
-                  value: item,
-                  child: InputDropdownItem(
-                    iconName: item,
-                  ),
-                )
-            ],
-            onChange: (newValue) {
-              icon = newValue ?? '';
-            },
-          ),
-          if (onDelete != null) ...[
+      child: Form(
+        key: formKey,
+        child: Column(
+          children: [
+            InputField(
+              controller: nameController,
+              labelText: 'Product naam',
+            ),
             const PaddingSpacing(),
-            Button(
-              onTap: onDelete,
-              color: dangerColor,
-              text: "Verwijderen",
-              icon: Icons.delete,
-            )
-          ]
-        ],
+            InputField(
+              controller: priceController,
+              labelText: 'Prijs',
+              isDouble: true,
+            ),
+            const PaddingSpacing(),
+            InputDropDown(
+              labelText: "Icon",
+              value: productIcons.keys.contains(icon) ? icon : null,
+              items: [
+                for (String item in productIcons.keys)
+                  DropdownMenuItem(
+                    value: item,
+                    child: InputDropdownItem(
+                      iconName: item,
+                    ),
+                  )
+              ],
+              onChange: (newValue) {
+                icon = newValue ?? '';
+              },
+            ),
+            const PaddingSpacing(),
+            InputField(
+              controller: countController,
+              labelText: 'Aantal stuks',
+              isInt: true,
+            ),
+            if (onDelete != null) ...[
+              const PaddingSpacing(),
+              Button(
+                onTap: onDelete,
+                color: dangerColor,
+                text: "Verwijderen",
+                icon: Icons.delete,
+              )
+            ]
+          ],
+        ),
       ), onSave: () {
-    // Updating the product object information
-    stockProduct!.product
-      ..name = nameController.text
-      ..price = double.parse(priceController.text)
-      ..icon = icon;
-    onSave(stockProduct);
+    if (formKey.currentState!.validate()) {
+      // Updating the product object information
+      stockProduct!.product
+        ..name = nameController.text
+        ..price = double.parse(priceController.text)
+        ..icon = icon;
+
+      stockProduct.quantity = int.tryParse(countController.text) ?? 0;
+      onSave(stockProduct);
+    }
   });
 }
 
 class StockElement extends StatelessWidget {
   final StockProduct stockProduct;
-  final Function(String)? onChange;
+  final Function(String?)? onChange;
   late TextEditingController stockController;
   final Function(StockProduct)? onSave;
-  final Function() onDelete;
+  final Function()? onDelete;
+  final bool isReadOnly;
 
-  StockElement(
-      {required this.stockProduct,
-      this.onChange,
-      this.onSave,
-      required this.onDelete}) {
+  StockElement({
+    super.key,
+    required this.stockProduct,
+    this.onChange,
+    this.onSave,
+    this.onDelete,
+    this.isReadOnly = false,
+  }) {
     stockController =
         TextEditingController(text: stockProduct.quantity.toString());
   }
 
   //Increasing or decresing the input by the given amount
   void changeNumber(int change) {
-    int currentValue = int.parse(stockController.text);
+    int currentValue = int.tryParse(stockController.text) ?? 0;
     currentValue += change;
 
     stockController.text = currentValue.toString();
+    updateInput();
+  }
+
+  void updateInput() {
+    if (onChange != null) {
+      onChange!(stockController.text);
+    }
+    stockProduct.quantity = int.tryParse(stockController.text) ?? 0;
   }
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      onTap: () {
-        addItemsDialog(context, (stockProduct) {
-          if (onSave != null) {
-            onSave!(stockProduct);
-          }
-        }, onDelete, stockProduct);
-      },
-      leading: SizedBox(
-        width: 45,
-        height: 45,
-        child: Stack(clipBehavior: Clip.none, children: [
-          Container(
-            width: 45,
-            height: 45,
-            decoration: BoxDecoration(
-              color: stockProduct.product.color,
-              borderRadius: BorderRadius.circular(
-                borderRadius,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.5),
-                  spreadRadius: 1,
-                  blurRadius: 4,
-                  offset: const Offset(2, 2), // changes position of shadow
+      onTap: isReadOnly
+          ? null
+          : () {
+              addItemsDialog(context, (stockProduct) {
+                if (onSave != null) {
+                  onSave!(stockProduct);
+                }
+              }, onDelete, stockProduct);
+            },
+      leading: isReadOnly
+          ? null
+          : Container(
+              width: 45,
+              height: 45,
+              decoration: BoxDecoration(
+                color: stockProduct.product.color,
+                borderRadius: BorderRadius.circular(
+                  borderRadius,
                 ),
-              ],
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 1,
+                    blurRadius: 4,
+                    offset: const Offset(2, 2), // changes position of shadow
+                  ),
+                ],
+              ),
+              child: Icon(
+                productIcons[stockProduct.product.icon],
+                color: Colors.white,
+              ),
             ),
-            child: Icon(
-              productIcons[stockProduct.product.icon],
-              color: Colors.white,
-            ),
-          ),
-          const Positioned(
-              bottom: 0,
-              right: -3,
-              child: StatusIndicator(color: successColor)),
-        ]),
-      ),
       title: Text(stockProduct.product.name),
-      subtitle: Text('€${stockProduct.product.price}'),
+      subtitle: Text('€${priceFormat.format(stockProduct.product.price)}'),
       contentPadding: EdgeInsets.zero,
-      trailing: SizedBox(
-        width: 160,
-        child: Row(
-          children: [
-            SizedBox(
-              width: 44,
-              height: 44,
-              child: Button(
-                onTap: () {
-                  changeNumber(-1);
-                },
-                icon: Icons.remove,
+      trailing: isReadOnly
+          ? Text(stockProduct.quantity.toString())
+          : SizedBox(
+              width: 160,
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 44,
+                    height: 44,
+                    child: Button(
+                      onTap: () {
+                        changeNumber(-1);
+                      },
+                      icon: Icons.remove,
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 5,
+                  ),
+                  Flexible(
+                    child: InputField(
+                      isUnderlineBorder: false,
+                      isInt: true,
+                      controller: stockController,
+                      textAlign: TextAlign.center,
+                      onChange: (value) {
+                        updateInput();
+                      },
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 5,
+                  ),
+                  SizedBox(
+                    width: 44,
+                    height: 44,
+                    child: Button(
+                      onTap: () {
+                        changeNumber(1);
+                      },
+                      icon: Icons.add,
+                    ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(
-              width: 5,
-            ),
-            Flexible(
-              child: InputField(
-                controller: stockController,
-                textAlign: TextAlign.center,
-              ),
-            ),
-            const SizedBox(
-              width: 5,
-            ),
-            SizedBox(
-              width: 44,
-              height: 44,
-              child: Button(
-                onTap: () {
-                  changeNumber(1);
-                },
-                icon: Icons.add,
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

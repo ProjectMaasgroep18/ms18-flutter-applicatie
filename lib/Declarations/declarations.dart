@@ -1,11 +1,6 @@
 import 'dart:convert';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:ms18_applicatie/Models/declaration.dart';
-import 'package:ms18_applicatie/Widgets/inputFields.dart';
 import 'package:ms18_applicatie/config.dart';
-
 import '../Api/apiManager.dart';
 import '../Widgets/paddingSpacing.dart';
 import '../menu.dart';
@@ -22,8 +17,13 @@ class Declarations extends StatefulWidget {
 
 class _DeclarationsState extends State<Declarations> {
   @override
-  void initState() {
-    _future = ApiManager.get("/api/v1/Receipt");
+
+  Future<dynamic>? getReceipt() async {
+    _future = ApiManager.get("api/v1/Receipt", await getHeaders());
+  }
+
+  void initState()  {
+    _future = getReceipt();
     super.initState();
   }
 
@@ -240,13 +240,17 @@ class _DeclarationsState extends State<Declarations> {
           actions: <Widget>[
             TextButton(
               onPressed: () async {
+
                 // Update the status
-                var res = ApiManager.post(
-                    "/api/v1/Receipt/${declInfo['id']}/Approve", {
+                var res = ApiManager
+                    .post("/api/v1/Receipt/${declInfo['id']}/Approve", {
+
                   "receiptId": declInfo['id'],
                   "note": declInfo['note'],
                   "approved": true,
-                });
+                  "paid": false
+                }, await getHeaders());
+
                 if (res != null) {
                   // Show snackbar
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -258,22 +262,23 @@ class _DeclarationsState extends State<Declarations> {
                   setState(() {
                     _future = null;
                   });
-                  setState(() {
-                    _future = ApiManager.get("/api/v1/Receipt");
+                  setState(() async {
+                    _future = ApiManager.get("api/v1/Receipt", await getHeaders());
                   });
                 }
               },
               child: const Text('Goedkeuren'),
             ),
             TextButton(
-              onPressed: () {
+              onPressed: () async {
                 // Update the status
-                var res = ApiManager.post(
-                    "/api/v1/Receipt/${declInfo['id']}/Approve", {
+                var res = ApiManager
+                    .post("/api/v1/Receipt/${declInfo['id']}/Approve", {
                   "receiptId": declInfo['id'],
                   "note": declInfo['note'],
                   "approved": false,
-                });
+                }, await getHeaders());
+
                 if (res != null) {
                   // Show snackbar
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -285,8 +290,8 @@ class _DeclarationsState extends State<Declarations> {
                   setState(() {
                     _future = null;
                   });
-                  setState(() {
-                    _future = ApiManager.get("/api/v1/Receipt");
+                  setState(() async {
+                    _future = ApiManager.get("api/v1/Receipt", await getHeaders());
                   });
                 }
               },

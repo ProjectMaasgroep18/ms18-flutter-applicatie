@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ms18_applicatie/Api/apiManager.dart';
@@ -11,10 +10,7 @@ import '../../menu.dart';
 import '../Widgets/buttons.dart';
 import '../Widgets/inputFields.dart';
 import '../Widgets/paddingSpacing.dart';
-
-final ImagePicker picker = ImagePicker();
-XFile? photo;
-File? file;
+import '../Widgets/popups.dart';
 
 List<DropdownMenuItem<String>> _costCentres = [
   const DropdownMenuItem(
@@ -23,26 +19,33 @@ List<DropdownMenuItem<String>> _costCentres = [
     child: Text("Selecteer een kostencentrum"),
   )
 ];
-String? selectedCostCentre;
-
-// ApiManager apiManager = ApiManager();
-
-TextEditingController nameController = TextEditingController();
-TextEditingController descriptionController = TextEditingController();
-TextEditingController amountController = TextEditingController();
 
 class PickPhoto extends StatefulWidget {
-  const PickPhoto({Key? key}) : super(key: key);
+  PickPhoto({Key? key}) : super(key: key);
 
   @override
   State<PickPhoto> createState() => PickPhotoState();
 }
 
 class PickPhotoState extends State<PickPhoto> {
+  TextEditingController nameController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
+  TextEditingController amountController = TextEditingController();
+  String? selectedCostCentre;
+  final ImagePicker picker = ImagePicker();
+  XFile? photo;
+  File? file;
+
+  Map<String, String> retrieveHeaders() {
+    Map<String, String> header = getHeaders();
+    print("HEARDER JWAKJKASKJ: $header");
+    return header;
+  }
+
   @override
   void initState() {
     // Retrieve all the costcentres and put them in a list
-    ApiManager.get("/api/v1/CostCentre").then((x) {
+    ApiManager.get("api/v1/CostCentre", retrieveHeaders()).then((x) {
       List<dynamic> data = x;
       List<DropdownMenuItem<String>> temp = [];
       // Loop over the data and add the names to the list
@@ -57,6 +60,13 @@ class PickPhotoState extends State<PickPhoto> {
         _costCentres = temp;
       });
     });
+    if(_costCentres.isEmpty) {
+      _costCentres.add(const DropdownMenuItem(
+        value: "Selecteer een kostencentrum",
+        enabled: false,
+        child: Text("Selecteer een kostencentrum"),
+      ));
+    }
     super.initState();
   }
 
@@ -77,14 +87,14 @@ class PickPhotoState extends State<PickPhoto> {
               icon: Icons.person,
               hintText: "Naam: ",
               controller: nameController,
-              isUnderlineBorder: true,
+              isRequired: false,
             ),
             const PaddingSpacing(),
             InputField(
               hintText: "Description: ",
               controller: descriptionController,
               icon: Icons.description,
-              isUnderlineBorder: true,
+              isRequired: false,
             ),
             const PaddingSpacing(),
             // Fill in the amount of euros
@@ -92,7 +102,7 @@ class PickPhotoState extends State<PickPhoto> {
               hintText: "Amount: ",
               controller: amountController,
               icon: Icons.euro,
-              isUnderlineBorder: true,
+              isRequired: false,
             ),
             const PaddingSpacing(),
             DropdownButton<String>(
@@ -121,51 +131,50 @@ class PickPhotoState extends State<PickPhoto> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Button(
-                  padding: const EdgeInsets.fromLTRB(21, 0, 21, 0),
-                  icon: Icons.camera_alt,
-                  onTap: () async {
-                    if (amountController.text.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text("Vul alle velden in"),
-                        ),
-                      );
-                      return;
-                    } else {
-                      var res = await picker.pickImage(
-                        source: ImageSource.camera,
-                      );
-                      setState(() {
-                        photo = res;
-                      });
-                      file = File(photo!.path);
-                    }
-                  },
-                  text: "Maak een foto",
+                SizedBox(
+                  width: 175,
+                  child: Button(
+                    padding: const EdgeInsets.fromLTRB(21, 0, 21, 0),
+                    icon: Icons.camera_alt,
+                    onTap: () async {
+                      // if (amountController.text.isEmpty) {
+                      //   PopupAndLoading.showError("Vul alle velden in");
+                      //   return;
+                      // } else {
+                        var res = await picker.pickImage(
+                          source: ImageSource.camera,
+                        );
+                        setState(() {
+                          photo = res;
+                        });
+                        file = File(photo!.path);
+                      // }
+                    },
+                    text: "Maak een foto",
+                  ),
                 ),
-                Button(
-                  padding: const EdgeInsets.fromLTRB(25, 0, 25, 0),
-                  icon: Icons.photo,
-                  onTap: () async {
-                    if (amountController.text.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text("Vul alle velden in"),
-                        ),
-                      );
-                      return;
-                    } else {
-                      var res = await picker.pickImage(
-                        source: ImageSource.gallery,
-                      );
-                      setState(() {
-                        photo = res;
-                      });
-                      file = File(photo!.path);
-                    }
-                  },
-                  text: "Kies een foto",
+                PaddingSpacing(),
+                SizedBox(
+                  width: 175,
+                  child: Button(
+                    padding: const EdgeInsets.fromLTRB(25, 0, 25, 0),
+                    icon: Icons.photo,
+                    onTap: () async {
+                      // if (amountController.text.isEmpty) {
+                      //   PopupAndLoading.showError("Vul alle velden in");
+                      //   return;
+                      // } else {
+                        var res = await picker.pickImage(
+                          source: ImageSource.gallery,
+                        );
+                        setState(() {
+                          photo = res;
+                        });
+                        file = File(photo!.path);
+                      // }
+                    },
+                    text: "Kies een foto",
+                  ),
                 ),
               ],
             ),
@@ -177,50 +186,58 @@ class PickPhotoState extends State<PickPhoto> {
                     width: 250,
                     height: 250,
                   )
-                : Container(
-                    child: const PaddingSpacing(),
-                  ),
+                : const PaddingSpacing(),
             const PaddingSpacing(),
             // Upload the photo
             Button(
                 onTap: () async {
-                  if (photo == null || amountController.text.isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text("Kies een foto en vul alle velden in"),
-                      ),
-                    );
+                  if (photo == null) {
+                    PopupAndLoading.showError("Kies een foto en vul alle velden in");
                     return;
                   } else {
-                    var res = await ApiManager.post(
-                      "/api/v1/Receipt",
+                    Map<String, dynamic> res = await ApiManager.post(
+                      "api/v1/Receipt",
                       {
                         "amount": amountController.text,
                         "name": nameController.text,
                         "note": descriptionController.text,
                         "costCentre": selectedCostCentre,
-                        "photos": [
-                          {
+                      },
+                      {
+                        "Authorization": "Bearer ${await getToken()}",
+                        "Content-Type": "application/json",
+                      },
+                    );
+                    print({
+                      "Authorization": "Bearer ${await getToken()}",
+                      "Content-Type": "application/json",
+                    });
+                    print(res);
+                    if (res["error"] != null) {
+                      PopupAndLoading.showError("Er is iets fout gegaan");
+                      return;
+                    }
+                    var photoRes = await ApiManager.post(
+                      "api/v1/Receipt/${res["id"]}/Photo",
+                      {
                             "fileName": file!.path.split("/").last,
                             "fileExtension": file!.path.split(".").last,
                             "base64Image": await imageToBase64(file!),
-                          }
-                        ],
+                            "receiptId": res["id"]
+                      },
+                      {
+                        "Authorization": "Bearer ${await getToken()}",
+                        "Content-Type": "application/json",
                       },
                     );
-                    if (res == null) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text("Er is iets fout gegaan"),
-                        ),
-                      );
-                      return;
+                    if (photoRes != null) {
+                      PopupAndLoading.showSuccess("De foto is geupload");
+                      // Future.delayed(const Duration(seconds: 2), () {
+                        Navigator.pop(context);
+                      // });
+                    } else {
+                      PopupAndLoading.showError("Er is iets fout gegaan");
                     }
-                    SnackBar snackBar = const SnackBar(
-                      content: Text("Succesvol geupload"),
-                    );
-                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                    Navigator.pop(context);
                   }
                 },
                 text: "Uploaden")
