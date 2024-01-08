@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Api/apiManager.dart';
-import 'package:ms18_applicatie/Dashboard/dashboard.dart';
 import 'package:ms18_applicatie/Dashboard/guestDashboard.dart';
 import 'package:ms18_applicatie/Widgets/buttons.dart';
 import 'package:ms18_applicatie/Widgets/inputFields.dart';
@@ -8,6 +7,7 @@ import 'package:ms18_applicatie/Widgets/paddingSpacing.dart';
 import 'package:ms18_applicatie/Widgets/popups.dart';
 import 'package:ms18_applicatie/config.dart';
 import 'package:ms18_applicatie/main.dart';
+
 import 'package:rive/rive.dart';
 
 class SignInForm extends StatefulWidget {

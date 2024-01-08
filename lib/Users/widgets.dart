@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Models/user.dart';
+import 'package:ms18_applicatie/Orders/orders.dart';
 import 'package:ms18_applicatie/Widgets/inputFields.dart';
 import 'package:ms18_applicatie/Widgets/inputPopup.dart';
 import 'package:ms18_applicatie/Widgets/paddingSpacing.dart';
@@ -11,7 +12,6 @@ import 'package:ms18_applicatie/roles.dart';
 
 import '../Widgets/buttons.dart';
 import '../config.dart';
-
 
 Future<void> addUsersDialog(BuildContext context, Function(User user) onSave,
     [Function()? onDelete, User? user]) async {
@@ -106,7 +106,6 @@ Future<void> addUsersDialog(BuildContext context, Function(User user) onSave,
                 return const PaddingSpacing();
               } else {
                 return Column(children: [
-
                   // Show password is not required when it is not a new user
                   if (isChange)
                     InputField(
@@ -164,15 +163,28 @@ Future<void> addUsersDialog(BuildContext context, Function(User user) onSave,
         if (onDelete != null) ...[
           const PaddingSpacing(),
           Button(
-              onTap: onDelete,
-              color: dangerColor,
-              text: "Verwijderen",
-              icon: Icons.delete)
+            onTap: onDelete,
+            color: dangerColor,
+            text: "Verwijderen",
+            icon: Icons.delete,
+          ),
+          const PaddingSpacing(),
+          Button(
+            icon: Icons.receipt_long,
+            text: 'Orders bekijken',
+            onTap: () {
+            navigatorKey.currentState?.push(
+              MaterialPageRoute(
+                builder: (context) => Orders(
+                  userId: user?.id,
+                ),
+              ),
+            );
+          })
         ]
       ]), onSave: () {
     // Ensure that guest user has the right role
     if (isGuest) userRole = [Roles.Order];
-
 
     user!
       ..name = nameController.text

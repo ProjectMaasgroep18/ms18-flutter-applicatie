@@ -1,7 +1,11 @@
 import 'dart:ui';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:ms18_applicatie/Dashboard/data/data.dart';
 import 'package:ms18_applicatie/Profile/profile.dart';
+import 'package:ms18_applicatie/Stock/stockReport.dart';
+import 'package:ms18_applicatie/config.dart';
 import 'package:ms18_applicatie/menu.dart';
 import 'package:rive/rive.dart';
 
@@ -14,6 +18,7 @@ class GuestDashboard extends StatefulWidget {
 
 class _OnboardingScreenState extends State<GuestDashboard> {
   bool isSignInDialogShown = false;
+  // const StatisticsGrid({Key? key}) : super(key: key);
   late RiveAnimationController _btnAnimationController;
 
   @override
@@ -22,112 +27,253 @@ class _OnboardingScreenState extends State<GuestDashboard> {
     super.initState();
   }
 
-  Map<String, String> statistics = {"key":"ola"};
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: Stack(
       children: [
-        Menu(
-          appBarHeight: 270,
-          centerTitle: false,
-          child: const SizedBox(),
-          title: const Text(
-            "Gast Dashboard",
-            textAlign: TextAlign.left,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
+        Container(
+          height: 230,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(20),
+              bottomRight: Radius.circular(20),
             ),
           ),
-          actions: [
-            // profile picture in appbar
-            Padding(
-              padding: const EdgeInsets.only(right: 16),
-              child: InkWell(
-                onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: ((context) => Profile())));
-                },
-                child: const CircleAvatar(
-                  radius: 22,
-                  backgroundImage: NetworkImage(
-                      "https://avatars.githubusercontent.com/u/55942632?v=4"),
-                ),
+          child: AppBar(
+            backgroundColor: mainColor,
+            automaticallyImplyLeading: false,
+            titleSpacing: lerpDouble(0, 0, 0),
+            toolbarHeight: 180,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(40),
+                bottomRight: Radius.circular(40),
               ),
             ),
-          ],
-        ),
-        Positioned(
-          width: MediaQuery.of(context).size.width * 1.7,
-          bottom: 500,
-          left: 100,
-          child: Container(
-            color: Colors.white,
-          ),
-        ),
-        GridView.builder(
-            itemCount: statistics.length,
-            physics: const NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisSpacing: 15,
-                childAspectRatio: 1,
-                crossAxisCount: 2,
-                mainAxisSpacing: 20),
-            itemBuilder: (context, index) {
-              return Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15),
-                  color: Colors.deepPurple,
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "string",
-                        maxLines: 2,
-                        softWrap: true,
-                        style: const TextStyle(
-                          fontSize: 17,
-                          color: Color(0xff8EA3B7),
+            title: Container(
+              height: 160, // Set the same height as the AppBar
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Positioned(
+                    top: 0,
+                    child: Center(
+                      child: Text(
+                        "Dashboard",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 21,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
-                            height: 40,
-                            width: 7,
-                            decoration: BoxDecoration(
-                                color: Colors.deepPurple,
-                                borderRadius: BorderRadius.circular(15)),
-                          ),
-                          Text(
-                            //statistics[index].number
-                            "string",
-                            style: const TextStyle(
-                              fontSize: 40,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xff006ED3),
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(top: 10),
+                          child: Text(
+                            "Openstaande uitgaven",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 22,
+                              fontWeight: FontWeight.w300,
                             ),
-                          )
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(top: 10),
+                          child: Text(
+                            "€ 0,00",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        Positioned(
+          top: kToolbarHeight + 205,
+          left: 16.0,
+          child: Text(
+            "Producten om te bestellen",
+            style: TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              fontFamily: "Montserrat",
+            ),
+          ),
+        ),
+        // Other actions if needed
+
+        Padding(
+          padding: const EdgeInsets.only(left: 4, right: 4, top: 20),
+          child: CustomScrollView(
+            slivers: [
+              SliverToBoxAdapter(
+                child: SizedBox(
+                  height: 300,
+                ),
+              ),
+              SliverGrid(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisSpacing: 20,
+                  childAspectRatio: 1.5,
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 20,
+                ),
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(left: 0, right: 0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          color: Color(_getColorFromHex(allProducts[index].link)
+                              .hashCode),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 25, vertical: 20),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                allProducts[index].title,
+                                maxLines: 4,
+                                softWrap: true,
+                                style: TextStyle(
+                                  fontSize: 17,
+                                  color: Color(
+                                      _getColorFromHex(allProducts[index].text)
+                                          .hashCode),
+                                ),
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    allProducts[index].number,
+                                    style: TextStyle(
+                                      fontSize: 40,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(_getColorFromHex(
+                                              allProducts[index].text)
+                                          .hashCode),
+                                    ),
+                                    textAlign: TextAlign.left,
+                                  )
+                                ],
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                  childCount: statistics.length,
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: Container(
+                  width: MediaQuery.of(context).size.width * 0.4,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ),
+        Positioned(
+          bottom: 0,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Container(
+              height: 125,
+              width: MediaQuery.of(context).size.width - 20,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(30),
+                image: DecorationImage(
+                    image: AssetImage("assets/box/box7.png"), fit: BoxFit.fill),
+              ),
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => StockReport()),
+                  );
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(26),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Text(
+                            "Bekijk mijn \nbestellingen",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: "poppins",
+                            ),
+                          ),
                         ],
-                      )
+                      ),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset(
+                            "assets/Left-Arrow.png",
+                            height: 70,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Text('Image not found');
+                            },
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                 ),
-              );
-              },
-            )
+              ),
+            ),
+          ),
+        ),
 
+        // Title(
+        //   color: Colors.black,
+        //   child: Text(
+        //     "mooie dingen",
+        //     style: TextStyle(
+        //         fontSize: 35,
+        //         color: Color.fromARGB(255, 0, 0, 0),
+        //         fontWeight: FontWeight.bold,
+        //         fontFamily: 'Roboto'),
+        //   ),
+        // ),
       ],
     ));
   }
 }
 
+Color _getColorFromHex(String hexColor) {
+  hexColor = hexColor.replaceAll("#", "");
+  int hexValue = int.parse(hexColor, radix: 16);
+  return Color(hexValue);
+}
