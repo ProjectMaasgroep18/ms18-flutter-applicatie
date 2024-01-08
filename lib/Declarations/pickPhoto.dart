@@ -137,10 +137,10 @@ class PickPhotoState extends State<PickPhoto> {
                     padding: const EdgeInsets.fromLTRB(21, 0, 21, 0),
                     icon: Icons.camera_alt,
                     onTap: () async {
-                      if (amountController.text.isEmpty) {
-                        PopupAndLoading.showError("Vul alle velden in");
-                        return;
-                      } else {
+                      // if (amountController.text.isEmpty) {
+                      //   PopupAndLoading.showError("Vul alle velden in");
+                      //   return;
+                      // } else {
                         var res = await picker.pickImage(
                           source: ImageSource.camera,
                         );
@@ -148,7 +148,7 @@ class PickPhotoState extends State<PickPhoto> {
                           photo = res;
                         });
                         file = File(photo!.path);
-                      }
+                      // }
                     },
                     text: "Maak een foto",
                   ),
@@ -160,10 +160,10 @@ class PickPhotoState extends State<PickPhoto> {
                     padding: const EdgeInsets.fromLTRB(25, 0, 25, 0),
                     icon: Icons.photo,
                     onTap: () async {
-                      if (amountController.text.isEmpty) {
-                        PopupAndLoading.showError("Vul alle velden in");
-                        return;
-                      } else {
+                      // if (amountController.text.isEmpty) {
+                      //   PopupAndLoading.showError("Vul alle velden in");
+                      //   return;
+                      // } else {
                         var res = await picker.pickImage(
                           source: ImageSource.gallery,
                         );
@@ -171,7 +171,7 @@ class PickPhotoState extends State<PickPhoto> {
                           photo = res;
                         });
                         file = File(photo!.path);
-                      }
+                      // }
                     },
                     text: "Kies een foto",
                   ),
@@ -201,7 +201,7 @@ class PickPhotoState extends State<PickPhoto> {
                         "amount": amountController.text,
                         "name": nameController.text,
                         "note": descriptionController.text,
-                        "costCentre": selectedCostCentre ?? "",
+                        "costCentre": selectedCostCentre,
                       },
                       {
                         "Authorization": "Bearer ${await getToken()}",
