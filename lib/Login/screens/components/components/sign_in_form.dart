@@ -69,7 +69,7 @@ class _SignInFormState extends State<SignInForm> {
       });
     } else {
       error.fire();
-      Future.delayed(Duration(seconds: 2), () {
+      Future.delayed(Duration(seconds: 1), () {
         setState(() {
           isShowLoading = false;
         });
@@ -161,7 +161,7 @@ class _SignInFormState extends State<SignInForm> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const GuestDashboard(),
+                          builder: (context) => const Dashboard(),
                         ),
                       );
                     });

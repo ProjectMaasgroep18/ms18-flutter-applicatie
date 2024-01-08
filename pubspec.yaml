@@ -75,6 +75,8 @@ flutter:
     - assets/avaters/
     - assets/Backgrounds/
     - assets/icons/
+    - assets/
+    - assets/box/
     - assets/RiveAssets/
     - assets/logo.jpg
 
