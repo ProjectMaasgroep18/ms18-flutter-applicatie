@@ -701,22 +701,24 @@ class CalendarState extends State<Calendar> {
                             onChanged: (String? value) {
                               _location = value;
                             }),
-                        InputDropDown(
-                          labelText: "Groep",
-                          value: groups.contains(group) ? group : null,
-                          items: [
-                            for (String item in groups)
-                              DropdownMenuItem(
-                                value: item,
-                                child: InputDropdownItem(
-                                  groupName: item,
-                                ),
-                              )
-                          ],
-                          onChange: (newValue) {
-                            group = newValue ?? 'Globaal';
-                          },
-                        ),
+                        if (isNewEvent) ...[
+                          InputDropDown(
+                            labelText: "Groep",
+                            value: groups.contains(group) ? group : null,
+                            items: [
+                              for (String item in groups)
+                                DropdownMenuItem(
+                                  value: item,
+                                  child: InputDropdownItem(
+                                    groupName: item,
+                                  ),
+                                )
+                            ],
+                            onChange: (newValue) {
+                              group = newValue ?? 'Globaal';
+                            },
+                          ),
+                        ],
                         TextFormField(
                             maxLines: 4,
                             keyboardType: TextInputType.multiline,
@@ -745,7 +747,7 @@ class CalendarState extends State<Calendar> {
                   ElevatedButton(
                     onPressed: () {
                       sendCreateRequest(
-                          _calendarId.toString(),
+                          groups.indexOf(group).toString(),
                           _eventId,
                           startTime.text,
                           endTime.text,
@@ -784,33 +786,6 @@ class CalendarState extends State<Calendar> {
                     child: const Text('Verwijderen'),
                   )
                 ],
-              if (isNewEvent) ...[
-                // Create new event.
-                ElevatedButton(
-                  onPressed: () {
-                    sendCreateRequest(
-                        groups.indexOf(group), _eventId, startTime.text, endTime.text, _subjectText, _description, _location, startDateInput.text, endDateInput.text, context);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Event toegevoegd')),
-                    );
-                  },
-                  child: const Text('Toevoegen'),
-                ),
-              ] else ...[
-                // Edit existing event.
-                ElevatedButton(
-                  onPressed: () {
-                    sendEditRequest(
-                        groups.indexOf(group), _eventId, startTime.text, endTime.text, _subjectText, _description, _location, startDateInput.text, endDateInput.text, context);
-                  },
-                  child: const Text('Aanpassen'),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    sendDeleteRequest(_calendarId.toString(), _eventId, context);
-                  },
-                  child: const Text('Verwijderen'),
-                )
               ],
             ],
           );
