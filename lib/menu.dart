@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Calendar/calendar.dart';
 import 'package:ms18_applicatie/Dashboard/dashboard.dart';
+import 'package:ms18_applicatie/Dashboard/guestDashboard.dart';
 import 'package:ms18_applicatie/Models/stock.dart';
 import 'package:ms18_applicatie/Orders/orders.dart';
 import 'package:ms18_applicatie/Pictures/listPictures.dart';
@@ -65,16 +66,6 @@ class Menu extends StatelessWidget {
       page: MaterialPageRoute(builder: (context) => const Calendar()),
       roles: Roles.values
     ),
-    /*
-    menuItem.MenuItem(
-      text: 'Google Maps',
-      icon: Icons.map_outlined,
-      page: MaterialPageRoute(
-          builder: (context) => Menu(
-                child: Container(),
-              )),
-    ),
-    */
     menuItem.MenuItem(
         text: 'Gebruikers',
         icon: Icons.account_circle,
@@ -138,8 +129,11 @@ class Menu extends StatelessWidget {
         ),
       );
       for (menuItem.MenuItem menuitem in menuItems) {
-        if (menuitem.roles.indexWhere((e) => UserData.roles!.contains(e)) >
-            -1) {
+        if (menuitem.roles.indexWhere((e) => UserData.roles!.contains(e)) > -1) {
+          if(menuitem.text == "Home" && globalLoggedInUserValues?.guest == true) {
+            menuitem.page = MaterialPageRoute(builder: (context) => const GuestDashboard());
+          }
+
           items.add(
             MenuItemBase(
               page: menuitem.page,
@@ -166,6 +160,10 @@ class Menu extends StatelessWidget {
 
     for (menuItem.MenuItem menuitem in menuItems) {
       if (menuitem.roles.indexWhere((e) => UserData.roles!.contains(e)) > -1) {
+        if(menuitem.text == "Home" && globalLoggedInUserValues?.guest == true) {
+          menuitem.page = MaterialPageRoute(builder: (context) => const GuestDashboard());
+        }
+
         bool selected = MenuIndex.index == i;
         items.add(
           BottomNavigationBarItem(
