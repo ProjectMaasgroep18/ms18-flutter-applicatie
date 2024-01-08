@@ -6,6 +6,7 @@ import 'package:ms18_applicatie/Models/stock.dart';
 import 'package:ms18_applicatie/Orders/orders.dart';
 import 'package:ms18_applicatie/Pictures/listPictures.dart';
 import 'package:ms18_applicatie/Profile/profile.dart';
+import 'package:ms18_applicatie/Shoppingcart/Shoppingcart.dart';
 import 'package:ms18_applicatie/Stock/stockReport.dart';
 import 'package:ms18_applicatie/Users/userList.dart';
 import 'package:ms18_applicatie/globals.dart';
@@ -67,12 +68,17 @@ class Menu extends StatelessWidget {
       roles: Roles.values
     ),
     menuItem.MenuItem(
-        text: 'Gebruikers',
-        icon: Icons.account_circle,
-        page: MaterialPageRoute(builder: (context) => const UserList()),
-        roles: [
-          Roles.Admin,
-        ]),
+      text: 'Gebruikers',
+      icon: Icons.account_circle,
+      page: MaterialPageRoute(builder: (context) => const UserList()),
+      roles: [Roles.Admin,]
+    ),
+
+    menuItem.MenuItem(
+      text: 'Bar',
+      icon: Icons.local_bar,
+      page: MaterialPageRoute(builder: (context) => ShoppingCart()),
+    ),
   ];
 
   Menu({
