@@ -33,6 +33,7 @@ class _OnboardingScreenState extends State<Dashboard> {
     return Scaffold(
         backgroundColor: const Color.fromARGB(255, 149, 149, 149),
         body: Stack(
+
           children: [
             Menu(
               appBarHeight: 70,
@@ -163,6 +164,7 @@ class _OnboardingScreenState extends State<Dashboard> {
                     ),
                   ],
                 ),
+
               ),
             ),
           ],

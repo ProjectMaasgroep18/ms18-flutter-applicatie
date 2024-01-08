@@ -27,6 +27,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
         body: Padding(
       padding: const EdgeInsets.all(0),
       child: Stack(
@@ -34,15 +35,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           Padding(
             padding: const EdgeInsets.all(0),
             child: SizedBox(
-                width: MediaQuery.of(context).size.width * 3,
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
                 // bottom: -5350,
                 // left: -2760,
-                child: Image.asset('assets/Backgrounds/Shapes.png')),
+                child: Image.asset('assets/Backgrounds/Shapes.png', fit: BoxFit.fill)),
           ),
           Positioned.fill(
               child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 0, sigmaY: 0),
-          )),
+                filter: ImageFilter.blur(sigmaX: 0, sigmaY: 0),
+              )),
           // const RiveAnimation.asset('assets/RiveAssets/shapes.riv'),
           // Positioned.fill(
           //     child: BackdropFilter(
@@ -127,6 +129,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         ),
                       ),
                     ),
+
                     const PaddingSpacing(),
                     const PaddingSpacing(),
                     const PaddingSpacing(),

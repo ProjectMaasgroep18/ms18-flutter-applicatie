@@ -12,6 +12,6 @@ class ListPictures extends StatefulWidget {
 class ListPicturesState extends State<ListPictures> {
   @override
   Widget build(BuildContext context) {
-    return Menu(child: Text("Ga vanaf hier verder"));
+    return Menu(child: const Text("Ga vanaf hier verder"));
   }
 }

@@ -9,7 +9,7 @@ import 'package:ms18_applicatie/Widgets/inputFields.dart';
 import 'package:ms18_applicatie/Widgets/paddingSpacing.dart';
 import 'package:ms18_applicatie/Widgets/popups.dart';
 import 'package:ms18_applicatie/config.dart';
-import 'package:ms18_applicatie/menu.dart';
+import 'package:ms18_applicatie/main.dart';
 import 'package:rive/rive.dart';
 
 class SignInForm extends StatefulWidget {
@@ -35,7 +35,7 @@ class _SignInFormState extends State<SignInForm> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
-  static const String url = "api/v1/User";
+  static const String url = "api/v1/User/Login";
 
   StateMachineController getRiveController(Artboard artboard) {
     StateMachineController? controller =
@@ -125,7 +125,9 @@ class _SignInFormState extends State<SignInForm> {
                 const PaddingSpacing(),
                 Button(
                   onTap: () async {
+
                     apiLogin();
+
                     // signIn(context);
                   },
                   text: 'Sign in',
