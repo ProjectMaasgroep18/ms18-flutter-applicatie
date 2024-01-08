@@ -74,13 +74,14 @@ class Maasgroep18App extends StatelessWidget {
       ...apiHeaders,
       ...{"Authorization": bearerToken}
     };
-    await ApiManager.get("api/v1/User/Current", headers).then((value) {
+    await ApiManager.get("api/v1/User/Current", headers).then((value) async{
       if (value["error"] != null){
         loggedIn = false;
       }else {
         loggedIn = true;
         print(value);
         loadLocalUser(value);
+        globToken = await getToken();
       }
     }).catchError((error){
       loggedIn=false;

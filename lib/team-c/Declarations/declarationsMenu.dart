@@ -16,11 +16,12 @@ class DeclarationsMenu extends StatefulWidget {
 
 class DeclarationsMenuState extends State<DeclarationsMenu> {
   List<Widget> getButtons(BuildContext context) => [
-        if (UserData.roles == Roles.Admin)
+        if (UserData.roles!.contains(Roles.Admin))
           ImageButton(
             subTitle: "Uitbetalen van declaraties",
             title: "Uitbetalen",
-            onClick: () {
+            onClick: () async {
+              globToken = await getToken();
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -34,22 +35,24 @@ class DeclarationsMenuState extends State<DeclarationsMenu> {
           image: 'assets/declarations/uploadtruck.png',
           subTitle: "Uploaden van declaraties voor goedkeuring",
           title: "Uploaden",
-          onClick: () {
+          onClick: () async {
+            globToken = await getToken();
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const PickPhoto(),
+                builder: (context) => PickPhoto(),
               ),
             );
           },
         ),
         const PaddingSpacing(),
-        if (UserData.roles == Roles.Admin)
+        if (UserData.roles!.contains(Roles.Admin))
           ImageButton(
             image: 'assets/declarations/approvetruck.png',
             subTitle: "Declaraties goedkeuren voor uitbetaling",
             title: "Goedkeuren",
-            onClick: () {
+            onClick: () async {
+              globToken = await getToken();
               Navigator.push(
                 context,
                 MaterialPageRoute(

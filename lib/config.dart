@@ -65,6 +65,7 @@ final InputDecoration inputFieldStyleDropdown = inputFieldStyle.copyWith(
 
 //error messages
 String fieldNotfound = 'This field does not exist';
+String? globToken;
 
 //Screen sizes
 const int mobileWidth = 600;
@@ -118,7 +119,6 @@ const String apiUrl = "https://api.hr.rspn.io/";
 const Map<String, String> apiHeaders = {
   "Content-Type": "application/json",
   "Accept": "application/json",
-  //'Authorization': "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTExMDcwODYsImlzcyI6ImxvY2FsaG9zdCIsImF1ZCI6ImxvY2FsaG9zdCJ9.QhZHteVxP5139xZ458IUKNpXOvF0du17dwT1Kq_UgZA"
 };
 
 Future<String?> getToken() async {
@@ -140,10 +140,10 @@ setPrefString(String value, String key) async {
   await prefs.setString(key, value);
 }
 
-Future<Map<String, String>> getHeaders() async {
-  final prefs = await SharedPreferences.getInstance();
-  final res = prefs.getString('token');
-  String bearerToken = "Bearer $res";
+Map<String, String> getHeaders() {
+  // final prefs = await SharedPreferences.getInstance();
+  // final res = prefs.getString('token');
+  String bearerToken = "Bearer $globToken";
   return {
     ...apiHeaders,
     ...{"Authorization": bearerToken}
