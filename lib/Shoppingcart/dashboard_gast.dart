@@ -51,7 +51,7 @@ class ProductApiManager {
     };
 
     try {
-      final response = await ApiManager.post(apiUrl, [requestBody]);
+      final response = await ApiManager.post(apiUrl,);
       return Product.fromJson(response);
     } catch (e) {
       // Handle exceptions

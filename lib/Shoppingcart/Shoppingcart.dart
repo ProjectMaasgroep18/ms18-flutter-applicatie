@@ -4,9 +4,14 @@ import 'package:ms18_applicatie/Stock/stockReport.dart';
 import 'package:ms18_applicatie/Stock/widgets.dart';
 import 'package:ms18_applicatie/Widgets/pageHeader.dart';
 import 'package:ms18_applicatie/config.dart';
+import 'package:ms18_applicatie/globals.dart';
 import 'package:ms18_applicatie/menu.dart';
+import 'package:ms18_applicatie/Stock/functions.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 import '../Api/apiManager.dart';
+
 
 class ShoppingCart extends StatefulWidget {
   ShoppingCart({Key? key}) : super(key: key);
@@ -19,99 +24,40 @@ class _ShoppingCartState extends State<ShoppingCart> {
   final List<StockProduct> shoppingCart = [];
   final List<Order> orderHistory = [];
 
-  /*final List<Product> productList = [
-    Product(
-      priceQuantity: 1,
-      color: Colors.redAccent,
-      name: 'Bier',
-      price: 2.43,
-      icon: Icons.local_drink,
-    ),
-    Product(
-      priceQuantity: 1,
-      color: Colors.blueAccent,
-      name: 'Cola',
-      price: 3.13,
-      icon: Icons.local_drink,
-    ),
-    Product(
-      priceQuantity: 1,
-      color: Colors.yellowAccent,
-      name: 'Fanta',
-      price: 6.81,
-      icon: Icons.local_drink,
-    ),
-    Product(
-      priceQuantity: 1,
-      color: Colors.greenAccent,
-      name: 'Wiskey',
-      price: 0.43,
-      icon: Icons.local_drink,
-    ),
-    // Voeg hier meer producten toe
-  ];*/
-
-  static Future<List<Product>> getProducts() async {
-    List<Product> productList = [];
-
-    await ApiManager.get<List<dynamic>>("api/v1/Product").then((data) {
-      for (Map<String, dynamic> product in data) {
-        Map<String, dynamic> map = product;
-
-        // Parsing the color from the db
-        final String hexColor =
-            "FF${(map["color"] as String).replaceAll('#', '')}";
-        final int color = int.tryParse(hexColor, radix: 16) ?? 0xFFFFFFFF;
-
-        Product tempProduct = Product(
-          color: Color(color),
-          name: map["name"],
-          price: double.tryParse(map["price"].toString()) ?? 0.0,
-          icon: map["icon"],
-          // Assuming "priceQuantity" is an int, if not, you may need to adjust
-          priceQuantity: map["priceQuantity"] as int,
-        );
-        productList.add(tempProduct);
-      }
-    }).catchError((error) {
-      print(error);
-    });
-
-    return productList;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Menu(
       child: Column(
         children: [
-          FutureBuilder(
-              future: getProducts(),
+          Expanded(
+            child: FutureBuilder(
+              future: getStock(),
               builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  return const Text("error");
-                } else if (snapshot.hasData) {
-                  var productList = snapshot.data ?? [];
-                  return  Expanded(
-                    child: ListView.builder(
-                      itemCount: productList.length,
-                      itemBuilder: (context, index) {
-                        return ProductListItem(
-                          product: productList[index],
-                          onAddToCart: () {
-                            addToCart(productList[index]);
-                          },
-                        );
-                      },
-                    )
-                  );
-                } else {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-              }),
+                                    if (snapshot.hasError) {
+                                      return const Text("Error loading data");
+                                    } else if (!snapshot.hasData) {
+                                      return const Center(
+                                        child: CircularProgressIndicator(),
+                                      );
+                                    } else {
+                                      var productList = snapshot.data!;
+                                      return ListView.builder(
+                                        itemCount: productList.length,
+                                        itemBuilder: (context, index) {
+                                          StockProduct currentProduct = productList[index];
+                                          return ProductListItem(
+                                            product: currentProduct.product,
+                                            onAddToCart: () {
+                                              addToCart(currentProduct.product);
+                                            },
+                                          );
+                                        },
+                                      );
+                                    }
 
+              },
+            ),
+          ),
           ShoppingCartPopupMenu(
             shoppingCart: shoppingCart,
             removeFromCart: removeFromCart,
@@ -166,16 +112,34 @@ class _ShoppingCartState extends State<ShoppingCart> {
     });
   }
 
-  void clearCartAndAddToHistory() {
+  void clearCartAndAddToHistory() async {
     if (shoppingCart.isNotEmpty) {
       Order order = Order(
         orderedProducts: List.from(shoppingCart),
         totalAmount: calculateTotalAmount(),
         orderDate: DateTime.now(),
       );
-
+      var res = await ApiManager.post(
+        "api/v1/Bill",
+        {
+          "lines": order.orderedProducts
+              .map((product) => {
+            "productId": product.product.id,
+            "quantity": product.quantity,
+          })
+              .toList(),
+          "note": "", // Add a note if needed
+          "name": globalLoggedInUserValues?.name,
+          "email": globalLoggedInUserValues?.email,
+        },
+        {
+          "Authorization": "Bearer ${await getToken()}",
+          'Content-Type': 'application/json',
+        },
+      );
+      print(res);
+      // Clear the shopping cart and update the UI
       setState(() {
-        orderHistory.insert(0, order);
         shoppingCart.clear();
       });
     }
@@ -403,28 +367,7 @@ class DetailedOrderScreen extends StatelessWidget {
   }
 }
 
-class Product {
-  final int priceQuantity;
-  final Color color;
-  final String name;
-  final double price;
-  final IconData icon;
 
-  Product({
-    required this.priceQuantity,
-    required this.color,
-    required this.name,
-    required this.price,
-    required this.icon,
-  });
-}
-
-class StockProduct {
-  final Product product;
-  final int quantity;
-
-  StockProduct({required this.product, required this.quantity});
-}
 
 class Order {
   final List<StockProduct> orderedProducts;
@@ -439,3 +382,5 @@ class Order {
 }
 
 
+
+// _future = ApiManager.get<List<dynamic>>("api/v1/user/Bill");

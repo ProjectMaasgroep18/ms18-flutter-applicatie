@@ -1,5 +1,4 @@
 import 'dart:ui';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Profile/profile.dart';
@@ -22,6 +21,8 @@ class _OnboardingScreenState extends State<GuestDashboard> {
     _btnAnimationController = OneShotAnimation("active", autoplay: false);
     super.initState();
   }
+
+  Map<String, String> statistics = {"key":"ola"};
 
   @override
   Widget build(BuildContext context) {
@@ -67,18 +68,66 @@ class _OnboardingScreenState extends State<GuestDashboard> {
             color: Colors.white,
           ),
         ),
-        Title(
-          color: Colors.black,
-          child: Text(
-            "mooie dingen",
-            style: TextStyle(
-                fontSize: 35,
-                color: Color.fromARGB(255, 0, 0, 0),
-                fontWeight: FontWeight.bold,
-                fontFamily: 'Roboto'),
-          ),
-        ),
+        GridView.builder(
+            itemCount: statistics.length,
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisSpacing: 15,
+                childAspectRatio: 1,
+                crossAxisCount: 2,
+                mainAxisSpacing: 20),
+            itemBuilder: (context, index) {
+              return Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15),
+                  color: Colors.deepPurple,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "string",
+                        maxLines: 2,
+                        softWrap: true,
+                        style: const TextStyle(
+                          fontSize: 17,
+                          color: Color(0xff8EA3B7),
+                        ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            height: 40,
+                            width: 7,
+                            decoration: BoxDecoration(
+                                color: Colors.deepPurple,
+                                borderRadius: BorderRadius.circular(15)),
+                          ),
+                          Text(
+                            //statistics[index].number
+                            "string",
+                            style: const TextStyle(
+                              fontSize: 40,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xff006ED3),
+                            ),
+                          )
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              );
+              },
+            )
+
       ],
     ));
   }
 }
+
