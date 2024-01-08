@@ -10,6 +10,14 @@ import '../menu.dart';
 import 'package:ms18_applicatie/roles.dart';
 import 'package:ms18_applicatie/Widgets/popups.dart';
 
+const List<String> groups = [
+  "Stam",
+  "Matrozen",
+  "Welpen",
+  "ZeeVerkenners",
+  "Globaal"
+];
+
 class Calendar extends StatefulWidget {
   const Calendar({Key? key}) : super(key: key);
 
@@ -23,6 +31,61 @@ var WelpenFilter = false;
 var ZeeVerkennersFilter = false;
 var GlobalFilter = true;
 var GlobalSource = apiUrl + 'Calendar/all';
+
+class InputDropDown extends StatefulWidget {
+  InputDropDown(
+      {super.key,
+      required this.items,
+      this.value,
+      this.onChange,
+      this.hintText,
+      this.isUnderlineBorder = true,
+      this.labelText});
+
+  final List<DropdownMenuItem<String>> items;
+  final Function(String? value)? onChange;
+  final String? hintText;
+  final String? labelText;
+  final bool isUnderlineBorder;
+  String? value;
+
+  @override
+  State<InputDropDown> createState() => _InputDropDownState();
+}
+
+class _InputDropDownState extends State<InputDropDown> {
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButtonFormField(
+      items: widget.items,
+      value: widget.value,
+      isExpanded: true,
+      decoration: InputDecoration(
+        contentPadding: EdgeInsets.symmetric(
+            vertical: 10, horizontal: widget.isUnderlineBorder ? 0 : 15),
+        isDense: true,
+        hintText: widget.hintText,
+        labelText: widget.labelText,
+        hintStyle: const TextStyle(
+          color: mainColor,
+          fontWeight: FontWeight.w300,
+        ),
+        enabledBorder:
+            widget.isUnderlineBorder ? inputUnderlineBorder : inputBorder,
+        focusedBorder:
+            widget.isUnderlineBorder ? inputUnderlineBorder : inputBorder,
+        border: widget.isUnderlineBorder ? inputUnderlineBorder : inputBorder,
+      ),
+      onChanged: (newValue) {
+        if (widget.onChange != null) widget.onChange!(newValue);
+
+        setState(() {
+          widget.value = newValue;
+        });
+      },
+    );
+  }
+}
 
 const scheduleViewSettings = ScheduleViewSettings(
   monthHeaderSettings:
@@ -50,6 +113,7 @@ class CalendarState extends State<Calendar> {
   TextEditingController endDateInput = TextEditingController();
   TextEditingController startTime = TextEditingController();
   TextEditingController endTime = TextEditingController();
+  String group = "Globaal";
   bool isNewEvent = false;
   bool isReadOnly = false;
 
@@ -110,7 +174,6 @@ class CalendarState extends State<Calendar> {
 
     PopupAndLoading.endLoading();
     if (response.statusCode == 200) {
-      print("1");
       PopupAndLoading.showSuccess("Event aangepast");
     } else {
       PopupAndLoading.showError("Event is niet aangepast, probeer opnieuw");
@@ -169,7 +232,6 @@ class CalendarState extends State<Calendar> {
   }
 
   Future<void> _fetchDataAsync(String source) async {
-    print("2");
     GlobalSource = source;
     PopupAndLoading.showLoading();
     var data = await _getDataSourceAsync(source);
@@ -457,7 +519,6 @@ class CalendarState extends State<Calendar> {
         endTime.text = _endTimeText!;
         startDateInput.text = _startDateText!;
         endDateInput.text = _endDateText!;
-
         break;
       case CalendarElement.calendarCell:
         if (UserData.role != Roles.Admin) {
@@ -484,7 +545,7 @@ class CalendarState extends State<Calendar> {
         TimeOfDay? pickedStartTime2 = null;
         break;
       default:
-        break;
+        return;
     }
 
     showDialog(
@@ -640,6 +701,24 @@ class CalendarState extends State<Calendar> {
                             onChanged: (String? value) {
                               _location = value;
                             }),
+                        if (isNewEvent) ...[
+                          InputDropDown(
+                            labelText: "Groep",
+                            value: groups.contains(group) ? group : null,
+                            items: [
+                              for (String item in groups)
+                                DropdownMenuItem(
+                                  value: item,
+                                  child: InputDropdownItem(
+                                    groupName: item,
+                                  ),
+                                )
+                            ],
+                            onChange: (newValue) {
+                              group = newValue ?? 'Globaal';
+                            },
+                          ),
+                        ],
                         TextFormField(
                             maxLines: 4,
                             keyboardType: TextInputType.multiline,
@@ -668,7 +747,7 @@ class CalendarState extends State<Calendar> {
                   ElevatedButton(
                     onPressed: () {
                       sendCreateRequest(
-                          _calendarId.toString(),
+                          groups.indexOf(group).toString(),
                           _eventId,
                           startTime.text,
                           endTime.text,
@@ -742,6 +821,20 @@ class EventDataSource extends CalendarDataSource {
   @override
   bool isAllDay(int index) {
     return appointments![index].isAllDay;
+  }
+}
+
+class InputDropdownItem extends StatelessWidget {
+  const InputDropdownItem({super.key, required this.groupName});
+  final String groupName;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Row(
+        children: [Text(groupName)],
+      ),
+    );
   }
 }
 
