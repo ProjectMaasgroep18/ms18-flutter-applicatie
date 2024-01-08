@@ -17,6 +17,12 @@ class Calendar extends StatefulWidget {
 
 const String apiUrl = "https://localhost:7059/";
 
+var StamFilter = false;
+var MatrozenFilter = false;
+var WelpenFilter = false;
+var ZeeVerkennersFilter = false;
+var GlobalFilter = true;
+
 const scheduleViewSettings = ScheduleViewSettings(
   monthHeaderSettings:
       MonthHeaderSettings(backgroundColor: Color.fromARGB(255, 227, 233, 255)),
@@ -242,9 +248,17 @@ class CalendarState extends State<Calendar> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Material(
+                    color:
+                        GlobalFilter ? backgroundColorDark : Colors.transparent,
+                    borderRadius: BorderRadius.circular(8),
                     child: InkWell(
                       borderRadius: BorderRadius.circular(8),
                       onTap: () {
+                        StamFilter = false;
+                        GlobalFilter = true;
+                        WelpenFilter = false;
+                        ZeeVerkennersFilter = false;
+                        MatrozenFilter = false;
                         setState(() {
                           _fetchDataAsync(apiUrl + 'Calendar/All');
                         });
@@ -263,9 +277,17 @@ class CalendarState extends State<Calendar> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Material(
+                    borderRadius: BorderRadius.circular(8),
+                    color:
+                        WelpenFilter ? backgroundColorDark : Colors.transparent,
                     child: InkWell(
                       borderRadius: BorderRadius.circular(8),
                       onTap: () {
+                        StamFilter = false;
+                        GlobalFilter = false;
+                        WelpenFilter = true;
+                        ZeeVerkennersFilter = false;
+                        MatrozenFilter = false;
                         setState(() {
                           _fetchDataAsync(apiUrl + 'Calendar/welpen');
                         });
@@ -284,12 +306,21 @@ class CalendarState extends State<Calendar> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Material(
+                    borderRadius: BorderRadius.circular(8),
+                    color: ZeeVerkennersFilter
+                        ? backgroundColorDark
+                        : Colors.transparent,
                     child: InkWell(
                       borderRadius: BorderRadius.circular(8),
                       onTap: () {
                         setState(() {
                           _fetchDataAsync(apiUrl + 'Calendar/ZeeVerkenners');
                         });
+                        StamFilter = false;
+                        GlobalFilter = false;
+                        WelpenFilter = false;
+                        ZeeVerkennersFilter = true;
+                        MatrozenFilter = false;
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                               content:
@@ -306,19 +337,33 @@ class CalendarState extends State<Calendar> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Material(
+                    borderRadius: BorderRadius.circular(8),
+                    color: MatrozenFilter
+                        ? backgroundColorDark
+                        : Colors.transparent,
                     child: InkWell(
                       onTap: () {
                         setState(() {
                           _fetchDataAsync(apiUrl + 'Calendar/matrozen');
                         });
+                        StamFilter = false;
+                        GlobalFilter = false;
+                        WelpenFilter = false;
+                        ZeeVerkennersFilter = false;
+                        MatrozenFilter = true;
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                               content: Text('Keuze veranderd naar matrozen')),
                         );
                       },
                       child: ClipRRect(
-                        child: Image.asset('../assets/groups/matrozen.png',
-                            width: imageSize, height: imageSize),
+                        child: Container(
+                          child: Image.asset(
+                            '../assets/groups/matrozen.png',
+                            width: imageSize,
+                            height: imageSize,
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -326,9 +371,17 @@ class CalendarState extends State<Calendar> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Material(
+                    borderRadius: BorderRadius.circular(8),
+                    color:
+                        StamFilter ? backgroundColorDark : Colors.transparent,
                     child: InkWell(
                       borderRadius: BorderRadius.circular(8),
                       onTap: () {
+                        StamFilter = true;
+                        GlobalFilter = false;
+                        WelpenFilter = false;
+                        ZeeVerkennersFilter = false;
+                        MatrozenFilter = false;
                         setState(() {
                           _fetchDataAsync(apiUrl + 'Calendar/stam');
                         });
