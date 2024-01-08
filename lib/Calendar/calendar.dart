@@ -17,8 +17,6 @@ class Calendar extends StatefulWidget {
   State<Calendar> createState() => CalendarState();
 }
 
-const String apiUrl = "https://localhost:7059/";
-
 var StamFilter = false;
 var MatrozenFilter = false;
 var WelpenFilter = false;
