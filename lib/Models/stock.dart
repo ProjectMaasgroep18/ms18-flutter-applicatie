@@ -1,24 +1,26 @@
 import 'package:flutter/material.dart';
 
 class Product {
-  final String name;
-  final double price;
-  final int priceQuantity;
-  final Color color;
+  int id;
+  String name;
+  double price;
+  Color color;
+  String icon;
 
   Product({
+    required this.id,
     required this.color,
     required this.name,
     required this.price,
-    required this.priceQuantity,
+    required this.icon
   });
 }
 
 class StockProduct {
-  final Product product;
+  Product product;
   StockStatus get status =>
       quantity == 0 ? StockStatus.Empty : StockStatus.Good;
-  final int quantity;
+  int quantity;
 
   StockProduct({
     required this.product,

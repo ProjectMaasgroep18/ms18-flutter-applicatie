@@ -28,7 +28,7 @@ class ProfilePicture extends StatelessWidget {
             ],
           ),
           clipBehavior: Clip.hardEdge,
-          child: Image.asset('assets/avaters/Avatar Default.png'),
+          child: Image.asset('assets/avatars/Avatar Default.png'),
         ),
         const Positioned(
           bottom: 0,
