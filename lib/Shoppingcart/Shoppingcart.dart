@@ -236,11 +236,11 @@ class ShoppingCartPopupMenu extends StatelessWidget {
           SizedBox(height: 8.0),
           ElevatedButton(
             onPressed: () {
-              print('Order confirmed!');
+              print('Bestelling geplaatst');
               clearCartAndAddToHistory();
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('Order confirmed!'),
+                  content: Text('Bestelling geplaatst!'),
                 ),
               );
             },
