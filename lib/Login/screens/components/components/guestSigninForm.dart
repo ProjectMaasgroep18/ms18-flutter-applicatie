@@ -1,27 +1,22 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:ms18_applicatie/Api/apiManager.dart';
 import 'package:ms18_applicatie/Dashboard/dashboard.dart';
 import 'package:ms18_applicatie/Dashboard/guestDashboard.dart';
 import 'package:ms18_applicatie/Widgets/buttons.dart';
 import 'package:ms18_applicatie/Widgets/inputFields.dart';
 import 'package:ms18_applicatie/Widgets/paddingSpacing.dart';
-import 'package:ms18_applicatie/Widgets/popups.dart';
-import 'package:ms18_applicatie/config.dart';
 import 'package:ms18_applicatie/menu.dart';
 import 'package:rive/rive.dart';
 
-class SignInForm extends StatefulWidget {
-  const SignInForm({
+class GuestSignInForm extends StatefulWidget {
+  const GuestSignInForm({
     super.key,
   });
 
   @override
-  State<SignInForm> createState() => _SignInFormState();
+  State<GuestSignInForm> createState() => _SignInFormState();
 }
 
-class _SignInFormState extends State<SignInForm> {
+class _SignInFormState extends State<GuestSignInForm> {
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool isShowLoading = false;
   bool isShowConfetti = false;
@@ -31,11 +26,6 @@ class _SignInFormState extends State<SignInForm> {
   late SMITrigger reset;
 
   late SMITrigger confetti;
-
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
-
-  static const String url = "api/v1/User";
 
   StateMachineController getRiveController(Artboard artboard) {
     StateMachineController? controller =
@@ -49,53 +39,25 @@ class _SignInFormState extends State<SignInForm> {
       isShowLoading = true;
       isShowConfetti = true;
     });
-
-    if (_formKey.currentState!.validate()) {
-      // show success
-      check.fire();
-      Future.delayed(Duration(seconds: 1), () {
-        setState(() {
-          isShowLoading = false;
+    Future.delayed(Duration(seconds: 2), () {
+      if (_formKey.currentState!.validate()) {
+        // show success
+        check.fire();
+        Future.delayed(Duration(seconds: 2), () {
+          setState(() {
+            isShowLoading = false;
+          });
+          confetti.fire();
         });
-        confetti.fire();
-        Future.delayed(Duration(seconds: 1), () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const Dashboard(),
-            ),
-          );
+      } else {
+        error.fire();
+        Future.delayed(Duration(seconds: 2), () {
+          setState(() {
+            isShowLoading = false;
+          });
         });
-      });
-    } else {
-      error.fire();
-      Future.delayed(Duration(seconds: 2), () {
-        setState(() {
-          isShowLoading = false;
-        });
-      });
-    }
-  }
-
-  Future apiLogin() async {
-    Map<String, String> body = {
-      'email': emailController.text,
-      'password': passwordController.text,
-    };
-    PopupAndLoading.showLoading();
-    await ApiManager.post(url + '/Login', body).then((value) {
-      Map<String, dynamic> response = value;
-
-      if (response["token"] != null) {
-        setToken(response["token"]);
-        signIn(context);
-        setPrefString(response["member"]["permissions"][0], "role");
       }
-    }).catchError((error) {
-      print(error);
-      PopupAndLoading.showError("Inloggen mislukt probeer het nog eens!");
     });
-    PopupAndLoading.endLoading();
   }
 
   @override
@@ -107,26 +69,18 @@ class _SignInFormState extends State<SignInForm> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                InputField(
+                const InputField(
                   labelText: "Email",
                   isUnderlineBorder: true,
-                  controller: emailController,
                 ),
                 const PaddingSpacing(),
                 const PaddingSpacing(),
-                InputField(
-                  labelText: "Password",
-                  isUnderlineBorder: true,
-                  isPassword: true,
-                  controller: passwordController,
-                ),
                 const PaddingSpacing(),
                 const PaddingSpacing(),
                 const PaddingSpacing(),
                 Button(
-                  onTap: () async {
-                    apiLogin();
-                    // signIn(context);
+                  onTap: () {
+                    signIn(context);
                   },
                   text: 'Sign in',
                   icon: Icons.arrow_forward,
