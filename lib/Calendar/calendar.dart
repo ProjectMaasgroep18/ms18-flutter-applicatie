@@ -545,7 +545,7 @@ class CalendarState extends State<Calendar> {
         TimeOfDay? pickedStartTime2 = null;
         break;
       default:
-        break;
+        return;
     }
 
     showDialog(
