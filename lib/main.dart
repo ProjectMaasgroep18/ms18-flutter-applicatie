@@ -5,6 +5,7 @@ import 'package:ms18_applicatie/config.dart';
 import 'package:ms18_applicatie/menu.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:ms18_applicatie/Login/screens/components/onboding_screen.dart';
+import 'package:syncfusion_localizations/syncfusion_localizations.dart';
 
 void main() {
   // Setting the default styles for the popups
@@ -24,6 +25,7 @@ class Maasgroep18App extends StatelessWidget {
       localizationsDelegates: <LocalizationsDelegate<Object>>[
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
+        SfGlobalLocalizations.delegate
       ],
       supportedLocales: <Locale>[
         Locale('nl', 'NL'),
