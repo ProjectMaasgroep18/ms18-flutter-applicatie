@@ -37,10 +37,17 @@ class PickPhoto extends StatefulWidget {
 }
 
 class PickPhotoState extends State<PickPhoto> {
+
+  Map<String, String> header() {
+    Map<String, String> header = {};
+    getHeaders().then((value) {return value;});
+    return header;
+  }
+
   @override
   void initState() {
     // Retrieve all the costcentres and put them in a list
-    ApiManager.get("api/v1/CostCentre").then((x) {
+    ApiManager.get("api/v1/CostCentre", header()).then((x) {
       List<dynamic> data = x;
       List<DropdownMenuItem<String>> temp = [];
       // Loop over the data and add the names to the list
@@ -188,9 +195,7 @@ class PickPhotoState extends State<PickPhoto> {
                         "note": descriptionController.text,
                         "costCentre": selectedCostCentre,
                       },
-                      {
-                        "Authorization": "Bearer ${await getToken()}",
-                      },
+                      await getHeaders(),
                     );
                     print(res);
                     if (res == null) {
@@ -205,9 +210,7 @@ class PickPhotoState extends State<PickPhoto> {
                             "base64Image": await imageToBase64(file!),
                             "receiptId": res
                       },
-                      {
-                        "Authorization": "Bearer ${await getToken()}",
-                      },
+                      await getHeaders(),
                     );
                     if (photoRes != null) {
                       PopupAndLoading.showSuccess("De foto is geupload");

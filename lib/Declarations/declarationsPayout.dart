@@ -22,8 +22,13 @@ class DeclarationsPayout extends StatefulWidget {
 
 class DeclarationsPayoutState extends State<DeclarationsPayout> {
   @override
-  void initState() {
-    _future = ApiManager.get<List<dynamic>>("api/v1/Receipt");
+
+  Future<dynamic>? getReceipt() async {
+    _future = ApiManager.get("api/v1/Receipt", await getHeaders());
+  }
+
+  void initState()  {
+    _future = getReceipt();
     super.initState();
   }
 
@@ -252,7 +257,7 @@ class DeclarationsPayoutState extends State<DeclarationsPayout> {
                   "note": declInfo['note'],
                   "approved": true,
                   "paid": true,
-                });
+                }, await getHeaders());
                 if (res != null) {
                   // Show snackbar
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -264,22 +269,22 @@ class DeclarationsPayoutState extends State<DeclarationsPayout> {
                   setState(() {
                     _future = null;
                   });
-                  setState(() {
-                    _future = ApiManager.get("api/v1/Receipt");
+                  setState(() async {
+                    _future = ApiManager.get("api/v1/Receipt", await getHeaders());
                   });
                 }
               },
               child: const Text('Goedkeuren'),
             ),
             TextButton(
-              onPressed: () {
+              onPressed: () async {
                 // Update the status
                 var res = ApiManager
                     .post("api/v1/Receipt/${declInfo['id']}/Approve", {
                   "receiptId": declInfo['id'],
                   "note": declInfo['note'],
                   "approved": false,
-                });
+                }, await getHeaders());
                 if (res != null) {
                   // Show snackbar
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -291,8 +296,8 @@ class DeclarationsPayoutState extends State<DeclarationsPayout> {
                   setState(() {
                     _future = null;
                   });
-                  setState(() {
-                    _future = ApiManager.get("api/v1/Receipt");
+                  setState(() async {
+                    _future = ApiManager.get("api/v1/Receipt", await getHeaders());
                   });
                 }
               },
