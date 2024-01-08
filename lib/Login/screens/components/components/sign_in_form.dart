@@ -1,15 +1,13 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Api/apiManager.dart';
 import 'package:ms18_applicatie/Dashboard/dashboard.dart';
-import 'package:ms18_applicatie/Dashboard/guestDashboard.dart';
 import 'package:ms18_applicatie/Widgets/buttons.dart';
 import 'package:ms18_applicatie/Widgets/inputFields.dart';
 import 'package:ms18_applicatie/Widgets/paddingSpacing.dart';
 import 'package:ms18_applicatie/Widgets/popups.dart';
 import 'package:ms18_applicatie/config.dart';
-import 'package:ms18_applicatie/menu.dart';
+import 'package:ms18_applicatie/main.dart';
+
 import 'package:rive/rive.dart';
 
 class SignInForm extends StatefulWidget {
@@ -35,7 +33,7 @@ class _SignInFormState extends State<SignInForm> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
-  static const String url = "api/v1/User";
+  static const String url = "api/v1/User/Login";
 
   StateMachineController getRiveController(Artboard artboard) {
     StateMachineController? controller =
@@ -49,53 +47,25 @@ class _SignInFormState extends State<SignInForm> {
       isShowLoading = true;
       isShowConfetti = true;
     });
-
-    if (_formKey.currentState!.validate()) {
-      // show success
-      check.fire();
-      Future.delayed(Duration(seconds: 1), () {
-        setState(() {
-          isShowLoading = false;
+    Future.delayed(Duration(seconds: 2), () {
+      if (_formKey.currentState!.validate()) {
+        // show success
+        check.fire();
+        Future.delayed(Duration(seconds: 2), () {
+          setState(() {
+            isShowLoading = false;
+          });
+          confetti.fire();
         });
-        confetti.fire();
-        Future.delayed(Duration(seconds: 1), () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const Dashboard(),
-            ),
-          );
+      } else {
+        error.fire();
+        Future.delayed(Duration(seconds: 2), () {
+          setState(() {
+            isShowLoading = false;
+          });
         });
-      });
-    } else {
-      error.fire();
-      Future.delayed(Duration(seconds: 2), () {
-        setState(() {
-          isShowLoading = false;
-        });
-      });
-    }
-  }
-
-  Future apiLogin() async {
-    Map<String, String> body = {
-      'email': emailController.text,
-      'password': passwordController.text,
-    };
-    PopupAndLoading.showLoading();
-    await ApiManager.post(url + '/Login', body).then((value) {
-      Map<String, dynamic> response = value;
-
-      if (response["token"] != null) {
-        setToken(response["token"]);
-        signIn(context);
-        setPrefString(response["member"]["permissions"][0], "role");
       }
-    }).catchError((error) {
-      print(error);
-      PopupAndLoading.showError("Inloggen mislukt probeer het nog eens!");
     });
-    PopupAndLoading.endLoading();
   }
 
   @override
@@ -125,7 +95,29 @@ class _SignInFormState extends State<SignInForm> {
                 const PaddingSpacing(),
                 Button(
                   onTap: () async {
-                    apiLogin();
+                    Map<String, String> body = {
+                      'email': emailController.text,
+                      'password': passwordController.text,
+                    };
+                    PopupAndLoading.showLoading();
+                    await ApiManager.post(url, body).then((value) {
+                      Map<String, dynamic> response = value;
+                      if (response["token"] != null) {
+                        setToken(response["token"]);
+                        setPrefString(response["member"]["permissions"][0], "role");
+                        signIn(context);
+                        loadLocalUser(response["member"]);
+                      }else {
+                        // Required until response codes are fixed
+                        throw Exception("Login failed, check creds");
+                      }
+                    }).catchError((error) {
+                      print(error);
+                      PopupAndLoading.showError(
+                          "Inloggen mislukt probeer het nog eens!");
+                    });
+                    PopupAndLoading.endLoading();
+
                     // signIn(context);
                   },
                   text: 'Sign in',
@@ -158,10 +150,10 @@ class _SignInFormState extends State<SignInForm> {
                     confetti =
                         controller.findSMI("Trigger explosion") as SMITrigger;
                     await Future.delayed(const Duration(seconds: 5), () {
-                      Navigator.push(
+                      Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const GuestDashboard(),
+                          builder: (context) => const Dashboard(),
                         ),
                       );
                     });

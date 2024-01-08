@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Widgets/buttons.dart';
 import 'package:ms18_applicatie/Widgets/paddingSpacing.dart';
+import 'package:ms18_applicatie/Widgets/responsiveness.dart';
 import 'package:ms18_applicatie/config.dart';
 import 'package:ms18_applicatie/config.dart';
 import 'package:rive/rive.dart';
@@ -34,10 +35,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           Padding(
             padding: const EdgeInsets.all(0),
             child: SizedBox(
-                width: MediaQuery.of(context).size.width * 3,
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+
                 // bottom: -5350,
                 // left: -2760,
-                child: Image.asset('assets/Backgrounds/Shapes.png')),
+                child: Image.asset('assets/Backgrounds/Shapes.png',
+                    fit: BoxFit.fill)),
           ),
           Positioned.fill(
               child: BackdropFilter(
@@ -50,7 +54,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           //   child: const SizedBox(),
           // )),
           AnimatedPositioned(
-            duration: Duration(milliseconds: 240),
+            duration: const Duration(milliseconds: 240),
             top: isSignInDialogShown ? -50 : 0,
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
@@ -60,7 +64,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Spacer(),
+                    const Spacer(),
                     Image.asset(
                       "assets/logo.jpg",
                       width: 50,
@@ -87,7 +91,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       flex: 2,
                     ),
                     Button(
-                      text: 'Sign in',
+                      text: 'Inloggen',
+                      isFullWidth: false,
                       icon: Icons.arrow_forward,
                       onTap: () {
                         _btnAnimationController.isActive = true;
@@ -103,7 +108,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         });
                       },
                     ),
-                    Center(
+                    Align(
+                      alignment: responsifeCondition(
+                          context, Alignment.center, Alignment.bottomLeft),
                       child: TextButton(
                         onPressed: () {
                           _btnAnimationController.isActive = true;
@@ -114,16 +121,18 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             customGuestLogin(context, onClosed: (_) {
                               setState(() {
                                 isSignInDialogShown = false;
+
                               });
                             });
                           });
                         },
-                        child: Text(
+                        child: const Text(
                           "Gast Login",
                           style: TextStyle(
-                              color: Colors.lightBlue,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold),
+                            color: Colors.lightBlue,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),

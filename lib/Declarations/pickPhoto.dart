@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ms18_applicatie/Api/apiManager.dart';
@@ -25,8 +24,6 @@ List<DropdownMenuItem<String>> _costCentres = [
   )
 ];
 String? selectedCostCentre;
-
-// ApiManager apiManager = ApiManager();
 
 TextEditingController nameController = TextEditingController();
 TextEditingController descriptionController = TextEditingController();
@@ -78,14 +75,14 @@ class PickPhotoState extends State<PickPhoto> {
               icon: Icons.person,
               hintText: "Naam: ",
               controller: nameController,
-              isUnderlineBorder: true,
+              isRequired: false,
             ),
             const PaddingSpacing(),
             InputField(
               hintText: "Description: ",
               controller: descriptionController,
               icon: Icons.description,
-              isUnderlineBorder: true,
+              isRequired: false,
             ),
             const PaddingSpacing(),
             // Fill in the amount of euros
@@ -93,7 +90,7 @@ class PickPhotoState extends State<PickPhoto> {
               hintText: "Amount: ",
               controller: amountController,
               icon: Icons.euro,
-              isUnderlineBorder: true,
+              isRequired: false,
             ),
             const PaddingSpacing(),
             DropdownButton<String>(

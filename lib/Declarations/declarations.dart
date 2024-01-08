@@ -1,11 +1,6 @@
 import 'dart:convert';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:ms18_applicatie/Models/declaration.dart';
-import 'package:ms18_applicatie/Widgets/inputFields.dart';
 import 'package:ms18_applicatie/config.dart';
-
 import '../Api/apiManager.dart';
 import '../Widgets/paddingSpacing.dart';
 import '../menu.dart';
@@ -240,14 +235,17 @@ class _DeclarationsState extends State<Declarations> {
           actions: <Widget>[
             TextButton(
               onPressed: () async {
+
                 // Update the status
-                var res = ApiManager.post(
-                    "api/v1/Receipt/${declInfo['id']}/Approve", {
+                var res = ApiManager
+                    .post("/api/v1/Receipt/${declInfo['id']}/Approve", {
+
                   "receiptId": declInfo['id'],
                   "note": declInfo['note'],
                   "approved": true,
                   "paid": false
                 });
+
                 if (res != null) {
                   // Show snackbar
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -269,12 +267,13 @@ class _DeclarationsState extends State<Declarations> {
             TextButton(
               onPressed: () {
                 // Update the status
-                var res = ApiManager.post(
-                    "api/v1/Receipt/${declInfo['id']}/Approve", {
+                var res = ApiManager
+                    .post("/api/v1/Receipt/${declInfo['id']}/Approve", {
                   "receiptId": declInfo['id'],
                   "note": declInfo['note'],
                   "approved": false,
                 });
+
                 if (res != null) {
                   // Show snackbar
                   ScaffoldMessenger.of(context).showSnackBar(

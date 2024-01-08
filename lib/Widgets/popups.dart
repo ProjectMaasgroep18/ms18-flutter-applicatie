@@ -26,7 +26,9 @@ class PopupAndLoading {
     isLoading = true;
     if (!otherPopup) {
       EasyLoading.removeAllCallbacks();
-      EasyLoading.instance.backgroundColor = mainColor;
+      EasyLoading.instance
+        ..backgroundColor = mainColor
+        ..dismissOnTap = false;
       EasyLoading.show(
         status: 'Laden...',
       );
@@ -44,7 +46,9 @@ class PopupAndLoading {
 //show and set the error popup
   static void showError(String message) {
     EasyLoading.removeAllCallbacks();
-    EasyLoading.instance.backgroundColor = dangerColor;
+    EasyLoading.instance
+      ..backgroundColor = dangerColor
+      ..dismissOnTap = true;
     EasyLoading.showError(
       message,
     );
@@ -54,7 +58,9 @@ class PopupAndLoading {
 //show and set the success popup
   static void showSuccess(String message) {
     EasyLoading.removeAllCallbacks();
-    EasyLoading.instance.backgroundColor = successColor;
+    EasyLoading.instance
+      ..backgroundColor = successColor
+      ..dismissOnTap = true;
     EasyLoading.showSuccess(
       message,
     );
