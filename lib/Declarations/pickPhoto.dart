@@ -43,7 +43,7 @@ class PickPhotoState extends State<PickPhoto> {
   @override
   void initState() {
     // Retrieve all the costcentres and put them in a list
-    ApiManager.get("/api/v1/CostCentre").then((x) {
+    ApiManager.get("api/v1/CostCentre").then((x) {
       List<dynamic> data = x;
       List<DropdownMenuItem<String>> temp = [];
       // Loop over the data and add the names to the list

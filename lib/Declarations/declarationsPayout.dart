@@ -23,7 +23,7 @@ class DeclarationsPayout extends StatefulWidget {
 class DeclarationsPayoutState extends State<DeclarationsPayout> {
   @override
   void initState() {
-    _future = ApiManager.get<List<dynamic>>("/api/v1/Receipt");
+    _future = ApiManager.get<List<dynamic>>("api/v1/Receipt");
     super.initState();
   }
 
@@ -247,7 +247,7 @@ class DeclarationsPayoutState extends State<DeclarationsPayout> {
               onPressed: () async {
                 // Update the status
                 var res = ApiManager
-                    .post("/api/v1/Receipt/${declInfo['id']}/Approve", {
+                    .post("api/v1/Receipt/${declInfo['id']}/Approve", {
                   "receiptId": declInfo['id'],
                   "note": declInfo['note'],
                   "approved": true,
@@ -265,7 +265,7 @@ class DeclarationsPayoutState extends State<DeclarationsPayout> {
                     _future = null;
                   });
                   setState(() {
-                    _future = ApiManager.get("/api/v1/Receipt");
+                    _future = ApiManager.get("api/v1/Receipt");
                   });
                 }
               },
@@ -275,7 +275,7 @@ class DeclarationsPayoutState extends State<DeclarationsPayout> {
               onPressed: () {
                 // Update the status
                 var res = ApiManager
-                    .post("/api/v1/Receipt/${declInfo['id']}/Approve", {
+                    .post("api/v1/Receipt/${declInfo['id']}/Approve", {
                   "receiptId": declInfo['id'],
                   "note": declInfo['note'],
                   "approved": false,
@@ -292,7 +292,7 @@ class DeclarationsPayoutState extends State<DeclarationsPayout> {
                     _future = null;
                   });
                   setState(() {
-                    _future = ApiManager.get("/api/v1/Receipt");
+                    _future = ApiManager.get("api/v1/Receipt");
                   });
                 }
               },
