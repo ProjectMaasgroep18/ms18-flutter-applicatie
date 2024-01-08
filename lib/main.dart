@@ -15,6 +15,7 @@ import 'package:ms18_applicatie/roles.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'Models/user.dart';
+import 'package:syncfusion_localizations/syncfusion_localizations.dart';
 
 void main() {
   // Setting the default styles for the popups
@@ -98,6 +99,7 @@ class Maasgroep18App extends StatelessWidget {
       localizationsDelegates: <LocalizationsDelegate<Object>>[
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
+        SfGlobalLocalizations.delegate
       ],
       supportedLocales: <Locale>[
         Locale('nl', 'NL'),
