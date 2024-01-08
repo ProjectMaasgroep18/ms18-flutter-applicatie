@@ -47,31 +47,9 @@ class UserListState extends State<UserList> {
     await showInputPopup(
       context,
       title: "Gebruiker toevoegen",
-      child: const Column(
-        children: [
-          InputField(
-            labelText: "Email",
-            isUnderlineBorder: true,
-          ),
-          PaddingSpacing(),
-          InputField(
-            labelText: "Voornaam",
-            isUnderlineBorder: true,
-          ),
-          PaddingSpacing(),
-          InputField(
-            labelText: "Achternaam",
-            isUnderlineBorder: true,
-          ),
-          PaddingSpacing(),
-          InputField(
-            labelText: "Wachtwoord",
-            isUnderlineBorder: true,
-          ),
-        ],
-      ),
+      child: const UserForm(),
       onSave: () {},
-      height: 300,
+      height: 350,
     );
   }
 

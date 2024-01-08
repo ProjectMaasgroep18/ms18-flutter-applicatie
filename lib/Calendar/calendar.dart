@@ -15,6 +15,8 @@ class Calendar extends StatefulWidget {
   State<Calendar> createState() => CalendarState();
 }
 
+const String apiUrl = "https://localhost:7059/";
+
 const scheduleViewSettings = ScheduleViewSettings(
   monthHeaderSettings:
       MonthHeaderSettings(backgroundColor: Color.fromARGB(255, 227, 233, 255)),
@@ -39,9 +41,9 @@ class CalendarState extends State<Calendar> {
   TextEditingController endTime = TextEditingController();
   bool isNewEvent = false;
   bool shouldShowForm = false;
-  final restfulUrl = 'https://localhost:7059/Calendar/Event';
+  final restfulUrl = apiUrl + 'Calendar/Event';
 
-  String source = 'https://localhost:7059/Calendar/all';
+  String source = apiUrl + 'Calendar/all';
   String lastSource = '';
 
   Future<void> sendDeleteRequest(calendarName, id, contextForm) async {
@@ -154,7 +156,7 @@ class CalendarState extends State<Calendar> {
     shouldShowForm = false;
     super.initState();
 
-    source = 'https://localhost:7059/Calendar/all';
+    source = apiUrl + 'Calendar/all';
     lastSource = '';
     _fetchDataAsync(source);
   }
@@ -193,6 +195,20 @@ class CalendarState extends State<Calendar> {
           final endDateTime =
               DateTime.parse(eventData['endDateTime']).toLocal();
           final isAllDay = endDateTime.isBefore(startDateTime);
+          var color = Colors.black;
+          switch (calendarId) {
+            case 0:
+              color = Color.fromARGB(255, 230, 108, 23);
+            case 1:
+              color = Color.fromARGB(255, 181, 49, 81);
+            case 2:
+              color = Color.fromARGB(255, 162, 198, 91);
+            case 3:
+              color = Color.fromARGB(255, 240, 166, 0);
+            case 4:
+              color = Colors.blue;
+          }
+
           final event = Event(
             eventId,
             calendarId,
@@ -201,7 +217,7 @@ class CalendarState extends State<Calendar> {
             location,
             startDateTime,
             endDateTime,
-            Colors.blue, // Vervang dit door de juiste achtergrondkleur
+            color, // Vervang dit door de juiste achtergrondkleur
             isAllDay,
           );
           events.add(event);
@@ -230,8 +246,7 @@ class CalendarState extends State<Calendar> {
                       borderRadius: BorderRadius.circular(8),
                       onTap: () {
                         setState(() {
-                          _fetchDataAsync(
-                              'https://localhost:7059/Calendar/All');
+                          _fetchDataAsync(apiUrl + 'Calendar/All');
                         });
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
@@ -252,8 +267,7 @@ class CalendarState extends State<Calendar> {
                       borderRadius: BorderRadius.circular(8),
                       onTap: () {
                         setState(() {
-                          _fetchDataAsync(
-                              'https://localhost:7059/Calendar/welpen');
+                          _fetchDataAsync(apiUrl + 'Calendar/welpen');
                         });
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
@@ -274,8 +288,7 @@ class CalendarState extends State<Calendar> {
                       borderRadius: BorderRadius.circular(8),
                       onTap: () {
                         setState(() {
-                          _fetchDataAsync(
-                              'https://localhost:7059/Calendar/ZeeVerkenners');
+                          _fetchDataAsync(apiUrl + 'Calendar/ZeeVerkenners');
                         });
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
@@ -296,8 +309,7 @@ class CalendarState extends State<Calendar> {
                     child: InkWell(
                       onTap: () {
                         setState(() {
-                          _fetchDataAsync(
-                              'https://localhost:7059/Calendar/matrozen');
+                          _fetchDataAsync(apiUrl + 'Calendar/matrozen');
                         });
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
@@ -318,8 +330,7 @@ class CalendarState extends State<Calendar> {
                       borderRadius: BorderRadius.circular(8),
                       onTap: () {
                         setState(() {
-                          _fetchDataAsync(
-                              'https://localhost:7059/Calendar/stam');
+                          _fetchDataAsync(apiUrl + 'Calendar/stam');
                         });
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
@@ -338,7 +349,7 @@ class CalendarState extends State<Calendar> {
             Expanded(
               child: SfCalendar(
                 view: MediaQuery.of(context).size.width > mobileWidth
-                    ? CalendarView.week
+                    ? CalendarView.month
                     : CalendarView.day,
                 timeSlotViewSettings: const TimeSlotViewSettings(
                   timeFormat: 'HH:mm',
@@ -362,7 +373,9 @@ class CalendarState extends State<Calendar> {
                   CalendarView.schedule,
                 ],
                 monthViewSettings: const MonthViewSettings(
-                    navigationDirection: MonthNavigationDirection.vertical),
+                    navigationDirection: MonthNavigationDirection.vertical,
+                    appointmentDisplayMode:
+                        MonthAppointmentDisplayMode.appointment),
               ),
             ),
           ],

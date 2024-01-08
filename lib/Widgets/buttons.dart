@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/config.dart';
 
@@ -6,6 +5,7 @@ class Button extends StatelessWidget {
   final IconData? icon;
   final String? text;
   final Function() onTap;
+  final Color color;
   final EdgeInsets padding;
   const Button({
     super.key,
@@ -13,16 +13,16 @@ class Button extends StatelessWidget {
     this.text,
     required this.onTap,
     this.padding = const EdgeInsets.all(0),
+    this.color = mainColor
   });
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      
       onPressed: onTap,
       style: ElevatedButton.styleFrom(
+        backgroundColor: color,
         padding: padding,
-        backgroundColor: mainColor,
         minimumSize: const Size(10, 48),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(
