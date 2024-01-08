@@ -1,16 +1,31 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Widgets/buttons.dart';
-import 'package:ms18_applicatie/Widgets/inputFields.dart';
 import 'package:ms18_applicatie/Widgets/paddingSpacing.dart';
-import 'package:ms18_applicatie/Widgets/profilePicture.dart';
 import 'package:ms18_applicatie/config.dart';
 import 'package:ms18_applicatie/globals.dart';
 import 'package:ms18_applicatie/menu.dart';
 import 'package:ms18_applicatie/roles.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../Api/apiManager.dart';
+import '../Login/screens/components/onboding_screen.dart';
 
 class Profile extends StatelessWidget {
   Profile({super.key});
+
+  Future<void> logout() async {
+    final prefs = await SharedPreferences.getInstance();
+    final res = prefs.getString('token');
+    String bearerToken = "Bearer $res";
+    Map<String, String> headers = {
+      ...apiHeaders,
+      ...{"Authorization": bearerToken}
+    };
+    await ApiManager.get("api/v1/User/Logout", headers);
+    prefs.remove('token');
+  }
+
   final TextEditingController emailController =
       TextEditingController(text: globalLoggedInUserValues?.email);
   final TextEditingController nameController =
@@ -29,6 +44,7 @@ class Profile extends StatelessWidget {
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(mobilePadding),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ListTile(
               title: const Text("Naam:"),
@@ -64,10 +80,15 @@ class Profile extends StatelessWidget {
               ),
             const PaddingSpacing(),
             Button(
-              onTap: () {},
+              onTap: () {
+                logout();
+                Navigator.of(context).pushReplacement(MaterialPageRoute(
+                    builder: (context) => const OnboardingScreen()));
+              },
               text: "Uitloggen",
               color: dangerColor,
               icon: Icons.logout,
+              isFullWidth: false,
             ),
           ],
         ),

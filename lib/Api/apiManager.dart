@@ -26,7 +26,6 @@ class ApiManager {
 
   static Future<T> post<T>(String url,
       [Map<String, dynamic>? apiBody,
-
         Map<String, String>? requestHeaders]) async {
 
     print("Sending: ${jsonEncode(apiBody)}");
@@ -40,8 +39,7 @@ class ApiManager {
 
     print("RESP: ${response.body}");
 
-    return tryJsonDecode(response.body);
-
+    return tryJsonDecode(response);
   }
 
   static Future<T> put<T>(String url,
@@ -58,12 +56,9 @@ class ApiManager {
       [Map<String, String>? requestHeaders]) async {
     http.Response response = await http.get(Uri.parse(apiUrl + url),
         headers: requestHeaders ?? apiHeaders);
-
-
     // checkStatusCode(response);
     print("Response GET : ${response.body}");
-    return tryJsonDecode(response.body);
-
+    return tryJsonDecode(response);
   }
 
   static Future<T> delete<T>(String url,

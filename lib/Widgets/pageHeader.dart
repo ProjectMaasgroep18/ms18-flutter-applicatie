@@ -6,10 +6,9 @@ import 'package:ms18_applicatie/config.dart';
 
 class PageHeader extends StatelessWidget {
   final TextEditingController searchController = TextEditingController();
-  final Function() onAdd;
+  final Function()? onAdd;
   final Function(String value)? onSearch;
-  PageHeader(
-      {super.key, required this.onAdd, this.onSearch});
+  PageHeader({super.key, this.onAdd, this.onSearch});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +24,7 @@ class PageHeader extends StatelessWidget {
                 child: InputField(
                   isUnderlineBorder: false,
                   icon: Icons.search,
-                  hintText: "Search",
+                  hintText: "Zoeken",
                   onChange: (value) {
                     if (onSearch != null) {
                       onSearch!(value ?? '');
@@ -33,8 +32,10 @@ class PageHeader extends StatelessWidget {
                   },
                 ),
               ),
-              const PaddingSpacing(),
-              Expanded(flex: 3, child: Button(onTap: onAdd, icon: Icons.add))
+              if (onAdd != null) ...[
+                const PaddingSpacing(),
+                Expanded(flex: 3, child: Button(onTap: onAdd!, icon: Icons.add))
+              ]
             ],
           ),
           const SizedBox(

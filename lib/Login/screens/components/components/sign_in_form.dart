@@ -7,6 +7,7 @@ import 'package:ms18_applicatie/Widgets/paddingSpacing.dart';
 import 'package:ms18_applicatie/Widgets/popups.dart';
 import 'package:ms18_applicatie/config.dart';
 import 'package:ms18_applicatie/main.dart';
+
 import 'package:rive/rive.dart';
 
 class SignInForm extends StatefulWidget {

@@ -3,6 +3,7 @@ import 'package:ms18_applicatie/Calendar/calendar.dart';
 import 'package:ms18_applicatie/Dashboard/dashboard.dart';
 import 'package:ms18_applicatie/Dashboard/guestDashboard.dart';
 import 'package:ms18_applicatie/Models/stock.dart';
+import 'package:ms18_applicatie/Orders/orders.dart';
 import 'package:ms18_applicatie/Pictures/listPictures.dart';
 import 'package:ms18_applicatie/Profile/profile.dart';
 import 'package:ms18_applicatie/Stock/stockReport.dart';
@@ -27,11 +28,10 @@ class Menu extends StatelessWidget {
   //fil the list of custom InputField classes
   final List<menuItem.MenuItem> menuItems = [
     menuItem.MenuItem(
-      text: 'Home',
-      icon: Icons.home,
-      page: MaterialPageRoute(builder: (context) => const Dashboard()),
-        roles: Roles.values
-    ),
+        text: 'Home',
+        icon: Icons.home,
+        page: MaterialPageRoute(builder: (context) => const Dashboard()),
+        roles: Roles.values),
     menuItem.MenuItem(
         text: 'Voorraad',
         icon: Icons.add_chart,
@@ -41,13 +41,25 @@ class Menu extends StatelessWidget {
         text: 'Foto\'s',
         icon: Icons.photo,
         page: MaterialPageRoute(builder: (context) => const ListPictures()),
-        roles: Roles.values
-    ),
+        roles: Roles.values),
     menuItem.MenuItem(
         text: 'Declaraties',
         icon: Icons.message,
         page: MaterialPageRoute(builder: (context) => const DeclarationsMenu()),
-        roles: [Roles.Admin, Roles.Receipt, Roles.ReceiptApprove, Roles.ReceiptPay]),
+        roles: [
+          Roles.Admin,
+          Roles.Receipt,
+          Roles.ReceiptApprove,
+          Roles.ReceiptPay
+        ]),
+    menuItem.MenuItem(
+        text: 'Orders',
+        icon: Icons.receipt_long,
+        page: MaterialPageRoute(builder: (context) => Orders()),
+        roles: [
+          Roles.OrderView,
+          Roles.Admin,
+        ]),
     menuItem.MenuItem(
       text: 'Agenda',
       icon: Icons.calendar_month,
@@ -55,11 +67,12 @@ class Menu extends StatelessWidget {
       roles: Roles.values
     ),
     menuItem.MenuItem(
-      text: 'Gebruikers',
-      icon: Icons.account_circle,
-      page: MaterialPageRoute(builder: (context) => const UserList()),
-      roles: [Roles.Admin,]
-    ),
+        text: 'Gebruikers',
+        icon: Icons.account_circle,
+        page: MaterialPageRoute(builder: (context) => const UserList()),
+        roles: [
+          Roles.Admin,
+        ]),
   ];
 
   Menu({
@@ -88,7 +101,8 @@ class Menu extends StatelessWidget {
         ),
       );
       for (menuItem.MenuItem menuitem in menuItems) {
-        if (menuitem.roles.indexWhere((e) => UserData.roles!.contains(e)) > -1) {
+        if (menuitem.roles.indexWhere((e) => UserData.roles!.contains(e)) >
+            -1) {
           items.add(
             MenuItemBase(
               page: menuitem.page,
