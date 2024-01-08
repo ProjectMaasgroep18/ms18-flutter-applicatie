@@ -19,6 +19,7 @@ class StockReport extends StatelessWidget {
   // Used to update the results by the search term
   ValueNotifier<String> searchNotifier = ValueNotifier('');
 
+
   @override
   Widget build(BuildContext context) {
     return Menu(

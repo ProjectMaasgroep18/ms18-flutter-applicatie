@@ -20,7 +20,7 @@ Future<List<Order>> getOrders(int? userId) async {
           DateTime.tryParse(map['dateTimeCreated']) ?? DateTime.now();
       Order tempOrder = Order(
           note: map['note'] ?? '',
-          totalAmount: map['totalAmount'] ?? 0,
+          totalAmount: double.tryParse((map['totalAmount'] ?? '0').toString()) ?? 0,
           dateTimeCreated: createDate,
           items: castListDynamicToStockProducts(map['lines'] as List<dynamic>),
           user: castMapToUser(map['memberCreated']));
