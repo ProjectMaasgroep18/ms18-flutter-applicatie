@@ -14,15 +14,14 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
   Color mainColor = Color(0xFF15233d);
 
   Future<http.Response?> _submit() async {
-    print("Test1");
     return http.post(
         Uri.parse('https://localhost:7059/api/albums'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode(<String, String>{
-          'Name': _titleController.text,
-          'Year': (_selectedDate?.year).toString(),
+          'name': _titleController.text,
+          'year': (_selectedDate?.year).toString(),
         })
     );
   }
