@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Models/stock.dart';
+import 'package:ms18_applicatie/Orders/orders.dart';
 import 'package:ms18_applicatie/Stock/stockReport.dart';
 import 'package:ms18_applicatie/Stock/widgets.dart';
 import 'package:ms18_applicatie/Widgets/pageHeader.dart';
@@ -200,7 +201,7 @@ class ShoppingCartPopupMenu extends StatelessWidget {
   final Function(StockProduct) removeFromCart;
   final Function(StockProduct, int) updateQuantity;
   final VoidCallback clearCartAndAddToHistory;
-  final List<Order> orderHistory;
+  final List<dynamic> orderHistory;
 
   ShoppingCartPopupMenu({
     required this.shoppingCart,
@@ -248,11 +249,15 @@ class ShoppingCartPopupMenu extends StatelessWidget {
           ),
           SizedBox(height: 8.0),
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
+              // Fetch order history when "Bestelhistorie" is clicked
+
+
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => OrderHistoryScreen(orderHistory: orderHistory),
+                  builder: (context) =>
+                      Orders(userId: globalLoggedInUserValues?.id ,),
                 ),
               );
             },
@@ -284,7 +289,8 @@ class ShoppingCartPopupMenu extends StatelessWidget {
                   ],
                 ),
                 trailing: Text(
-                  '\€${(shoppingCart[index].product.price * shoppingCart[index].quantity).toStringAsFixed(2)}',
+                  '\€${(shoppingCart[index].product.price *
+                      shoppingCart[index].quantity).toStringAsFixed(2)}',
                 ),
                 onTap: () {
                   removeFromCart(shoppingCart[index]);
@@ -297,7 +303,6 @@ class ShoppingCartPopupMenu extends StatelessWidget {
     );
   }
 }
-
 class OrderHistoryScreen extends StatelessWidget {
   final List<Order> orderHistory;
 
