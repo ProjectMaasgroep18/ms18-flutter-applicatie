@@ -235,9 +235,11 @@ class _DeclarationsState extends State<Declarations> {
           actions: <Widget>[
             TextButton(
               onPressed: () async {
-                // Update the statu
-                var res = ApiManager.post(
-                    "/api/v1/Receipt/${declInfo['id']}/Approve", {
+
+                // Update the status
+
+                var res = ApiManager
+                    .post("/api/v1/Receipt/${declInfo['id']}/Approve", {
                   "receiptId": declInfo['id'],
                   "note": declInfo['note'],
                   "approved": true,
@@ -265,9 +267,9 @@ class _DeclarationsState extends State<Declarations> {
               onPressed: () {
                 // Update the status
 
-                var res = ApiManager.post(
-                    "/api/v1/Receipt/${declInfo['id']}/Approve", {
 
+                var res = ApiManager
+                    .post("/api/v1/Receipt/${declInfo['id']}/Approve", {
                   "receiptId": declInfo['id'],
                   "note": declInfo['note'],
                   "approved": false,
@@ -289,7 +291,6 @@ class _DeclarationsState extends State<Declarations> {
                   });
                 }
               },
-
               child: const Text('Afkeuren'),
             ),
             TextButton(

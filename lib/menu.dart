@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Calendar/calendar.dart';
 import 'package:ms18_applicatie/Dashboard/dashboard.dart';
+import 'package:ms18_applicatie/Models/stock.dart';
 import 'package:ms18_applicatie/Pictures/listPictures.dart';
+import 'package:ms18_applicatie/Profile/profile.dart';
 import 'package:ms18_applicatie/Stock/stockReport.dart';
 import 'package:ms18_applicatie/Users/userList.dart';
+import 'package:ms18_applicatie/globals.dart';
 import 'package:ms18_applicatie/roles.dart';
 import 'package:ms18_applicatie/team-c/Declarations/declarationsMenu.dart';
 import 'config.dart';
@@ -26,26 +29,31 @@ class Menu extends StatelessWidget {
       text: 'Home',
       icon: Icons.home,
       page: MaterialPageRoute(builder: (context) => const Dashboard()),
+        roles: Roles.values
     ),
     menuItem.MenuItem(
         text: 'Voorraad',
         icon: Icons.add_chart,
         page: MaterialPageRoute(builder: (context) => StockReport()),
-        roles: [Roles.Admin, Roles.Subadmin]),
+        roles: [Roles.Admin]),
     menuItem.MenuItem(
         text: 'Foto\'s',
         icon: Icons.photo,
-        page: MaterialPageRoute(builder: (context) => const ListPictures())),
+        page: MaterialPageRoute(builder: (context) => const ListPictures()),
+        roles: Roles.values
+    ),
     menuItem.MenuItem(
         text: 'Declaraties',
         icon: Icons.message,
         page: MaterialPageRoute(builder: (context) => const DeclarationsMenu()),
-        roles: [Roles.Admin, Roles.Subadmin]),
+        roles: [Roles.Admin, Roles.Receipt, Roles.ReceiptApprove, Roles.ReceiptPay]),
     menuItem.MenuItem(
       text: 'Agenda',
       icon: Icons.calendar_month,
       page: MaterialPageRoute(builder: (context) => const Calendar()),
+      roles: Roles.values
     ),
+  /*
     menuItem.MenuItem(
       text: 'Google Maps',
       icon: Icons.map_outlined,
@@ -54,14 +62,16 @@ class Menu extends StatelessWidget {
                 child: Container(),
               )),
     ),
+    */
     menuItem.MenuItem(
       text: 'Gebruikers',
       icon: Icons.account_circle,
       page: MaterialPageRoute(builder: (context) => const UserList()),
+      roles: [Roles.Admin,]
     ),
   ];
 
-  Menu({super.key, 
+  Menu({
     required this.child,
     this.title,
     this.actions,
@@ -87,7 +97,7 @@ class Menu extends StatelessWidget {
         ),
       );
       for (menuItem.MenuItem menuitem in menuItems) {
-        if (menuitem.roles.contains(UserData.role)) {
+        if (menuitem.roles.indexWhere((e) => UserData.roles!.contains(e)) > -1) {
           items.add(
             MenuItemBase(
               page: menuitem.page,
@@ -99,22 +109,22 @@ class Menu extends StatelessWidget {
               ),
             ),
           );
+          i++;
         }
-        i++;
       }
     } else if (screenWidth > mobileWidth) {
       items.add(
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 20),
           child: Image.asset(
-            "",
+            "assets/logo.jpg",
             height: 30,
             width: 30,
           ),
         ),
       );
       for (menuItem.MenuItem menuitem in menuItems) {
-        if (menuitem.roles.contains(UserData.role)) {
+        if (menuitem.roles.indexWhere((e) => UserData.roles!.contains(e)) > -1) {
           items.add(
             MenuItemBase(
               page: menuitem.page,
@@ -126,8 +136,8 @@ class Menu extends StatelessWidget {
               ),
             ),
           );
+          i++;
         }
-        i++;
       }
     }
 
@@ -140,7 +150,7 @@ class Menu extends StatelessWidget {
     int i = 0;
 
     for (menuItem.MenuItem menuitem in menuItems) {
-      if (menuitem.roles.contains(UserData.role)) {
+      if (menuitem.roles.indexWhere((e) => UserData.roles!.contains(e)) > -1) {
         bool selected = MenuIndex.index == i;
         items.add(
           BottomNavigationBarItem(
@@ -159,8 +169,8 @@ class Menu extends StatelessWidget {
             ),
           ),
         );
+        i++;
       }
-      i++;
     }
 
     return items;
@@ -216,9 +226,9 @@ class Menu extends StatelessWidget {
                     ),
                   ),
                 )
-              : const SizedBox(),
+              : SizedBox(),
           Expanded(
-            child: child,
+            child: child!,
           ),
         ],
       ),
@@ -227,7 +237,7 @@ class Menu extends StatelessWidget {
 }
 
 class UserData {
-  static Roles? role = Roles.Admin;
+  static List<Roles>? roles = globalLoggedInUserValues?.roles ?? [Roles.Order];
 }
 
 class MenuItemDesktop extends StatelessWidget {
@@ -235,12 +245,12 @@ class MenuItemDesktop extends StatelessWidget {
   final IconData? icon;
   final bool? selected;
 
-  const MenuItemDesktop({super.key, this.text, this.icon, this.selected});
+  MenuItemDesktop({this.text, this.icon, this.selected});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
+      padding: EdgeInsets.symmetric(horizontal: 25, vertical: 10),
       child: Row(
         children: [
           Icon(
@@ -248,7 +258,7 @@ class MenuItemDesktop extends StatelessWidget {
             size: 25,
             color: selected! ? secondColor : textColorOnMainColor,
           ),
-          const SizedBox(width: 20),
+          SizedBox(width: 20),
           Text(
             text!,
             style: TextStyle(
@@ -268,13 +278,13 @@ class MenuItemtabletWidth extends StatelessWidget {
   final IconData icon;
   final bool selected;
 
-  const MenuItemtabletWidth(
-      {super.key, required this.text, required this.icon, required this.selected});
+  MenuItemtabletWidth(
+      {required this.text, required this.icon, required this.selected});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(5),
+      padding: EdgeInsets.all(5),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -283,7 +293,7 @@ class MenuItemtabletWidth extends StatelessWidget {
             size: 30,
             color: selected ? secondColor : textColorOnMainColor,
           ),
-          const SizedBox(width: 25),
+          SizedBox(width: 25),
           Text(
             text,
             style: TextStyle(
@@ -304,7 +314,7 @@ class MenuItemBase extends StatelessWidget {
   final Widget? child;
   final Route? page;
 
-  const MenuItemBase({super.key, required this.index, required this.child, required this.page});
+  MenuItemBase({required this.index, required this.child, required this.page});
 
   @override
   Widget build(BuildContext context) {
@@ -315,7 +325,7 @@ class MenuItemBase extends StatelessWidget {
         alignment: Alignment.center,
         backgroundColor:
             index == MenuIndex.index! ? mainColor : Colors.transparent,
-        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
       ),
       onPressed: () {
         MenuIndex.index = index;
@@ -331,11 +341,11 @@ class MobileWidthMenuItem extends StatelessWidget {
   final String? text;
   final bool? selected;
 
-  const MobileWidthMenuItem({super.key, this.text, this.icon, this.selected});
+  MobileWidthMenuItem({this.text, this.icon, this.selected});
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return Container(
       width: double.infinity,
       height: 48,
       child: Column(

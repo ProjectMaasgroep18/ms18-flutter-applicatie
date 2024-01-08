@@ -26,20 +26,25 @@ class ApiManager {
 
   static Future<T> post<T>(String url,
       [Map<String, dynamic>? apiBody,
-      Map<String, String>? requestHeaders]) async {
+        Map<String, String>? requestHeaders]) async {
+
     print("Sending: ${jsonEncode(apiBody)}");
+
     http.Response response = await http.post(Uri.parse(apiUrl + url),
         headers: requestHeaders ?? apiHeaders, body: jsonEncode(apiBody ?? {}));
 
-    checkStatusCode(response);
+    // Disabled until status codes are handled properly
+    // Necessary for addUser function, which needs the userID from returned JSON
+    // checkStatusCode(response);
+
     print("RESP: ${response.body}");
 
-    return tryJsonDecode(response.body);
+    return tryJsonDecode(response);
   }
 
   static Future<T> put<T>(String url,
       [Map<String, dynamic>? apiBody,
-      Map<String, String>? requestHeaders]) async {
+        Map<String, String>? requestHeaders]) async {
     http.Response response = await http.put(Uri.parse(apiUrl + url),
         headers: requestHeaders ?? apiHeaders, body: jsonEncode(apiBody ?? {}));
 
@@ -51,12 +56,9 @@ class ApiManager {
       [Map<String, String>? requestHeaders]) async {
     http.Response response = await http.get(Uri.parse(apiUrl + url),
         headers: requestHeaders ?? apiHeaders);
-
-    checkStatusCode(response);
     // checkStatusCode(response);
     print("Response GET : ${response.body}");
-    return tryJsonDecode(response.body);
-
+    return tryJsonDecode(response);
   }
 
   static Future<T> delete<T>(String url,

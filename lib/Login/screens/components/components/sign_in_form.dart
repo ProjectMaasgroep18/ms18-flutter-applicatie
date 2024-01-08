@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Api/apiManager.dart';
-import 'package:ms18_applicatie/Dashboard/dashboard.dart';
 import 'package:ms18_applicatie/Dashboard/guestDashboard.dart';
 import 'package:ms18_applicatie/Widgets/buttons.dart';
 import 'package:ms18_applicatie/Widgets/inputFields.dart';
 import 'package:ms18_applicatie/Widgets/paddingSpacing.dart';
+import 'package:ms18_applicatie/Widgets/popups.dart';
+import 'package:ms18_applicatie/config.dart';
+import 'package:ms18_applicatie/main.dart';
+
 import 'package:rive/rive.dart';
 
 class SignInForm extends StatefulWidget {
@@ -17,7 +20,7 @@ class SignInForm extends StatefulWidget {
 }
 
 class _SignInFormState extends State<SignInForm> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool isShowLoading = false;
   bool isShowConfetti = false;
 
@@ -30,7 +33,7 @@ class _SignInFormState extends State<SignInForm> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
-  static const String url = "api/v1/User";
+  static const String url = "api/v1/User/Login";
 
   StateMachineController getRiveController(Artboard artboard) {
     StateMachineController? controller =
@@ -44,11 +47,11 @@ class _SignInFormState extends State<SignInForm> {
       isShowLoading = true;
       isShowConfetti = true;
     });
-    Future.delayed(const Duration(seconds: 2), () {
+    Future.delayed(Duration(seconds: 2), () {
       if (_formKey.currentState!.validate()) {
         // show success
         check.fire();
-        Future.delayed(const Duration(seconds: 2), () {
+        Future.delayed(Duration(seconds: 2), () {
           setState(() {
             isShowLoading = false;
           });
@@ -56,7 +59,7 @@ class _SignInFormState extends State<SignInForm> {
         });
       } else {
         error.fire();
-        Future.delayed(const Duration(seconds: 2), () {
+        Future.delayed(Duration(seconds: 2), () {
           setState(() {
             isShowLoading = false;
           });
@@ -101,8 +104,12 @@ class _SignInFormState extends State<SignInForm> {
                       Map<String, dynamic> response = value;
                       if (response["token"] != null) {
                         setToken(response["token"]);
-                        setPrefString(response["permissions"][0], "role");
+                        setPrefString(response["member"]["permissions"][0], "role");
                         signIn(context);
+                        loadLocalUser(response["member"]);
+                      }else {
+                        // Required until response codes are fixed
+                        throw Exception("Login failed, check creds");
                       }
                     }).catchError((error) {
                       print(error);

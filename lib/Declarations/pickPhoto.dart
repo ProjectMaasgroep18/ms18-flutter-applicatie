@@ -24,7 +24,6 @@ List<DropdownMenuItem<String>> _costCentres = [
 ];
 String? selectedCostCentre;
 
-
 TextEditingController nameController = TextEditingController();
 TextEditingController descriptionController = TextEditingController();
 TextEditingController amountController = TextEditingController();
