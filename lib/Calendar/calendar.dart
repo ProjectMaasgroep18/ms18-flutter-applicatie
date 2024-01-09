@@ -92,10 +92,6 @@ const scheduleViewSettings = ScheduleViewSettings(
       MonthHeaderSettings(backgroundColor: Color.fromARGB(255, 227, 233, 255)),
 );
 
-class UserData {
-  static Roles? role = Roles.Admin;
-}
-
 class CalendarState extends State<Calendar> {
   List<Event> events = [];
   String? _eventId,
@@ -129,7 +125,7 @@ class CalendarState extends State<Calendar> {
           'calendarName': calendarName,
           'id': id,
         }),
-        headers: {"Content-Type": "application/json"});
+        headers: getHeaders());
 
     PopupAndLoading.endLoading();
     if (response.statusCode == 200) {
@@ -170,7 +166,7 @@ class CalendarState extends State<Calendar> {
           'Location': location,
           'CalendarId': calendarName
         }),
-        headers: {"Content-Type": "application/json"});
+        headers: getHeaders());
 
     PopupAndLoading.endLoading();
     if (response.statusCode == 200) {
@@ -202,7 +198,7 @@ class CalendarState extends State<Calendar> {
           'Location': location,
           'CalendarId': calendarName
         }),
-        headers: {"Content-Type": "application/json"});
+        headers: getHeaders());
 
     PopupAndLoading.endLoading();
     if (response.statusCode == 200) {
@@ -493,7 +489,12 @@ class CalendarState extends State<Calendar> {
     switch (details.targetElement) {
       case CalendarElement.appointment:
       case CalendarElement.agenda:
-        if (UserData.role != Roles.Admin) {
+        if (UserData.roles != null) {
+          if (!UserData.roles!.contains(Roles.CalendarEditor) &&
+              !UserData.roles!.contains(Roles.Admin)) {
+            isReadOnly = true;
+          }
+        } else {
           isReadOnly = true;
         }
         isNewEvent = false;
@@ -521,8 +522,12 @@ class CalendarState extends State<Calendar> {
         endDateInput.text = _endDateText!;
         break;
       case CalendarElement.calendarCell:
-        if (UserData.role != Roles.Admin) {
-          isNewEvent = false;
+        if (UserData.roles != null) {
+          if (!UserData.roles!.contains(Roles.CalendarEditor) &&
+              !UserData.roles!.contains(Roles.Admin)) {
+            return;
+          }
+        } else {
           return;
         }
         isNewEvent = true;
@@ -801,7 +806,6 @@ class EventDataSource extends CalendarDataSource {
   @override
   DateTime getStartTime(int index) {
     return appointments![index].from;
-
   }
 
   @override
