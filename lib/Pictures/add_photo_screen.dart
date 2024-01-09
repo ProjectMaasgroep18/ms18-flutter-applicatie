@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_dropzone/flutter_dropzone.dart';
@@ -6,6 +9,9 @@ import 'photo_viewer_screen.dart';
 import 'editable_file.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'dart:convert';
+import 'package:http/http.dart'as http;
+import 'package:exif/exif.dart';
 
 //Deze pagina voor de knop (Photo toevogen )
 
@@ -38,8 +44,26 @@ class _AddPhotoScreenState extends State<AddPhotoScreen> {
 
   Future<void> _submit() async {
     if (_selectedFiles.isNotEmpty && _areTitlesValid()) {
-      // Submit logic here
+      for (var file in _selectedFiles) {
+          UploadPhoto(file);
+      }
     }
+  }
+
+  Future<http.Response?> UploadPhoto(var file) async {
+    Uint8List listimage = file.file.bytes;
+    String preImage = base64Encode(listimage);
+    return http.post(
+        Uri.parse('https://localhost:7059/api/photos'),
+        headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+        'Title': file.editableName,
+        'ImageData': preImage,
+        'ContentType': "image/${file.file.extension}"
+        })
+    );
   }
 
   bool _areTitlesValid() {
