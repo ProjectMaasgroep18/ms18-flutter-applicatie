@@ -198,20 +198,14 @@ class PickPhotoState extends State<PickPhoto> {
                     Map<String, dynamic> res = await ApiManager.post(
                       "api/v1/Receipt",
                       {
-                        "amount": amountController.text,
-                        "name": nameController.text,
-                        "note": descriptionController.text,
+                        "amount": amountController.text == "" ? null : amountController.text,
+                        "name": nameController.text == "" ? null : nameController.text,
+                        "note": descriptionController.text == "" ? null : descriptionController.text,
                         "costCentre": selectedCostCentre,
                       },
-                      {
-                        "Authorization": "Bearer ${await getToken()}",
-                        "Content-Type": "application/json",
-                      },
+                      getHeaders(),
                     );
-                    print({
-                      "Authorization": "Bearer ${await getToken()}",
-                      "Content-Type": "application/json",
-                    });
+                    print(getHeaders());
                     print(res);
                     if (res["error"] != null) {
                       PopupAndLoading.showError("Er is iets fout gegaan");
@@ -225,10 +219,7 @@ class PickPhotoState extends State<PickPhoto> {
                             "base64Image": await imageToBase64(file!),
                             "receiptId": res["id"]
                       },
-                      {
-                        "Authorization": "Bearer ${await getToken()}",
-                        "Content-Type": "application/json",
-                      },
+                      getHeaders(),
                     );
                     if (photoRes != null) {
                       PopupAndLoading.showSuccess("De foto is geupload");
