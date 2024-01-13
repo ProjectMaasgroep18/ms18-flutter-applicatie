@@ -11,6 +11,7 @@ import '../Widgets/buttons.dart';
 import '../Widgets/inputFields.dart';
 import '../Widgets/paddingSpacing.dart';
 import '../Widgets/popups.dart';
+import '../globals.dart';
 
 List<DropdownMenuItem<String>> _costCentres = [
   const DropdownMenuItem(
@@ -28,6 +29,7 @@ class PickPhoto extends StatefulWidget {
 }
 
 class PickPhotoState extends State<PickPhoto> {
+  Future<dynamic>? _future;
   TextEditingController nameController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
   TextEditingController amountController = TextEditingController();
@@ -42,8 +44,17 @@ class PickPhotoState extends State<PickPhoto> {
     return header;
   }
 
+  Future<dynamic> getReceipt() async {
+    _future = ApiManager.get(
+        "api/v1/User/${globalLoggedInUserValues?.id}/Receipt", getHeaders());
+    print("Headers: ${getHeaders()}");
+    print("URL: api/v1/User/${globalLoggedInUserValues?.id}/Receipt");
+    return _future;
+  }
+
   @override
   void initState() {
+    _future = getReceipt();
     // Retrieve all the costcentres and put them in a list
     ApiManager.get("api/v1/CostCentre", retrieveHeaders()).then((x) {
       List<dynamic> data = x;
@@ -60,7 +71,7 @@ class PickPhotoState extends State<PickPhoto> {
         _costCentres = temp;
       });
     });
-    if(_costCentres.isEmpty) {
+    if (_costCentres.isEmpty) {
       _costCentres.add(const DropdownMenuItem(
         value: "Selecteer een kostencentrum",
         enabled: false,
@@ -131,8 +142,10 @@ class PickPhotoState extends State<PickPhoto> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                // Size it to according to the screen size
                 SizedBox(
-                  width: 175,
+                  width: MediaQuery.of(context).size.width / 2.3,
+                  height: MediaQuery.of(context).size.height / 15,
                   child: Button(
                     padding: const EdgeInsets.fromLTRB(21, 0, 21, 0),
                     icon: Icons.camera_alt,
@@ -141,21 +154,21 @@ class PickPhotoState extends State<PickPhoto> {
                       //   PopupAndLoading.showError("Vul alle velden in");
                       //   return;
                       // } else {
-                        var res = await picker.pickImage(
-                          source: ImageSource.camera,
-                        );
-                        setState(() {
-                          photo = res;
-                        });
-                        file = File(photo!.path);
+                      var res = await picker.pickImage(
+                        source: ImageSource.camera,
+                      );
+                      setState(() {
+                        photo = res;
+                      });
+                      file = File(photo!.path);
                       // }
                     },
                     text: "Maak een foto",
                   ),
                 ),
-                PaddingSpacing(),
                 SizedBox(
-                  width: 175,
+                  width: MediaQuery.of(context).size.width / 2.3,
+                  height: MediaQuery.of(context).size.height / 15,
                   child: Button(
                     padding: const EdgeInsets.fromLTRB(25, 0, 25, 0),
                     icon: Icons.photo,
@@ -164,13 +177,13 @@ class PickPhotoState extends State<PickPhoto> {
                       //   PopupAndLoading.showError("Vul alle velden in");
                       //   return;
                       // } else {
-                        var res = await picker.pickImage(
-                          source: ImageSource.gallery,
-                        );
-                        setState(() {
-                          photo = res;
-                        });
-                        file = File(photo!.path);
+                      var res = await picker.pickImage(
+                        source: ImageSource.gallery,
+                      );
+                      setState(() {
+                        photo = res;
+                      });
+                      file = File(photo!.path);
                       // }
                     },
                     text: "Kies een foto",
@@ -183,8 +196,8 @@ class PickPhotoState extends State<PickPhoto> {
             photo != null
                 ? Image.file(
                     File(photo!.path),
-                    width: 250,
-                    height: 250,
+                    width: MediaQuery.of(context).size.width / 1.7,
+                    height: MediaQuery.of(context).size.width / 1.7,
                   )
                 : const PaddingSpacing(),
             const PaddingSpacing(),
@@ -192,15 +205,22 @@ class PickPhotoState extends State<PickPhoto> {
             Button(
                 onTap: () async {
                   if (photo == null) {
-                    PopupAndLoading.showError("Kies een foto en vul alle velden in");
+                    PopupAndLoading.showError(
+                        "Kies een foto en vul alle velden in");
                     return;
                   } else {
                     Map<String, dynamic> res = await ApiManager.post(
                       "api/v1/Receipt",
                       {
-                        "amount": amountController.text == "" ? null : amountController.text,
-                        "name": nameController.text == "" ? null : nameController.text,
-                        "note": descriptionController.text == "" ? null : descriptionController.text,
+                        "amount": amountController.text == ""
+                            ? null
+                            : amountController.text,
+                        "name": nameController.text == ""
+                            ? null
+                            : nameController.text,
+                        "note": descriptionController.text == ""
+                            ? null
+                            : descriptionController.text,
                         "costCentre": selectedCostCentre,
                       },
                       getHeaders(),
@@ -211,27 +231,54 @@ class PickPhotoState extends State<PickPhoto> {
                       PopupAndLoading.showError("Er is iets fout gegaan");
                       return;
                     }
-                    var photoRes = await ApiManager.post(
-                      "api/v1/Receipt/${res["id"]}/Photo",
-                      {
-                            "fileName": file!.path.split("/").last,
-                            "fileExtension": file!.path.split(".").last,
-                            "base64Image": await imageToBase64(file!),
-                            "receiptId": res["id"]
-                      },
-                      getHeaders(),
-                    );
+                    Future<dynamic>? photoRes;
+                    var fileLength = await file!.length();
+                    print(" Size: $fileLength");
+                    try {
+                      photoRes = await ApiManager.post(
+                        "api/v1/Receipt/${res["id"]}/Photo",
+                        {
+                          "fileName": file!
+                              .path
+                              .split("/")
+                              .last,
+                          "fileExtension": file!
+                              .path
+                              .split(".")
+                              .last,
+                          "base64Image": await imageToBase64(file!),
+                          "receiptId": res["id"]
+                        },
+                        getHeaders(),
+                      );
+                    } catch (e) {
+                      print(e);
+                    }
                     if (photoRes != null) {
                       PopupAndLoading.showSuccess("De foto is geupload");
                       // Future.delayed(const Duration(seconds: 2), () {
-                        Navigator.pop(context);
+                      Navigator.pop(context);
                       // });
                     } else {
                       PopupAndLoading.showError("Er is iets fout gegaan");
                     }
                   }
                 },
-                text: "Uploaden")
+                text: "Uploaden"),
+            // Make a horizontal divider
+            if (photo == null) ...[
+              const Divider(color: mainColor),
+              const PaddingSpacing(),
+              // SingleChildScrollView(
+              //   scrollDirection: Axis.horizontal,
+              //   child: Row(
+              //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //     children: [
+                    showRows(),
+              //     ],
+              //   ),
+              // ),
+            ],
           ],
         ),
       ),
@@ -242,5 +289,111 @@ class PickPhotoState extends State<PickPhoto> {
     List<int> imageBytes = await imageFile.readAsBytes();
     String base64Image = base64Encode(Uint8List.fromList(imageBytes));
     return base64Image;
+  }
+
+  showRows() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Expanded(
+            child: FutureBuilder(
+                future: _future,
+                builder: (context, AsyncSnapshot<dynamic> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  } else {
+                    if (snapshot.hasData) {
+                      List<dynamic> data = snapshot.data;
+                      return ListView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: data.length,
+                        itemBuilder: (context, index) {
+                          Map<String, dynamic> decl = data[index];
+                          print("DECL: $decl");
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: ElevatedButton(
+                              onPressed: () async {
+                                // Load the text fields with the info
+                              },
+                              style: ElevatedButton.styleFrom(
+                                elevation: 0,
+                                backgroundColor: mainColor,
+                                padding:
+                                    const EdgeInsets.fromLTRB(5, 30, 5, 30),
+                                shadowColor: backgroundColor,
+                                shape: const RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(3))),
+                              ),
+                              child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              decl['note'] ??
+                                                  "Geen beschrijving",
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            Text(
+                                              decl['statusString'] ??
+                                                  "Geen status",
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      decl['photos'] != null &&
+                                              decl['photos'].length > 0 &&
+                                              decl['photos'][0]
+                                                      ['base64Image'] !=
+                                                  null
+                                          ? Image(
+                                              image: MemoryImage(base64Decode(
+                                                  decl['photos'][0]
+                                                      ['base64Image'])),
+                                              height: 100,
+                                              width: 150,
+                                            )
+                                          : Container(
+                                              child: const PaddingSpacing(),
+                                            ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    } else {
+                      return const Text("Geen declaraties gevonden");
+                    }
+                  }
+                })),
+      ],
+    );
   }
 }
