@@ -95,7 +95,7 @@ const double itemHeight = 11;
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 //Price formatter
-var priceFormat = NumberFormat("###.0#", "nl_NL");
+var priceFormat = NumberFormat("##0.00", "nl_NL");
 
 //From here down you got stuff for roles
 

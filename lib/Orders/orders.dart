@@ -47,10 +47,11 @@ class Orders extends StatelessWidget {
 
                         return Row(
                           children: [
-                            Text('Totaal: €${priceFormat.format(ordersTotal?.total ?? 0)}'),
+                            Text(
+                                'Totaal: €${priceFormat.format(ordersTotal?.total ?? 0)}'),
                             const PaddingSpacing(),
                             Text(
-                                'Aantal orders: ${ordersTotal?.billCount ?? '-'}')
+                                'Aantal bestellingen: ${ordersTotal?.billCount ?? '-'}')
                           ],
                         );
                       }),
@@ -62,8 +63,9 @@ class Orders extends StatelessWidget {
             FutureBuilder(
               future: getOrders(userId),
               builder: (context, snapshot) {
+                final bool isOwnPage = userId != null;
+
                 if (snapshot.hasError) {
-                  print(snapshot.error);
                   return const ListErrorIndicator();
                 } else if (snapshot.hasData) {
                   var orders = snapshot.data ?? [];
@@ -81,6 +83,7 @@ class Orders extends StatelessWidget {
                         itemBuilder: (context, index) {
                           return OrderElement(
                             order: items[index],
+                            isOwnPage: isOwnPage,
                           );
                         },
                       ),

@@ -85,7 +85,7 @@ class _SignInFormState extends State<SignInForm> {
                 const PaddingSpacing(),
                 const PaddingSpacing(),
                 InputField(
-                  labelText: "Password",
+                  labelText: "Wachtwoord",
                   isUnderlineBorder: true,
                   isPassword: true,
                   controller: passwordController,
@@ -121,7 +121,7 @@ class _SignInFormState extends State<SignInForm> {
 
                     // signIn(context);
                   },
-                  text: 'Sign in',
+                  text: 'Inloggen',
                   icon: Icons.arrow_forward,
                 ),
               ],

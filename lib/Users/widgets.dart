@@ -168,19 +168,22 @@ Future<void> addUsersDialog(BuildContext context, Function(User user) onSave,
             text: "Verwijderen",
             icon: Icons.delete,
           ),
-          const PaddingSpacing(),
-          Button(
-            icon: Icons.receipt_long,
-            text: 'Orders bekijken',
-            onTap: () {
-            navigatorKey.currentState?.push(
-              MaterialPageRoute(
-                builder: (context) => Orders(
-                  userId: user?.id,
-                ),
-              ),
-            );
-          })
+          if (user.guest) ...[
+            const PaddingSpacing(),
+            Button(
+              icon: Icons.receipt_long,
+              text: 'Bestellingen bekijken',
+              onTap: () {
+                navigatorKey.currentState?.push(
+                  MaterialPageRoute(
+                    builder: (context) => Orders(
+                      userId: user?.id,
+                    ),
+                  ),
+                );
+              },
+            )
+          ]
         ]
       ]), onSave: () {
     // Ensure that guest user has the right role
