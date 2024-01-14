@@ -337,7 +337,7 @@ class _DeclarationsState extends State<Declarations> {
                   setState(() {
                     _future = getReceipt();
                   });
-                  Navigator.pop(context);
+                  // Navigator.pop(context);
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
@@ -365,7 +365,7 @@ class _DeclarationsState extends State<Declarations> {
                   setState(() {
                     _future = getReceipt();
                   });
-                  Navigator.pop(context);
+                  // Navigator.pop(context);
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
