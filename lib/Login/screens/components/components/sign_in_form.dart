@@ -151,11 +151,11 @@ class _SignInFormState extends State<SignInForm> {
                     confetti =
                         controller.findSMI("Trigger explosion") as SMITrigger;
                     await Future.delayed(const Duration(seconds: 5), () {
-                      Navigator.pushReplacement(
+                      Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(
                           builder: (context) => const Dashboard(),
-                        ),
+                        ), (T)=>false
                       );
                     });
                   },

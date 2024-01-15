@@ -137,7 +137,7 @@ class Menu extends StatelessWidget {
           if (menuitem.text == "Home" &&
               globalLoggedInUserValues?.guest == true) {
             menuitem.page =
-                MaterialPageRoute(builder: (context) => const GuestDashboard());
+                MaterialPageRoute(builder: (context) => ShoppingCart());
           }
 
           items.add(
@@ -169,7 +169,7 @@ class Menu extends StatelessWidget {
         if (menuitem.text == "Home" &&
             globalLoggedInUserValues?.guest == true) {
           menuitem.page =
-              MaterialPageRoute(builder: (context) => const GuestDashboard());
+              MaterialPageRoute(builder: (context) => ShoppingCart());
         }
 
         bool selected = MenuIndex.index == i;

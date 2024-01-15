@@ -82,8 +82,8 @@ class Profile extends StatelessWidget {
             Button(
               onTap: () {
                 logout();
-                Navigator.of(context).pushReplacement(MaterialPageRoute(
-                    builder: (context) => const OnboardingScreen()));
+                Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
+                    builder: (context) => const OnboardingScreen()), (T)=>false);
               },
               text: "Uitloggen",
               color: dangerColor,

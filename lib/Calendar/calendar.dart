@@ -300,6 +300,12 @@ class CalendarState extends State<Calendar> {
         MediaQuery.of(context).size.width > mobileWidth ? 110.0 : 55.0;
 
     return Menu(
+      title: const Text(
+        "Agenda",
+        style: TextStyle(
+          color: Colors.white,
+        ),
+      ),
       child: SizedBox(
         child: Row(
           children: [

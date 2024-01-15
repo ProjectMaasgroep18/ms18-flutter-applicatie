@@ -70,7 +70,6 @@ class DeclarationsMenuState extends State<DeclarationsMenu> {
         "Declaraties",
         style: TextStyle(
           color: Colors.white,
-          fontWeight: FontWeight.bold,
         ),
       ),
       child: SingleChildScrollView(

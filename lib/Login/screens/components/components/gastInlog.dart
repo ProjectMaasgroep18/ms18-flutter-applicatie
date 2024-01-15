@@ -111,11 +111,11 @@ class _GastInfrom extends State<GastInfrom> {
                     confetti =
                         controller.findSMI("Trigger explosion") as SMITrigger;
                     await Future.delayed(const Duration(seconds: 5), () {
-                      Navigator.pushReplacement(
+                      Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(
                           builder: (context) => const GuestDashboard(),
-                        ),
+                        ),(T)=>false
                       );
                     });
                   },

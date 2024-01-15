@@ -10,6 +10,7 @@ import 'package:ms18_applicatie/globals.dart';
 import 'package:ms18_applicatie/menu.dart';
 import 'package:ms18_applicatie/Stock/functions.dart';
 import '../Api/apiManager.dart';
+import '../Profile/profile.dart';
 
 class ShoppingCart extends StatefulWidget {
   ShoppingCart({Key? key}) : super(key: key);
@@ -25,6 +26,31 @@ class _ShoppingCartState extends State<ShoppingCart> {
   @override
   Widget build(BuildContext context) {
     return Menu(
+        appBarHeight: 70,
+        centerTitle: !globalLoggedInUserValues!.guest,
+        title: const Text(
+          "Bestellingen",
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
+        actions: [
+          if(globalLoggedInUserValues!.guest == true)
+          // profile picture in appbar
+          Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: InkWell(
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: ((context) => Profile())));
+              },
+              child: CircleAvatar(
+                radius: 22,
+                backgroundImage: Image.asset('assets/avatars/Avatar Default.jpg').image
+              ),
+            ),
+          ),
+        ],
       child: Column(
         children: [
           Expanded(

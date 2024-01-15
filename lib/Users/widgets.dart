@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
@@ -32,20 +33,12 @@ Future<void> addUsersDialog(BuildContext context, Function(User user) onSave,
       color: Colors.primaries[Random().nextInt(Colors.primaries.length)]);
 
   // Values for the roles checkboxes
-  Map<String, ValueNotifier<bool>> rolesCheckboxValues = {
-    "Admin": ValueNotifier<bool>(user.roles.contains(Roles.Admin)),
-    "Orders maken": ValueNotifier<bool>(user.roles.contains(Roles.Order)),
-    "Orders bekijken":
-        ValueNotifier<bool>(user.roles.contains(Roles.OrderView)),
-    "Order product":
-        ValueNotifier<bool>(user.roles.contains(Roles.OrderProduct)),
-    "Declaraties aanmaken":
-        ValueNotifier<bool>(user.roles.contains(Roles.Receipt)),
-    "Declaraties goedkeuren":
-        ValueNotifier<bool>(user.roles.contains(Roles.ReceiptApprove)),
-    "Declaraties betalen":
-        ValueNotifier<bool>(user.roles.contains(Roles.ReceiptPay))
-  };
+
+  Map<String, ValueNotifier<bool>> rolesCheckboxValues = {};
+
+  rolesDescription.forEach((key, value) {
+    rolesCheckboxValues[key] = ValueNotifier<bool>(user!.roles.contains(value));
+  });
 
   TextEditingController nameController = TextEditingController(text: user.name);
   TextEditingController emailController =

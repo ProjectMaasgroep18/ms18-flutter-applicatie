@@ -43,6 +43,8 @@ User castMapToUser(Map<String, dynamic> apiUser) {
         userRole.add(Roles.ReceiptApprove);
       case "receipt.pay":
         userRole.add(Roles.ReceiptPay);
+      case "calendar.editor":
+        userRole.add(Roles.CalendarEditor);
       default:
         userRole.add(Roles.Order);
     }

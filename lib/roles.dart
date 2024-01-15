@@ -21,12 +21,12 @@ const Map<String, Roles> rolesToDB = {
 };
 
 const Map<String, Roles> rolesDescription = {
-  "Admin": Roles.Admin,
-  "Orders maken": Roles.Order,
-  "Orders bekijken": Roles.OrderView,
-  "Order product": Roles.OrderProduct,
+  "Toegang tot alles": Roles.Admin,
+  "Bestellingen aanmaken": Roles.Order,
+  "Bestellingen bekijken": Roles.OrderView,
+  "Bestellingen product": Roles.OrderProduct,
   "Declaraties aanmaken": Roles.Receipt,
   "Declaraties goedkeuren": Roles.ReceiptApprove,
   "Declaraties betalen": Roles.ReceiptPay,
-  "Kan agenda items bewerken/aanmaken": Roles.CalendarEditor,
+  "Agenda items bewerken": Roles.CalendarEditor,
 };
