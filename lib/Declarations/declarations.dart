@@ -198,10 +198,10 @@ class _DeclarationsState extends State<Declarations> {
                                               ),
                                             ),
                                             Text(
-                                              costCentre["id"].toString() == ""
+                                              costCentre["name"].toString() == ""
                                                   ? "Geen \n"
                                                       "kostencentrum"
-                                                  : costCentre["id"].toString(),
+                                                  : costCentre["name"].toString(),
                                               style: const TextStyle(
                                                 color: Colors.white,
                                                 fontSize: 15,
