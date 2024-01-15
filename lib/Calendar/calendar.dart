@@ -5,6 +5,7 @@ import 'package:intl/date_time_patterns.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/config.dart';
+import 'package:ms18_applicatie/globals.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import '../menu.dart';
 import 'package:ms18_applicatie/roles.dart';
@@ -495,9 +496,9 @@ class CalendarState extends State<Calendar> {
     switch (details.targetElement) {
       case CalendarElement.appointment:
       case CalendarElement.agenda:
-        if (UserData.roles != null) {
-          if (!UserData.roles!.contains(Roles.CalendarEditor) &&
-              !UserData.roles!.contains(Roles.Admin)) {
+        if (globalLoggedInUserValues!.roles != null) {
+          if (!globalLoggedInUserValues!.roles.contains(Roles.CalendarEditor) &&
+              !globalLoggedInUserValues!.roles.contains(Roles.Admin)) {
             isReadOnly = true;
           }
         } else {
@@ -528,9 +529,9 @@ class CalendarState extends State<Calendar> {
         endDateInput.text = _endDateText!;
         break;
       case CalendarElement.calendarCell:
-        if (UserData.roles != null) {
-          if (!UserData.roles!.contains(Roles.CalendarEditor) &&
-              !UserData.roles!.contains(Roles.Admin)) {
+        if (globalLoggedInUserValues!.roles != null) {
+          if (!globalLoggedInUserValues!.roles.contains(Roles.CalendarEditor) &&
+              !globalLoggedInUserValues!.roles.contains(Roles.Admin)) {
             return;
           }
         } else {

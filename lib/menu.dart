@@ -104,7 +104,7 @@ class Menu extends StatelessWidget {
         ),
       );
       for (menuItem.MenuItem menuitem in menuItems) {
-        if (menuitem.roles.indexWhere((e) => UserData.roles!.contains(e)) >
+        if (menuitem.roles.indexWhere((e) => globalLoggedInUserValues!.roles.contains(e)) >
             -1) {
           items.add(
             MenuItemBase(
@@ -132,7 +132,7 @@ class Menu extends StatelessWidget {
         ),
       );
       for (menuItem.MenuItem menuitem in menuItems) {
-        if (menuitem.roles.indexWhere((e) => UserData.roles!.contains(e)) >
+        if (menuitem.roles.indexWhere((e) => globalLoggedInUserValues!.roles.contains(e)) >
             -1) {
           if (menuitem.text == "Home" &&
               globalLoggedInUserValues?.guest == true) {
@@ -165,7 +165,7 @@ class Menu extends StatelessWidget {
     int i = 0;
 
     for (menuItem.MenuItem menuitem in menuItems) {
-      if (menuitem.roles.indexWhere((e) => UserData.roles!.contains(e)) > -1) {
+      if (menuitem.roles.indexWhere((e) => globalLoggedInUserValues!.roles.contains(e)) > -1) {
         if (menuitem.text == "Home" &&
             globalLoggedInUserValues?.guest == true) {
           menuitem.page =
@@ -255,10 +255,6 @@ class Menu extends StatelessWidget {
       ),
     );
   }
-}
-
-class UserData {
-  static List<Roles>? roles = globalLoggedInUserValues?.roles ?? [Roles.Order];
 }
 
 class MenuItemDesktop extends StatelessWidget {

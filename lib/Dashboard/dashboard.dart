@@ -8,6 +8,7 @@ import 'package:ms18_applicatie/Dashboard/Widgets/statistics_grid.dart';
 import 'package:ms18_applicatie/Dashboard/data/data.dart';
 import 'package:ms18_applicatie/Profile/profile.dart';
 import 'package:ms18_applicatie/Stock/stockReport.dart';
+import 'package:ms18_applicatie/globals.dart';
 import 'package:ms18_applicatie/menu.dart';
 import 'package:rive/rive.dart';
 
@@ -27,7 +28,6 @@ class _OnboardingScreenState extends State<Dashboard> {
     _btnAnimationController = OneShotAnimation("active", autoplay: false);
     super.initState();
   }
-
   @override
   Widget build(BuildContext context) {
     return Menu(

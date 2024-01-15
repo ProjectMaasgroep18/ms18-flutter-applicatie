@@ -5,6 +5,7 @@ import 'package:ms18_applicatie/roles.dart';
 import '../../Declarations/pickPhoto.dart';
 import '../../Widgets/paddingSpacing.dart';
 import '../../config.dart';
+import '../../globals.dart';
 import '../../menu.dart';
 
 class DeclarationsMenu extends StatefulWidget {
@@ -16,7 +17,7 @@ class DeclarationsMenu extends StatefulWidget {
 
 class DeclarationsMenuState extends State<DeclarationsMenu> {
   List<Widget> getButtons(BuildContext context) => [
-        if (UserData.roles!.contains(Roles.Admin))
+        if (globalLoggedInUserValues!.roles.contains(Roles.Admin))
           ImageButton(
             subTitle: "Uitbetalen van declaraties",
             title: "Uitbetalen",
@@ -46,7 +47,7 @@ class DeclarationsMenuState extends State<DeclarationsMenu> {
           },
         ),
         const PaddingSpacing(),
-        if (UserData.roles!.contains(Roles.Admin))
+        if (globalLoggedInUserValues!.roles.contains(Roles.Admin))
           ImageButton(
             image: 'assets/declarations/approvetruck.png',
             subTitle: "Declaraties goedkeuren voor uitbetaling",
