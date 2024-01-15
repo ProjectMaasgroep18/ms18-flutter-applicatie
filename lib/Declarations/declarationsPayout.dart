@@ -340,6 +340,7 @@ class DeclarationsPayoutState extends State<DeclarationsPayout> {
             ),
           ),
           actions: <Widget>[
+            if (declInfo['isPayable'])
             TextButton(
               onPressed: () async {
                 // Update the status
@@ -366,6 +367,7 @@ class DeclarationsPayoutState extends State<DeclarationsPayout> {
               },
               child: const Text('Goedkeuren'),
             ),
+            if (declInfo['isPayable'])
             TextButton(
               onPressed: () async {
                 // Update the status
