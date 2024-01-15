@@ -42,13 +42,14 @@ class Button extends StatelessWidget {
                 icon,
                 color: Colors.white,
               ),
-            if (text != null)
+            if (text != null && icon != null)
               const SizedBox(
                 width: 5,
               ),
             if (text != null)
               Text(
                 text!,
+                textAlign: TextAlign.center,
                 style: const TextStyle(color: Colors.white),
               )
           ],
