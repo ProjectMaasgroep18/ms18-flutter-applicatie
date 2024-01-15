@@ -5,7 +5,7 @@ import 'package:ms18_applicatie/Widgets/paddingSpacing.dart';
 import 'package:ms18_applicatie/config.dart';
 import 'package:ms18_applicatie/globals.dart';
 import 'package:ms18_applicatie/menu.dart';
-import 'package:ms18_applicatie/roles.dart';
+import 'package:ms18_applicatie/Models/roles.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Api/apiManager.dart';
@@ -24,6 +24,8 @@ class Profile extends StatelessWidget {
     };
     await ApiManager.get("api/v1/User/Logout", headers);
     prefs.remove('token');
+    globalLoggedInUserValues = null;
+    globalLoggedIn = false;
   }
 
   final TextEditingController emailController =
@@ -82,8 +84,8 @@ class Profile extends StatelessWidget {
             Button(
               onTap: () {
                 logout();
-                Navigator.of(context).pushReplacement(MaterialPageRoute(
-                    builder: (context) => const OnboardingScreen()));
+                Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
+                    builder: (context) => const OnboardingScreen()), (T)=>false);
               },
               text: "Uitloggen",
               color: dangerColor,

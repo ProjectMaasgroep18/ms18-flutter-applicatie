@@ -4,9 +4,11 @@ import 'package:ms18_applicatie/Declarations/declarations.dart';
 import 'package:ms18_applicatie/Declarations/declarationsPayout.dart';
 import 'package:ms18_applicatie/globals.dart';
 import 'package:ms18_applicatie/roles.dart';
+import 'package:ms18_applicatie/Models/roles.dart';
 import '../../Declarations/pickPhoto.dart';
 import '../../Widgets/paddingSpacing.dart';
 import '../../config.dart';
+import '../../globals.dart';
 import '../../menu.dart';
 
 class DeclarationsMenu extends StatefulWidget {
@@ -73,7 +75,6 @@ class DeclarationsMenuState extends State<DeclarationsMenu> {
         "Declaraties",
         style: TextStyle(
           color: Colors.white,
-          fontWeight: FontWeight.bold,
         ),
       ),
       child: SingleChildScrollView(

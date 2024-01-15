@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Models/stock.dart';
 import 'package:ms18_applicatie/Orders/orders.dart';
-import 'package:ms18_applicatie/Stock/stockReport.dart';
 import 'package:ms18_applicatie/Stock/widgets.dart';
-import 'package:ms18_applicatie/Widgets/pageHeader.dart';
+import 'package:ms18_applicatie/Widgets/buttons.dart';
+import 'package:ms18_applicatie/Widgets/listState.dart';
+import 'package:ms18_applicatie/Widgets/popups.dart';
 import 'package:ms18_applicatie/config.dart';
 import 'package:ms18_applicatie/globals.dart';
 import 'package:ms18_applicatie/menu.dart';
 import 'package:ms18_applicatie/Stock/functions.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
-
 import '../Api/apiManager.dart';
-
+import '../Profile/profile.dart';
 
 class ShoppingCart extends StatefulWidget {
   ShoppingCart({Key? key}) : super(key: key);
@@ -24,38 +22,60 @@ class ShoppingCart extends StatefulWidget {
 class _ShoppingCartState extends State<ShoppingCart> {
   final List<StockProduct> shoppingCart = [];
   final List<Order> orderHistory = [];
-
   @override
   Widget build(BuildContext context) {
+    print("USER ${globalLoggedInUserValues!.name}");
     return Menu(
+        appBarHeight: 70,
+        centerTitle: !globalLoggedInUserValues!.guest,
+        title: const Text(
+          "Bestellingen",
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
+        actions: [
+          if(globalLoggedInUserValues!.guest == true)
+          // profile picture in appbar
+          Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: InkWell(
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: ((context) => Profile())));
+              },
+              child: CircleAvatar(
+                radius: 22,
+                backgroundImage: Image.asset('assets/avatars/Avatar Default.jpg').image
+              ),
+            ),
+          ),
+        ],
       child: Column(
         children: [
           Expanded(
             child: FutureBuilder(
               future: getStock(),
               builder: (context, snapshot) {
-                                    if (snapshot.hasError) {
-                                      return const Text("Error loading data");
-                                    } else if (!snapshot.hasData) {
-                                      return const Center(
-                                        child: CircularProgressIndicator(),
-                                      );
-                                    } else {
-                                      var productList = snapshot.data!;
-                                      return ListView.builder(
-                                        itemCount: productList.length,
-                                        itemBuilder: (context, index) {
-                                          StockProduct currentProduct = productList[index];
-                                          return ProductListItem(
-                                            product: currentProduct.product,
-                                            onAddToCart: () {
-                                              addToCart(currentProduct.product);
-                                            },
-                                          );
-                                        },
-                                      );
-                                    }
-
+                if (snapshot.hasError) {
+                  return const ListErrorIndicator();
+                } else if (!snapshot.hasData) {
+                  return const ListLoadingIndicator();
+                } else {
+                  var productList = snapshot.data!;
+                  return ListView.builder(
+                    itemCount: productList.length,
+                    itemBuilder: (context, index) {
+                      StockProduct currentProduct = productList[index];
+                      return ProductListItem(
+                        product: currentProduct.product,
+                        onAddToCart: () {
+                          addToCart(currentProduct.product);
+                        },
+                      );
+                    },
+                  );
+                }
               },
             ),
           ),
@@ -73,7 +93,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
 
   void addToCart(Product product) {
     var existingIndex = shoppingCart.indexWhere(
-          (item) => item.product.name == product.name,
+      (item) => item.product.name == product.name,
     );
 
     if (existingIndex != -1) {
@@ -115,34 +135,37 @@ class _ShoppingCartState extends State<ShoppingCart> {
 
   void clearCartAndAddToHistory() async {
     if (shoppingCart.isNotEmpty) {
+      PopupAndLoading.showLoading();
+
       Order order = Order(
         orderedProducts: List.from(shoppingCart),
         totalAmount: calculateTotalAmount(),
         orderDate: DateTime.now(),
       );
-      var res = await ApiManager.post(
+      await ApiManager.post(
         "api/v1/Bill",
         {
           "lines": order.orderedProducts
               .map((product) => {
-            "productId": product.product.id,
-            "quantity": product.quantity,
-          })
+                    "productId": product.product.id,
+                    "quantity": product.quantity,
+                  })
               .toList(),
           "note": "", // Add a note if needed
           "name": globalLoggedInUserValues?.name,
           "email": globalLoggedInUserValues?.email,
-        },
-        {
-          "Authorization": "Bearer ${await getToken()}",
-          'Content-Type': 'application/json',
-        },
-      );
-      print(res);
-      // Clear the shopping cart and update the UI
-      setState(() {
-        shoppingCart.clear();
+        }, await getHeaders(),
+      ).then((value) {
+        PopupAndLoading.showSuccess('Bestellen gelukt');
+
+        setState(() {
+          shoppingCart.clear();
+        });
+      }).catchError((error) {
+        PopupAndLoading.showError('Bestellen mislukt');
       });
+
+      PopupAndLoading.endLoading();
     }
   }
 
@@ -159,38 +182,43 @@ class ProductListItem extends StatelessWidget {
   final Product product;
   final VoidCallback onAddToCart;
 
-  ProductListItem({required this.product, required this.onAddToCart});
+  const ProductListItem({required this.product, required this.onAddToCart});
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
       title: Text(product.name),
-      subtitle: Text('Price: \€${product.price.toStringAsFixed(2)}'),
-      leading: SizedBox(
-        width: 45,
-        height: 45,
-        child: Stack(clipBehavior: Clip.none, children: [
-          Container(
-            decoration: BoxDecoration(
-              color: product.color,
-              borderRadius: BorderRadius.circular(
-                borderRadius,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.5),
-                  spreadRadius: 1,
-                  blurRadius: 4,
-                  offset: const Offset(2, 2),
-                ),
-              ],
+      subtitle: Text('Prijs: €${priceFormat.format(product.price)}'),
+      leading: Stack(clipBehavior: Clip.none, children: [
+        Container(
+          width: 45,
+          height: 45,
+          decoration: BoxDecoration(
+            color: product.color,
+            borderRadius: BorderRadius.circular(
+              borderRadius,
             ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 1,
+                blurRadius: 4,
+                offset: const Offset(2, 2),
+              ),
+            ],
           ),
-        ]),
-      ),
-      trailing: ElevatedButton(
-        onPressed: onAddToCart,
-        child: Icon(Icons.add),
+          child: Icon(
+            productIcons[product.icon],
+            color: Colors.white,
+          ),
+        ),
+      ]),
+      trailing: SizedBox(
+        width: 100,
+        child: Button(
+          onTap: onAddToCart,
+          icon: Icons.add,
+        ),
       ),
     );
   }
@@ -200,10 +228,10 @@ class ShoppingCartPopupMenu extends StatelessWidget {
   final List<StockProduct> shoppingCart;
   final Function(StockProduct) removeFromCart;
   final Function(StockProduct, int) updateQuantity;
-  final VoidCallback clearCartAndAddToHistory;
+  final Function clearCartAndAddToHistory;
   final List<dynamic> orderHistory;
 
-  ShoppingCartPopupMenu({
+  const ShoppingCartPopupMenu({
     required this.shoppingCart,
     required this.removeFromCart,
     required this.updateQuantity,
@@ -222,49 +250,45 @@ class ShoppingCartPopupMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(mobilePadding),
       color: Colors.grey[300],
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Total: \€${calculateTotalAmount().toStringAsFixed(2)}',
-            style: TextStyle(
+            'Total: €${priceFormat.format(calculateTotalAmount())}',
+            style: const TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 18.0,
             ),
           ),
-          SizedBox(height: 8.0),
-          ElevatedButton(
-            onPressed: () {
-              print('Bestelling geplaatst');
-              clearCartAndAddToHistory();
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Bestelling geplaatst!'),
-                ),
-              );
+          const SizedBox(height: 8.0),
+          Button(
+            isFullWidth: false,
+            onTap: () async {
+              await clearCartAndAddToHistory();
             },
-            child: Text('Bestellen'),
+            text: 'Bestellen',
+            icon: Icons.payment,
           ),
-          SizedBox(height: 8.0),
-          ElevatedButton(
-            onPressed: () async {
-              // Fetch order history when "Bestelhistorie" is clicked
-
-
+          const SizedBox(height: 8.0),
+          Button(
+            isFullWidth: false,
+            onTap: () async {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) =>
-                      Orders(userId: globalLoggedInUserValues?.id ,),
+                  builder: (context) => Orders(
+                    userId: globalLoggedInUserValues?.id,
+                  ),
                 ),
               );
             },
-            child: Text('Bestelhistorie'),
+            text: 'Bestellingen bekijken',
+            icon: Icons.receipt_long,
           ),
-          SizedBox(height: 8.0),
-          Text('Winkelwagen'),
+          const SizedBox(height: 8.0),
+          const Text('Winkelwagen'),
           ListView.builder(
             shrinkWrap: true,
             itemCount: shoppingCart.length,
@@ -274,14 +298,14 @@ class ShoppingCartPopupMenu extends StatelessWidget {
                 subtitle: Row(
                   children: [
                     IconButton(
-                      icon: Icon(Icons.remove),
+                      icon: const Icon(Icons.remove),
                       onPressed: () {
                         updateQuantity(shoppingCart[index], -1);
                       },
                     ),
-                    Text('Quantity: ${shoppingCart[index].quantity}'),
+                    Text('Aantal: ${shoppingCart[index].quantity}'),
                     IconButton(
-                      icon: Icon(Icons.add),
+                      icon: const Icon(Icons.add),
                       onPressed: () {
                         updateQuantity(shoppingCart[index], 1);
                       },
@@ -289,8 +313,8 @@ class ShoppingCartPopupMenu extends StatelessWidget {
                   ],
                 ),
                 trailing: Text(
-                  '\€${(shoppingCart[index].product.price *
-                      shoppingCart[index].quantity).toStringAsFixed(2)}',
+                  '€${priceFormat.format(shoppingCart[index].product.price * shoppingCart[index].quantity)}',
+                  style: const TextStyle(fontSize: 15),
                 ),
                 onTap: () {
                   removeFromCart(shoppingCart[index]);
@@ -303,76 +327,6 @@ class ShoppingCartPopupMenu extends StatelessWidget {
     );
   }
 }
-class OrderHistoryScreen extends StatelessWidget {
-  final List<Order> orderHistory;
-
-  OrderHistoryScreen({required this.orderHistory});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Bestelhistorie'),
-      ),
-      body: ListView.builder(
-        itemCount: orderHistory.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            title: Text('Bestelling ${index + 1}'),
-            subtitle: Text('Totaal: \€${orderHistory[index].totalAmount.toStringAsFixed(2)}'),
-            onTap: () {
-              // Navigeer naar het gedetailleerde scherm voor deze bestelling
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => DetailedOrderScreen(order: orderHistory[index]),
-                ),
-              );
-            },
-          );
-        },
-      ),
-    );
-  }
-}
-
-class DetailedOrderScreen extends StatelessWidget {
-  final Order order;
-
-  DetailedOrderScreen({required this.order});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Bestelling Details'),
-      ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('Besteldatum: ${order.orderDate.toString()}'),
-          SizedBox(height: 8.0),
-          Text('Bestelde producten:'),
-          ListView.builder(
-            shrinkWrap: true,
-            itemCount: order.orderedProducts.length,
-            itemBuilder: (context, index) {
-              return ListTile(
-                title: Text(order.orderedProducts[index].product.name),
-                subtitle: Text('Aantal: ${order.orderedProducts[index].quantity}'),
-              );
-            },
-          ),
-          SizedBox(height: 8.0),
-          Text('Totaalbedrag: \€${order.totalAmount.toStringAsFixed(2)}'),
-          Text('Betaald'),
-        ],
-      ),
-    );
-  }
-}
-
-
 
 class Order {
   final List<StockProduct> orderedProducts;
@@ -385,7 +339,3 @@ class Order {
     required this.orderDate,
   });
 }
-
-
-
-// _future = ApiManager.get<List<dynamic>>("api/v1/user/Bill");

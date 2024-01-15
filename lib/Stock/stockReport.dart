@@ -13,12 +13,11 @@ class StockReport extends StatelessWidget {
   static const String url = "api/v1/Product";
 
   // Used to update the stock amount of the products
-  Set<StockProduct> changedProducts = {};
-  ValueNotifier<bool> hasChangedStock = ValueNotifier(false);
+  final Set<StockProduct> changedProducts = {};
+  final ValueNotifier<bool> hasChangedStock = ValueNotifier(false);
 
   // Used to update the results by the search term
-  ValueNotifier<String> searchNotifier = ValueNotifier('');
-
+  final ValueNotifier<String> searchNotifier = ValueNotifier('');
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +67,8 @@ class StockReport extends StatelessWidget {
                                 stockProduct: items[index],
                                 onChange: (value) {
                                   // Checking if the product has already been changed
-                                  if (!changedProducts.contains(items[index])) {
+                                  if (!changedProducts
+                                      .contains(items[index])) {
                                     // Checking id the stock has not changed then show the button
                                     if (!hasChangedStock.value) {
                                       hasChangedStock.value = true;
@@ -111,7 +111,7 @@ class StockReport extends StatelessWidget {
                             color: Colors.white,
                           ),
                           onPressed: () {
-                            updateAllStock(changedProducts,hasChangedStock);
+                            updateAllStock(changedProducts, hasChangedStock);
                           }),
                     );
                   } else {

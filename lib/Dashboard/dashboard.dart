@@ -8,6 +8,9 @@ import 'package:ms18_applicatie/Dashboard/Widgets/statistics_grid.dart';
 import 'package:ms18_applicatie/Dashboard/data/data.dart';
 import 'package:ms18_applicatie/Profile/profile.dart';
 import 'package:ms18_applicatie/Stock/stockReport.dart';
+import 'package:ms18_applicatie/Widgets/paddingSpacing.dart';
+import 'package:ms18_applicatie/config.dart';
+import 'package:ms18_applicatie/globals.dart';
 import 'package:ms18_applicatie/menu.dart';
 import 'package:rive/rive.dart';
 
@@ -27,7 +30,6 @@ class _OnboardingScreenState extends State<Dashboard> {
     _btnAnimationController = OneShotAnimation("active", autoplay: false);
     super.initState();
   }
-
   @override
   Widget build(BuildContext context) {
     return Menu(
@@ -37,7 +39,7 @@ class _OnboardingScreenState extends State<Dashboard> {
         "Dashboard",
         textAlign: TextAlign.left,
         style: TextStyle(
-            color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+            color: Colors.white, fontSize: 24),
       ),
       actions: [
         // profile picture in appbar
@@ -48,70 +50,42 @@ class _OnboardingScreenState extends State<Dashboard> {
               Navigator.push(context,
                   MaterialPageRoute(builder: ((context) => Profile())));
             },
-            child: const CircleAvatar(
+            child: CircleAvatar(
               radius: 22,
-              backgroundImage: NetworkImage(
-                  "https://avatars.githubusercontent.com/u/55942632?v=4"),
+              backgroundImage: Image.asset('assets/avatars/Avatar Default.jpg').image
             ),
           ),
         ),
       ],
-      child: Stack(
+      child: Column(
         children: [
-          Positioned(
-            width: MediaQuery.of(context).size.width * 1.7,
-            bottom: 200,
-            left: 100,
-            child: Container(
-              color: Color.fromARGB(255, 2, 2, 2),
-            ),
-          ),
-          SizedBox(
-            height: 500,
-          ),
           SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
             child: Padding(
               padding:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 70),
+                  const EdgeInsets.all(mobilePadding),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const SizedBox(
-                    height: 20,
-                  ),
                   const CourseGrid(),
-                  const SizedBox(
-                    height: 20,
-                  ),
+                  const PaddingSpacing(),
                   const StatisticsGrid(),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  GridView.builder(
-                    itemCount: course.length,
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                            childAspectRatio: 16 / 7,
-                            crossAxisCount: 1,
-                            mainAxisSpacing: 20),
-                    itemBuilder: (context, index) {
-                      return Container(
-                        decoration: const BoxDecoration(
-                          image: DecorationImage(
-                              image: AssetImage("assets/box/box7.png"),
-                              fit: BoxFit.fill),
-                        ),
-                        child: GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => StockReport()),
-                            );
-                          },
+                  const PaddingSpacing(),
+                  GestureDetector(
+                    onTap: () {
+                      MenuIndex.index=1;
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => StockReport()),
+                      );
+                    },
+                    child: Container(
+                          decoration: const BoxDecoration(
+                            image: DecorationImage(
+                                image: AssetImage("assets/box/box7.png"),
+                                fit: BoxFit.fill),
+                          ),
                           child: Padding(
                             padding: const EdgeInsets.all(16),
                             child: Row(
@@ -150,8 +124,6 @@ class _OnboardingScreenState extends State<Dashboard> {
                             ),
                           ),
                         ),
-                      );
-                    },
                   ),
                 ],
               ),
