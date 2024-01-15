@@ -91,9 +91,9 @@ class _DeclarationsState extends State<Declarations> {
                   } else {
                     if (snapshot.hasData) {
                       List<dynamic> data = snapshot.data;
-                      data = data
-                          .where((element) => element["status"] == 1)
-                          .toList();
+                      // data = data
+                      //     .where((element) => element["status"] == 1)
+                      //     .toList();
                       if (data.isEmpty) {
                         return const Text("Geen declaraties gevonden");
                       }

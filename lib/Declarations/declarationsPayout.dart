@@ -351,7 +351,7 @@ class DeclarationsPayoutState extends State<DeclarationsPayout> {
               onPressed: () async {
                 // Update the status
                 var res = await ApiManager.post(
-                    "/api/v1/Receipt/${declInfo['id']}/Approve",
+                    "api/v1/Receipt/${declInfo['id']}/Approve",
                     {
                       "receiptId": declInfo['id'],
                       "note": remarkController.text,
