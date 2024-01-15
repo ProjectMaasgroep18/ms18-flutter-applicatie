@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Api/apiManager.dart';
-import 'package:ms18_applicatie/Dashboard/guestDashboard.dart';
+import 'package:ms18_applicatie/Shoppingcart/Shoppingcart.dart';
 import 'package:ms18_applicatie/Widgets/buttons.dart';
 import 'package:ms18_applicatie/Widgets/inputFields.dart';
 import 'package:ms18_applicatie/Widgets/paddingSpacing.dart';
@@ -100,6 +100,7 @@ class _SignInFormState extends State<GuestSignInForm> {
                         setPrefString(response["member"]["permissions"][0], "role");
                         signIn(context);
                         loadLocalUser(response["member"]);
+                        globToken = response["token"];
                       }else{
                         throw Exception("Login failed, check creds");
                       }
@@ -143,7 +144,7 @@ class _SignInFormState extends State<GuestSignInForm> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const GuestDashboard(),
+                          builder: (context) =>  ShoppingCart(),
                         ),
                       );
                     });

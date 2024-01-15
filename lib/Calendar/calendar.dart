@@ -9,7 +9,7 @@ import 'package:ms18_applicatie/config.dart';
 import 'package:ms18_applicatie/globals.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import '../menu.dart';
-import 'package:ms18_applicatie/roles.dart';
+import 'package:ms18_applicatie/Models/roles.dart';
 import 'package:ms18_applicatie/Widgets/popups.dart';
 
 const List<String> groups = [
@@ -336,7 +336,7 @@ class CalendarState extends State<Calendar> {
                         });
                       },
                       child: ClipRRect(
-                        child: Image.asset('../assets/groups/globaal.png',
+                        child: Image.asset('assets/groups/globaal.png',
                             width: imageSize, height: imageSize),
                       ),
                     ),
@@ -361,7 +361,7 @@ class CalendarState extends State<Calendar> {
                         });
                       },
                       child: ClipRRect(
-                        child: Image.asset('../assets/groups/welpen.png',
+                        child: Image.asset('assets/groups/welpen.png',
                             width: imageSize, height: imageSize),
                       ),
                     ),
@@ -387,7 +387,7 @@ class CalendarState extends State<Calendar> {
                         MatrozenFilter = false;
                       },
                       child: ClipRRect(
-                        child: Image.asset('../assets/groups/zee_verkenner.png',
+                        child: Image.asset('assets/groups/zee_verkenner.png',
                             width: imageSize, height: imageSize),
                       ),
                     ),
@@ -414,7 +414,7 @@ class CalendarState extends State<Calendar> {
                       child: ClipRRect(
                         child: Container(
                           child: Image.asset(
-                            '../assets/groups/matrozen.png',
+                            'assets/groups/matrozen.png',
                             width: imageSize,
                             height: imageSize,
                           ),
@@ -442,7 +442,7 @@ class CalendarState extends State<Calendar> {
                         });
                       },
                       child: ClipRRect(
-                        child: Image.asset('../assets/groups/stam.png',
+                        child: Image.asset('assets/groups/stam.png',
                             width: imageSize, height: imageSize),
                       ),
                     ),

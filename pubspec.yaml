@@ -45,7 +45,7 @@ dependencies:
   flutter_easyloading: ^3.0.5
   image_picker: ^1.0.4
   syncfusion_localizations: ^22.1.44
-  flutter_native_splash: ^2.3.9
+  flutter_native_splash: ^2.3.7
 
 dev_dependencies:
   flutter_test:
@@ -82,6 +82,7 @@ flutter:
     - assets/RiveAssets/
     - assets/logo.jpg
     - assets/declarations/
+    - assets/groups/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
@@ -108,8 +109,6 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
-
-
 
 flutter_native_splash:
   # This package generates native code to customize Flutter's default white native splash screen

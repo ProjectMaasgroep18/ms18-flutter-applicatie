@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Calendar/calendar.dart';
 import 'package:ms18_applicatie/Dashboard/dashboard.dart';
-import 'package:ms18_applicatie/Dashboard/guestDashboard.dart';
 import 'package:ms18_applicatie/Orders/orders.dart';
 import 'package:ms18_applicatie/Pictures/listPictures.dart';
 import 'package:ms18_applicatie/Shoppingcart/Shoppingcart.dart';
 import 'package:ms18_applicatie/Stock/stockReport.dart';
 import 'package:ms18_applicatie/Users/userList.dart';
 import 'package:ms18_applicatie/globals.dart';
-import 'package:ms18_applicatie/roles.dart';
+import 'package:ms18_applicatie/Models/roles.dart';
 import 'package:ms18_applicatie/team-c/Declarations/declarationsMenu.dart';
 import 'config.dart';
 import 'menuItem.dart' as menuItem;
@@ -71,11 +70,6 @@ class Menu extends StatelessWidget {
         roles: [
           Roles.Admin,
         ]),
-    menuItem.MenuItem(
-      text: 'Bar',
-      icon: Icons.local_bar,
-      page: MaterialPageRoute(builder: (context) => ShoppingCart()),
-    ),
   ];
 
   Menu({

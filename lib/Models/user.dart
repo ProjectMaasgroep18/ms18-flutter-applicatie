@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ms18_applicatie/roles.dart';
+import 'package:ms18_applicatie/Models/roles.dart';
 
 class User {
   int id;

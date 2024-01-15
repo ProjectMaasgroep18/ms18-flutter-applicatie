@@ -7,7 +7,7 @@ import '../Api/apiManager.dart';
 import '../Models/user.dart';
 import '../Widgets/popups.dart';
 import '../config.dart';
-import '../roles.dart';
+import '../Models/roles.dart';
 
 const String url = "api/v1/User";
 
