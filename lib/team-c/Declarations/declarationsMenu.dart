@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Declarations/declarations.dart';
 import 'package:ms18_applicatie/Declarations/declarationsPayout.dart';
-import 'package:ms18_applicatie/roles.dart';
+import 'package:ms18_applicatie/Models/roles.dart';
 import '../../Declarations/pickPhoto.dart';
 import '../../Widgets/paddingSpacing.dart';
 import '../../config.dart';
