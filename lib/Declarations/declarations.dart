@@ -1,12 +1,11 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/config.dart';
+import 'package:ms18_applicatie/globals.dart';
 import '../Api/apiManager.dart';
 import '../Widgets/paddingSpacing.dart';
+import '../Widgets/popups.dart';
 import '../menu.dart';
-
-Future<dynamic>? _future;
-TextEditingController remarkController = TextEditingController();
 
 class Declarations extends StatefulWidget {
   const Declarations({super.key});
@@ -16,14 +15,18 @@ class Declarations extends StatefulWidget {
 }
 
 class _DeclarationsState extends State<Declarations> {
-  @override
+  Future<dynamic>? _future;
+  TextEditingController remarkController = TextEditingController();
 
-  Future<dynamic>? getReceipt() async {
-    _future = ApiManager.get("api/v1/Receipt", await getHeaders());
+  getReceipt() {
+    setState(() {
+      _future = ApiManager.get("api/v1/Receipt", getHeaders());
+    });
   }
 
-  void initState()  {
-    _future = getReceipt();
+  @override
+  void initState() {
+    getReceipt();
     super.initState();
   }
 
@@ -88,19 +91,29 @@ class _DeclarationsState extends State<Declarations> {
                   } else {
                     if (snapshot.hasData) {
                       List<dynamic> data = snapshot.data;
+                      data = data
+                          .where((element) => element["status"] == 1)
+                          .toList();
+                      if (data.isEmpty) {
+                        return const Text("Geen declaraties gevonden");
+                      }
                       return ListView.builder(
                         physics: const NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
                         itemCount: data.length,
                         itemBuilder: (context, index) {
                           Map<String, dynamic> decl = data[index];
-                          print("DECL: $decl");
+                          Map<String, dynamic> costCentre =
+                              decl["costCentre"] ?? {};
                           return Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: ElevatedButton(
                               onPressed: () async {
                                 // Show a dialog with some info about the decl
-                                showInfoDialog(context, decl);
+                                var photos = await ApiManager.get(
+                                    "api/v1/Receipt/${decl['id']}/Photo",
+                                    getHeaders());
+                                showInfoDialog(context, decl, photos);
                               },
                               style: ElevatedButton.styleFrom(
                                 elevation: 0,
@@ -148,21 +161,37 @@ class _DeclarationsState extends State<Declarations> {
                                           ],
                                         ),
                                       ),
-                                      decl['photos'] != null &&
-                                              decl['photos'].length > 0 &&
-                                              decl['photos'][0]
-                                                      ['base64Image'] !=
-                                                  null
-                                          ? Image(
-                                              image: MemoryImage(base64Decode(
-                                                  decl['photos'][0]
-                                                      ['base64Image'])),
-                                              height: 100,
-                                              width: 150,
-                                            )
-                                          : Container(
-                                              child: const PaddingSpacing(),
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              decl['amount'].toString() ==
+                                                      "null"
+                                                  ? "Geen bedrag"
+                                                  : decl['amount'].toString(),
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                             ),
+                                            Text(
+                                              costCentre["id"].toString() == ""
+                                                  ? "Geen \n"
+                                                      "kostencentrum"
+                                                  : costCentre["id"].toString(),
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
                                     ],
                                   ),
                                 ],
@@ -180,7 +209,7 @@ class _DeclarationsState extends State<Declarations> {
     );
   }
 
-  showInfoDialog(context, declInfo) {
+  showInfoDialog(context, declInfo, photo) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -207,64 +236,114 @@ class _DeclarationsState extends State<Declarations> {
                     Text("Status: ${declInfo['statusString']}"),
                   ],
                 ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text("Kostencentrum: ${declInfo['costCentre']['name']}"),
+                  ],
+                ),
                 const PaddingSpacing(),
-                Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-                  declInfo['photos'] != null &&
-                          declInfo['photos'].length > 0 &&
-                          declInfo['photos'][0]['base64Image'] != null
-                      ? Image(
-                          image: MemoryImage(base64Decode(
-                              declInfo['photos'][0]['base64Image'])),
+                TextFormField(
+                  controller: remarkController,
+                  decoration: const InputDecoration(
+                    hintText: "Opmerking",
+                    labelText: "Opmerking: ",
+                    hintStyle: TextStyle(
+                      color: mainColor,
+                      fontWeight: FontWeight.w300,
+                    ),
+                    enabledBorder: inputUnderlineBorder,
+                    focusedBorder: inputUnderlineBorder,
+                    border: inputUnderlineBorder,
+                    prefixIcon: Align(
+                      widthFactor: 1.0,
+                      heightFactor: 1.0,
+                      child: Icon(
+                        Icons.note,
+                        color: mainColor,
+                        size: 20,
+                      ),
+                    ),
+                  ),
+                ),
+                const PaddingSpacing(),
+                // Show the photo
+                photo != null &&
+                        photo.length > 0 &&
+                        photo[0]['base64Image'] != null
+                    ? ElevatedButton(
+                        onPressed: () async {
+                          // Show a dialog with the photo full size
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                contentPadding: const EdgeInsets.all(8),
+                                content: Image(
+                                  image: MemoryImage(
+                                      base64Decode(photo[0]['base64Image'])),
+                                  height:
+                                      MediaQuery.of(context).size.height * 1,
+                                  width: MediaQuery.of(context).size.width * 1,
+                                ),
+                                actions: <Widget>[
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text('Cancel'),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          elevation: 0,
+                          backgroundColor: mainColor,
+                          padding: const EdgeInsets.all(5),
+                          shadowColor: backgroundColor,
+                          shape: const RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(3))),
+                        ),
+                        child: Image(
+                          image: MemoryImage(
+                              base64Decode(photo[0]['base64Image'])),
                           height: 250,
                           width: 250,
-                        )
-                      : Container(
-                          child: const PaddingSpacing(),
                         ),
-                ]),
-                const PaddingSpacing(),
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.start,
-                //   children: [
-                //     InputField(
-                //       icon: Icons.note,
-                //       hintText: "Opmerking",
-                //       labelText: "Opmerking: ",
-                //       controller: remarkController
-                //     )
-                //   ],
-                // )
+                      )
+                    : const PaddingSpacing(),
               ],
             ),
           ),
           actions: <Widget>[
             TextButton(
               onPressed: () async {
-
                 // Update the status
-                var res = ApiManager
-                    .post("/api/v1/Receipt/${declInfo['id']}/Approve", {
-
-                  "receiptId": declInfo['id'],
-                  "note": declInfo['note'],
-                  "approved": true,
-                  "paid": false
-                }, await getHeaders());
-
+                var res = await ApiManager.post(
+                    "api/v1/Receipt/${declInfo['id']}/Approve",
+                    {
+                      "receiptId": declInfo['id'],
+                      "note": remarkController.text,
+                      "approved": true,
+                      "paid": false
+                    },
+                    getHeaders());
+                print(" RESPONSE AFTER SEND: $res");
                 if (res != null) {
-                  // Show snackbar
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("Declaratie goedgekeurd"),
+                  PopupAndLoading.showSuccess("Declaratie goedgekeurd");
+                  setState(() {
+                    _future = getReceipt();
+                  });
+                  // Navigator.pop(context);
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const Declarations(),
                     ),
                   );
-                  Navigator.pop(context);
-                  setState(() {
-                    _future = null;
-                  });
-                  setState(() async {
-                    _future = ApiManager.get("api/v1/Receipt", await getHeaders());
-                  });
                 }
               },
               child: const Text('Goedkeuren'),
@@ -272,27 +351,27 @@ class _DeclarationsState extends State<Declarations> {
             TextButton(
               onPressed: () async {
                 // Update the status
-                var res = ApiManager
-                    .post("/api/v1/Receipt/${declInfo['id']}/Approve", {
-                  "receiptId": declInfo['id'],
-                  "note": declInfo['note'],
-                  "approved": false,
-                }, await getHeaders());
-
+                var res = await ApiManager.post(
+                    "api/v1/Receipt/${declInfo['id']}/Approve",
+                    {
+                      "receiptId": declInfo['id'],
+                      "note": remarkController.text,
+                      "approved": false,
+                    },
+                    getHeaders());
+                print(" RESPONSE AFTER SEND: $res");
                 if (res != null) {
-                  // Show snackbar
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("Declaratie afgekeurd"),
+                  PopupAndLoading.showSuccess("Declaratie afgekeurd");
+                  setState(() {
+                    _future = getReceipt();
+                  });
+                  // Navigator.pop(context);
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const Declarations(),
                     ),
                   );
-                  Navigator.pop(context);
-                  setState(() {
-                    _future = null;
-                  });
-                  setState(() async {
-                    _future = ApiManager.get("api/v1/Receipt", await getHeaders());
-                  });
                 }
               },
               child: const Text('Afkeuren'),
