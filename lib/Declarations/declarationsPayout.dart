@@ -1,3 +1,4 @@
+// Made by Joost Both 103674
 import 'dart:convert';
 import 'dart:io';
 
@@ -8,6 +9,7 @@ import 'package:ms18_applicatie/config.dart';
 
 import '../Api/apiManager.dart';
 import '../Widgets/paddingSpacing.dart';
+import '../Widgets/popups.dart';
 import '../menu.dart';
 
 Future<dynamic>? _future;
@@ -21,14 +23,13 @@ class DeclarationsPayout extends StatefulWidget {
 }
 
 class DeclarationsPayoutState extends State<DeclarationsPayout> {
-  @override
-
-  Future<dynamic>? getReceipt() async {
-    _future = ApiManager.get("api/v1/Receipt", await getHeaders());
+  getReceipt() async {
+    _future = ApiManager.get("api/v1/Receipt", getHeaders());
   }
 
+  @override
   void initState()  {
-    _future = getReceipt();
+    getReceipt();
     super.initState();
   }
 
@@ -70,7 +71,7 @@ class DeclarationsPayoutState extends State<DeclarationsPayout> {
                 children: [
                   if (_future is Future<Map<String, dynamic>>)
                     const Center(
-                      child: Text("Geen data gevonden wallah"),
+                      child: Text("Geen data gevonden"),
                     )
                   else showRows(),
                 ],
@@ -97,45 +98,49 @@ class DeclarationsPayoutState extends State<DeclarationsPayout> {
                   } else {
                     if (snapshot.hasData) {
                       List<dynamic> data = snapshot.data;
-                      data = data.where((element) => element['statusString'] == "Goedgekeurd").toList();
+                      data = data.where((element) => element['status'] == 2).toList();
                       return ListView.builder(
                         physics: const NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
                         itemCount: data.length,
                         itemBuilder: (context, index) {
                           Map<String, dynamic> decl = data[index];
-                          print("DECL: $decl");
+                          Map<String, dynamic> costCentre =
+                              decl["costCentre"] ?? {};
                           return Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: ElevatedButton(
                               onPressed: () async {
                                 // Show a dialog with some info about the decl
-                                showInfoDialog(context, decl);
+                                var photos = await ApiManager.get(
+                                    "api/v1/Receipt/${decl['id']}/Photo",
+                                    getHeaders());
+                                showInfoDialog(context, decl, photos);
                               },
                               style: ElevatedButton.styleFrom(
                                 elevation: 0,
                                 backgroundColor: mainColor,
                                 padding:
-                                    const EdgeInsets.fromLTRB(5, 30, 5, 30),
+                                const EdgeInsets.fromLTRB(5, 30, 5, 30),
                                 shadowColor: backgroundColor,
                                 shape: const RoundedRectangleBorder(
                                     borderRadius:
-                                        BorderRadius.all(Radius.circular(3))),
+                                    BorderRadius.all(Radius.circular(3))),
                               ),
                               child: Column(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
+                                MainAxisAlignment.spaceEvenly,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
                                   Row(
                                     mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceBetween,
                                     children: [
                                       Padding(
                                         padding: const EdgeInsets.all(8.0),
                                         child: Column(
                                           mainAxisAlignment:
-                                              MainAxisAlignment.start,
+                                          MainAxisAlignment.start,
                                           children: [
                                             Text(
                                               decl['note'] ??
@@ -158,21 +163,37 @@ class DeclarationsPayoutState extends State<DeclarationsPayout> {
                                           ],
                                         ),
                                       ),
-                                      decl['photos'] != null &&
-                                              decl['photos'].length > 0 &&
-                                              decl['photos'][0]
-                                                      ['base64Image'] !=
-                                                  null
-                                          ? Image(
-                                              image: MemoryImage(base64Decode(
-                                                  decl['photos'][0]
-                                                      ['base64Image'])),
-                                              height: 100,
-                                              width: 150,
-                                            )
-                                          : Container(
-                                              child: const PaddingSpacing(),
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              decl['amount'].toString() ==
+                                                  "null"
+                                                  ? "Geen bedrag"
+                                                  : decl['amount'].toString(),
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                             ),
+                                            Text(
+                                              costCentre["id"].toString() == ""
+                                                  ? "Geen \n"
+                                                  "kostencentrum"
+                                                  : costCentre["id"].toString(),
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
                                     ],
                                   ),
                                 ],
@@ -190,7 +211,7 @@ class DeclarationsPayoutState extends State<DeclarationsPayout> {
     );
   }
 
-  showInfoDialog(context, declInfo) {
+  showInfoDialog(context, declInfo, photo) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -217,33 +238,85 @@ class DeclarationsPayoutState extends State<DeclarationsPayout> {
                     Text("Status: ${declInfo['statusString']}"),
                   ],
                 ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text("Kostencentrum: ${declInfo['costCentre']['name']}"),
+                  ],
+                ),
                 const PaddingSpacing(),
-                Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-                  declInfo['photos'] != null &&
-                          declInfo['photos'].length > 0 &&
-                          declInfo['photos'][0]['base64Image'] != null
-                      ? Image(
-                          image: MemoryImage(base64Decode(
-                              declInfo['photos'][0]['base64Image'])),
-                          height: 250,
-                          width: 250,
-                        )
-                      : Container(
-                          child: const PaddingSpacing(),
-                        ),
-                ]),
+                TextFormField(
+                  controller: remarkController,
+                  decoration: const InputDecoration(
+                    hintText: "Opmerking",
+                    labelText: "Opmerking: ",
+                    hintStyle: TextStyle(
+                      color: mainColor,
+                      fontWeight: FontWeight.w300,
+                    ),
+                    enabledBorder: inputUnderlineBorder,
+                    focusedBorder: inputUnderlineBorder,
+                    border: inputUnderlineBorder,
+                    prefixIcon: Align(
+                      widthFactor: 1.0,
+                      heightFactor: 1.0,
+                      child: Icon(
+                        Icons.note,
+                        color: mainColor,
+                        size: 20,
+                      ),
+                    ),
+                  ),
+                ),
                 const PaddingSpacing(),
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.start,
-                //   children: [
-                //     InputField(
-                //       icon: Icons.note,
-                //       hintText: "Opmerking",
-                //       labelText: "Opmerking: ",
-                //       controller: remarkController
-                //     )
-                //   ],
-                // )
+                // Show the photo
+                photo != null &&
+                    photo.length > 0 &&
+                    photo[0]['base64Image'] != null
+                    ? ElevatedButton(
+                  onPressed: () async {
+                    // Show a dialog with the photo full size
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          contentPadding: const EdgeInsets.all(8),
+                          content: Image(
+                            image: MemoryImage(
+                                base64Decode(photo[0]['base64Image'])),
+                            height:
+                            MediaQuery.of(context).size.height * 1,
+                            width: MediaQuery.of(context).size.width * 1,
+                          ),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: const Text('Cancel'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    elevation: 0,
+                    backgroundColor: mainColor,
+                    padding: const EdgeInsets.all(5),
+                    shadowColor: backgroundColor,
+                    shape: const RoundedRectangleBorder(
+                        borderRadius:
+                        BorderRadius.all(Radius.circular(3))),
+                  ),
+                  child: Image(
+                    image: MemoryImage(
+                        base64Decode(photo[0]['base64Image'])),
+                    height: 250,
+                    width: 250,
+                  ),
+                )
+                    : const PaddingSpacing(),
               ],
             ),
           ),
@@ -251,26 +324,24 @@ class DeclarationsPayoutState extends State<DeclarationsPayout> {
             TextButton(
               onPressed: () async {
                 // Update the status
-                var res = ApiManager
-                    .post("api/v1/Receipt/${declInfo['id']}/Approve", {
-                  "receiptId": declInfo['id'],
-                  "note": declInfo['note'],
-                  "approved": true,
-                  "paid": true,
-                }, await getHeaders());
+                print("Sending to: api/v1/Receipt/${declInfo['id']}/Approve");
+                var res = await ApiManager.post(
+                    "api/v1/Receipt/${declInfo['id']}/Approve",
+                    {
+                      "receiptId": declInfo['id'],
+                      "note": remarkController.text,
+                      "approved": true,
+                      "paid": true
+                    },
+                    getHeaders());
                 if (res != null) {
-                  // Show snackbar
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("Declaratie goedgekeurd"),
-                    ),
-                  );
+                  PopupAndLoading.showSuccess("Declaratie goedgekeurd voor uitbetaling");
                   Navigator.pop(context);
                   setState(() {
                     _future = null;
                   });
-                  setState(() async {
-                    _future = ApiManager.get("api/v1/Receipt", await getHeaders());
+                  setState(() {
+                    _future = ApiManager.get("api/v1/Receipt", getHeaders());
                   });
                 }
               },
@@ -279,25 +350,24 @@ class DeclarationsPayoutState extends State<DeclarationsPayout> {
             TextButton(
               onPressed: () async {
                 // Update the status
-                var res = ApiManager
-                    .post("api/v1/Receipt/${declInfo['id']}/Approve", {
-                  "receiptId": declInfo['id'],
-                  "note": declInfo['note'],
-                  "approved": false,
-                }, await getHeaders());
+                var res = await ApiManager.post(
+                    "api/v1/Receipt/${declInfo['id']}/Approve",
+                    {
+                      "receiptId": declInfo['id'],
+                      "note": remarkController.text,
+                      "approved": true,
+                      "paid": false
+                    },
+                    getHeaders());
+                print(" RESPONSE AFTER SEND: $res");
                 if (res != null) {
-                  // Show snackbar
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("Declaratie afgekeurd"),
-                    ),
-                  );
+                  PopupAndLoading.showSuccess("Declaratie afgekeurd voor uitbetaling");
                   Navigator.pop(context);
                   setState(() {
                     _future = null;
                   });
-                  setState(() async {
-                    _future = ApiManager.get("api/v1/Receipt", await getHeaders());
+                  setState(() {
+                    _future = ApiManager.get("api/v1/Receipt", getHeaders());
                   });
                 }
               },

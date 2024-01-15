@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Dashboard/guestDashboard.dart';
+import 'package:ms18_applicatie/Shoppingcart/Shoppingcart.dart';
 import 'package:ms18_applicatie/Widgets/buttons.dart';
 import 'package:ms18_applicatie/Widgets/inputFields.dart';
 import 'package:ms18_applicatie/Widgets/paddingSpacing.dart';
@@ -111,11 +112,11 @@ class _GastInfrom extends State<GastInfrom> {
                     confetti =
                         controller.findSMI("Trigger explosion") as SMITrigger;
                     await Future.delayed(const Duration(seconds: 5), () {
-                      Navigator.pushReplacement(
+                      Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const GuestDashboard(),
-                        ),
+                          builder: (context) => ShoppingCart(),
+                        ),(T)=>false
                       );
                     });
                   },

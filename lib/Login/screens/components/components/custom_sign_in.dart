@@ -40,7 +40,7 @@ Future<Object?> customSigninDialog(BuildContext context,
             children: [
               Column(children: [
                 Text(
-                  "Sign In",
+                  "Inloggen",
                   style: TextStyle(
                     fontSize: 34,
                     fontFamily: "Poppins",
@@ -109,7 +109,7 @@ Future<Object?> customGuestLogin(BuildContext context,
             children: [
               Column(children: [
                 Text(
-                  "Sign In",
+                  "Inloggen",
                   style: TextStyle(
                     fontSize: 34,
                     fontFamily: "Poppins",

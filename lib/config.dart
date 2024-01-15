@@ -95,7 +95,7 @@ const double itemHeight = 11;
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 //Price formatter
-var priceFormat = NumberFormat("###.0#", "nl_NL");
+var priceFormat = NumberFormat("##0.00", "nl_NL");
 
 //From here down you got stuff for roles
 
@@ -119,6 +119,7 @@ const String apiUrl = "https://api.hr.rspn.io/";
 const Map<String, String> apiHeaders = {
   "Content-Type": "application/json",
   "Accept": "application/json",
+  "Connection": "keep-alive",
 };
 
 Future<String?> getToken() async {

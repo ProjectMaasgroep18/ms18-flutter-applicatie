@@ -8,11 +8,13 @@ import 'package:ms18_applicatie/config.dart';
 class OrderElement extends StatelessWidget {
   final Order order;
   final Function(String?)? onChange;
+  final bool isOwnPage;
 
   const OrderElement({
     super.key,
     required this.order,
     this.onChange,
+    this.isOwnPage = false,
   });
 
   @override
@@ -21,11 +23,13 @@ class OrderElement extends StatelessWidget {
       onTap: () {
         orderDetailsDialog(context, order);
       },
-      leading: Text('€${priceFormat.format(order.totalAmount)}'),
-      title: Text(order.user.name),
-      subtitle: Text(order.user.email),
+      leading: Text('€${priceFormat.format(order.totalAmount)}',
+          style: const TextStyle(fontSize: 15)),
+      title: !isOwnPage ? Text(order.user.name) : null,
+      subtitle: !isOwnPage ? Text(order.user.email) : null,
       contentPadding: EdgeInsets.zero,
-      trailing: Text(order.getDateString()),
+      trailing:
+          Text(order.getDateString(), style: const TextStyle(fontSize: 15)),
     );
   }
 }
