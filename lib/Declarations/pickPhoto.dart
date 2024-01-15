@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ms18_applicatie/Api/apiManager.dart';
@@ -40,6 +41,7 @@ class PickPhotoState extends State<PickPhoto> {
   String btnText = "Uploaden";
   int? id;
   bool isEditing = false;
+  List<Image>? photos = [];
 
   Map<String, String> retrieveHeaders() {
     Map<String, String> header = getHeaders();
@@ -165,10 +167,15 @@ class PickPhotoState extends State<PickPhoto> {
                         var res = await picker.pickImage(
                           source: ImageSource.camera,
                         );
+                        // setState(() {
+                        photo = res;
+                        // });
                         setState(() {
-                          photo = res;
+                          photos?.add(Image(
+                            image: FileImage(File(photo!.path)),
+                          ));
                         });
-                        file = File(photo!.path);
+                        // file = File(photo!.path);
                         // }
                       },
                       text: "Maak een foto",
@@ -188,10 +195,17 @@ class PickPhotoState extends State<PickPhoto> {
                         var res = await picker.pickImage(
                           source: ImageSource.gallery,
                         );
+                        // setState(() {
+                        photo = res;
+                        // });
                         setState(() {
-                          photo = res;
+                          photos?.add(Image.file(
+                            File(photo!.path),
+                            width: MediaQuery.of(context).size.width / 1.7,
+                            height: MediaQuery.of(context).size.width / 1.7,
+                          ));
                         });
-                        file = File(photo!.path);
+                        // file = File(photo!.path);
                         // }
                       },
                       text: "Kies een foto",
@@ -202,12 +216,15 @@ class PickPhotoState extends State<PickPhoto> {
               const PaddingSpacing(),
               // Show the photo
               photo != null
-                  ? Image.file(
-                      File(photo!.path),
-                      width: MediaQuery.of(context).size.width / 1.7,
-                      height: MediaQuery.of(context).size.width / 1.7,
-                    )
+                  ? CarouselSlider(items: photos, options: CarouselOptions(enableInfiniteScroll: false))
                   : const PaddingSpacing(),
+              // photo != null
+              //     ? Image.file(
+              //         File(photo!.path),
+              //         width: MediaQuery.of(context).size.width / 1.7,
+              //         height: MediaQuery.of(context).size.width / 1.7,
+              //       )
+              //     : const PaddingSpacing(),
               const PaddingSpacing(),
               // Upload the photo
               Button(
@@ -538,7 +555,7 @@ class PickPhotoState extends State<PickPhoto> {
                                             ),
                                             Text(
                                               costCentre["id"].toString() == "" ? "Geen \n"
-                                                      "kostencentrum" : costCentre["id"].toString(),
+                                                      "kostencentrum" : costCentre["name"].toString(),
                                               style: const TextStyle(
                                                 color: Colors.white,
                                                 fontSize: 15,
