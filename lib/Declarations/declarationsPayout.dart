@@ -107,6 +107,25 @@ class DeclarationsPayoutState extends State<DeclarationsPayout> {
                           Map<String, dynamic> decl = data[index];
                           Map<String, dynamic> costCentre =
                               decl["costCentre"] ?? {};
+                          Color btnColor = mainButtonColor;
+                          // Switch the status to a string
+                          switch (decl['status']) {
+                            case 0:
+                              btnColor = mainButtonColor;
+                              break;
+                            case 1:
+                              btnColor = const Color(0xFFE8B025);
+                              break;
+                            case 2:
+                              btnColor = const Color(0xFF00CCA1);
+                              break;
+                            case 3:
+                              btnColor = dangerColor;
+                              break;
+                            case 4:
+                              btnColor = successColor;
+                              break;
+                          }
                           return Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: ElevatedButton(
@@ -119,7 +138,7 @@ class DeclarationsPayoutState extends State<DeclarationsPayout> {
                               },
                               style: ElevatedButton.styleFrom(
                                 elevation: 0,
-                                backgroundColor: mainColor,
+                                backgroundColor: btnColor,
                                 padding:
                                 const EdgeInsets.fromLTRB(5, 30, 5, 30),
                                 shadowColor: backgroundColor,
@@ -321,6 +340,7 @@ class DeclarationsPayoutState extends State<DeclarationsPayout> {
             ),
           ),
           actions: <Widget>[
+            if (declInfo['isPayable'])
             TextButton(
               onPressed: () async {
                 // Update the status
@@ -347,6 +367,7 @@ class DeclarationsPayoutState extends State<DeclarationsPayout> {
               },
               child: const Text('Goedkeuren'),
             ),
+            if (declInfo['isPayable'])
             TextButton(
               onPressed: () async {
                 // Update the status

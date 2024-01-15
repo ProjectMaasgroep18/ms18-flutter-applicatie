@@ -45,6 +45,8 @@ dependencies:
   flutter_easyloading: ^3.0.5
   image_picker: ^1.0.4
   syncfusion_localizations: ^22.1.44
+  carousel_slider: ^4.2.1
+
   flutter_native_splash: ^2.3.7
 
 dev_dependencies:

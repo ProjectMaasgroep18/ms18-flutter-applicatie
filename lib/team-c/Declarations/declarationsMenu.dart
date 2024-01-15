@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Declarations/declarations.dart';
 import 'package:ms18_applicatie/Declarations/declarationsPayout.dart';
+import 'package:ms18_applicatie/globals.dart';
+import 'package:ms18_applicatie/roles.dart';
 import 'package:ms18_applicatie/Models/roles.dart';
 import '../../Declarations/pickPhoto.dart';
 import '../../Widgets/paddingSpacing.dart';
@@ -18,8 +20,8 @@ class DeclarationsMenu extends StatefulWidget {
 
 class DeclarationsMenuState extends State<DeclarationsMenu> {
   List<Widget> getButtons(BuildContext context) => [
-        if (globalLoggedInUserValues!.roles.contains(Roles.Admin))
-          ImageButton(
+    if(globalLoggedInUserValues!.roles.contains(Roles.ReceiptPay) || globalLoggedInUserValues!.roles.contains(Roles.Admin))
+      ImageButton(
             subTitle: "Uitbetalen van declaraties",
             title: "Uitbetalen",
             onClick: () async {
@@ -33,6 +35,7 @@ class DeclarationsMenuState extends State<DeclarationsMenu> {
             },
           ),
         const PaddingSpacing(),
+        if(globalLoggedInUserValues!.roles.contains(Roles.Receipt) || globalLoggedInUserValues!.roles.contains(Roles.Admin))
         ImageButton(
           image: 'assets/declarations/uploadtruck.png',
           subTitle: "Uploaden van declaraties voor goedkeuring",
@@ -48,8 +51,8 @@ class DeclarationsMenuState extends State<DeclarationsMenu> {
           },
         ),
         const PaddingSpacing(),
-        if (globalLoggedInUserValues!.roles.contains(Roles.Admin))
-          ImageButton(
+    if(globalLoggedInUserValues!.roles.contains(Roles.ReceiptApprove) || globalLoggedInUserValues!.roles.contains(Roles.Admin))
+      ImageButton(
             image: 'assets/declarations/approvetruck.png',
             subTitle: "Declaraties goedkeuren voor uitbetaling",
             title: "Goedkeuren",
