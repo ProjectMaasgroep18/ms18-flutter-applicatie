@@ -7,7 +7,7 @@ import 'package:ms18_applicatie/Orders/orders.dart';
 import 'package:ms18_applicatie/Widgets/inputFields.dart';
 import 'package:ms18_applicatie/Widgets/inputPopup.dart';
 import 'package:ms18_applicatie/Widgets/paddingSpacing.dart';
-import 'package:ms18_applicatie/roles.dart';
+import 'package:ms18_applicatie/Models/roles.dart';
 
 import '../Widgets/buttons.dart';
 import '../config.dart';

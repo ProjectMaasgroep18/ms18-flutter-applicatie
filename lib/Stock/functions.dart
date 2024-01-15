@@ -116,7 +116,7 @@ Future updateAllStock(Set<StockProduct> changedProducts,
     for (StockProduct changedStock in changedProducts) updateStock(changedStock)
   ]).then((value) {
     // Clearing the changed items and hiding the button
-    changedProducts = {};
+    changedProducts.clear();
     hasChangedStock.value = false;
 
     PopupAndLoading.showSuccess("Voorraad wijzigen gelukt");

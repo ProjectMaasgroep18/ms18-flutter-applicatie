@@ -22,9 +22,9 @@ class ShoppingCart extends StatefulWidget {
 class _ShoppingCartState extends State<ShoppingCart> {
   final List<StockProduct> shoppingCart = [];
   final List<Order> orderHistory = [];
-
   @override
   Widget build(BuildContext context) {
+    print("USER ${globalLoggedInUserValues!.name}");
     return Menu(
         appBarHeight: 70,
         centerTitle: !globalLoggedInUserValues!.guest,
@@ -154,11 +154,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
           "note": "", // Add a note if needed
           "name": globalLoggedInUserValues?.name,
           "email": globalLoggedInUserValues?.email,
-        },
-        {
-          "Authorization": "Bearer ${await getToken()}",
-          'Content-Type': 'application/json',
-        },
+        }, await getHeaders(),
       ).then((value) {
         PopupAndLoading.showSuccess('Bestellen gelukt');
 
