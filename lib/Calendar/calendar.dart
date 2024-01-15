@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:intl/date_time_patterns.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:ms18_applicatie/Widgets/buttons.dart';
 import 'package:ms18_applicatie/config.dart';
 import 'package:ms18_applicatie/globals.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
@@ -231,12 +232,17 @@ class CalendarState extends State<Calendar> {
   Future<void> _fetchDataAsync(String source) async {
     GlobalSource = source;
     PopupAndLoading.showLoading();
-    var data = await _getDataSourceAsync(source);
-    setState(() {
-      lastSource = source;
-      events = data;
-    });
-    PopupAndLoading.endLoading();
+    try {
+      var data = await _getDataSourceAsync(source);
+      setState(() {
+        lastSource = source;
+        events = data;
+      });
+    } catch (exeption) {
+      PopupAndLoading.showError("Ophalen van data is mislukt :(");
+    } finally {
+      PopupAndLoading.endLoading();
+    }
   }
 
   Future<List<Event>> _getDataSourceAsync(String source) async {
@@ -258,10 +264,8 @@ class CalendarState extends State<Calendar> {
               : eventData['description'];
           final location =
               (eventData['location'] == null) ? "" : eventData['location'];
-          final startDateTime =
-              DateTime.parse(eventData['starDateTime']).toLocal();
-          final endDateTime =
-              DateTime.parse(eventData['endDateTime']).toLocal();
+          final startDateTime = DateTime.parse(eventData['starDateTime']);
+          final endDateTime = DateTime.parse(eventData['endDateTime']);
           final isAllDay = endDateTime.isBefore(startDateTime);
           var color = Colors.black;
           switch (calendarId) {
@@ -566,185 +570,188 @@ class CalendarState extends State<Calendar> {
           return AlertDialog(
             title: Text('$_subjectText'),
             content: SizedBox(
-              height: 500,
-              child: Column(
-                children: <Widget>[
-                  Form(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Create / update event form.
-                        TextFormField(
-                            controller: startDateInput,
-                            readOnly: true,
-                            decoration: InputDecoration(
-                                labelText: isReadOnly
-                                    ? "Startdatum"
-                                    : "Vul startdatum in"),
-                            onTap: () async {
-                              if (!isReadOnly) {
-                                DateTime? pickedDate = await showDatePicker(
-                                    locale: const Locale('nl', 'NL'),
-                                    context: context,
-                                    initialDate: isNewEvent
-                                        ? DateTime.now()
-                                        : DateTime.parse(_startDateText!),
-                                    firstDate: DateTime(2000),
-                                    lastDate: DateTime(2101));
-                                if (pickedDate != null) {
-                                  String formattedDate =
-                                      DateFormat('yyyy-MM-dd')
-                                          .format(pickedDate)
-                                          .toString();
-                                  setState(() {
-                                    startDateInput.text = formattedDate;
-                                  });
-                                }
-                              }
-                            },
-                            onChanged: (String? newValue) {
-                              _startDateText = newValue;
-                            }),
-                        TextFormField(
-                            controller: endDateInput,
-                            decoration: InputDecoration(
-                                labelText: isReadOnly
-                                    ? "Einddatum"
-                                    : "Vul einddatum in"),
-                            readOnly: true,
-                            onTap: () async {
-                              if (!isReadOnly) {
-                                DateTime? pickedDate = await showDatePicker(
-                                    locale: const Locale('nl', 'NL'),
-                                    context: context,
-                                    initialDate: isNewEvent
-                                        ? DateTime.now()
-                                        : DateTime.parse(_endDateText!),
-                                    firstDate: DateTime(2000),
-                                    lastDate: DateTime(2101));
-                                if (pickedDate != null) {
-                                  String formattedEndDate =
-                                      DateFormat('yyyy-MM-dd')
-                                          .format(pickedDate)
-                                          .toString();
-                                  setState(() {
-                                    endDateInput.text = formattedEndDate;
-                                  });
-                                }
-                              }
-                            },
-                            onChanged: (String? newValue) {
-                              _endDateText = newValue;
-                            }),
-                        TextFormField(
-                          controller: startTime,
-                          decoration: const InputDecoration(
-                              icon: Icon(Icons.access_time),
-                              labelText: "Start tijd"),
-                          readOnly: true,
-                          onTap: () async {
-                            if (!isReadOnly) {
-                              TimeOfDay? pickedStartTime = await showTimePicker(
-                                context: context,
-                                initialTime: _startTimeText == ""
-                                    ? TimeOfDay.now()
-                                    : TimeOfDay(
-                                        hour: int.parse(
-                                            _startTimeText!.split(":")[0]),
-                                        minute: int.parse(_startTimeText!
-                                            .split(":")[1]
-                                            .split(" ")[0])),
-                              );
-                              if (pickedStartTime != null) {
-                                setState(() {
-                                  startTime.text = pickedStartTime
-                                      .format(context)
-                                      .toString();
-                                });
-                              }
-                            }
-                          },
-                        ),
-
-                        TextFormField(
-                          controller: endTime,
-                          decoration: const InputDecoration(
-                              icon: Icon(Icons.access_time),
-                              labelText: "Eind tijd"),
-                          readOnly: true,
-                          onTap: () async {
-                            if (!isReadOnly) {
-                              TimeOfDay? pickedEndTime = await showTimePicker(
-                                context: context,
-                                initialTime: _endTimeText == ""
-                                    ? TimeOfDay.now()
-                                    : TimeOfDay(
-                                        hour: int.parse(
-                                            _endTimeText!.split(":")[0]),
-                                        minute: int.parse(_endTimeText!
-                                            .split(":")[1]
-                                            .split(" ")[0])),
-                              );
-                              if (pickedEndTime != null) {
-                                setState(() {
-                                  endTime.text =
-                                      pickedEndTime.format(context).toString();
-                                });
-                              }
-                            }
-                          },
-                        ),
-                        if (!isReadOnly) ...[
+              child: SingleChildScrollView(
+                child: Column(
+                  children: <Widget>[
+                    Form(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Create / update event form.
                           TextFormField(
+                              controller: startDateInput,
+                              readOnly: true,
+                              decoration: InputDecoration(
+                                  labelText: isReadOnly
+                                      ? "Startdatum"
+                                      : "Vul startdatum in"),
+                              onTap: () async {
+                                if (!isReadOnly) {
+                                  DateTime? pickedDate = await showDatePicker(
+                                      locale: const Locale('nl', 'NL'),
+                                      context: context,
+                                      initialDate: isNewEvent
+                                          ? DateTime.now()
+                                          : DateTime.parse(_startDateText!),
+                                      firstDate: DateTime(2000),
+                                      lastDate: DateTime(2101));
+                                  if (pickedDate != null) {
+                                    String formattedDate =
+                                        DateFormat('yyyy-MM-dd')
+                                            .format(pickedDate)
+                                            .toString();
+                                    setState(() {
+                                      startDateInput.text = formattedDate;
+                                    });
+                                  }
+                                }
+                              },
+                              onChanged: (String? newValue) {
+                                _startDateText = newValue;
+                              }),
+                          TextFormField(
+                              controller: endDateInput,
+                              decoration: InputDecoration(
+                                  labelText: isReadOnly
+                                      ? "Einddatum"
+                                      : "Vul einddatum in"),
+                              readOnly: true,
+                              onTap: () async {
+                                if (!isReadOnly) {
+                                  DateTime? pickedDate = await showDatePicker(
+                                      locale: const Locale('nl', 'NL'),
+                                      context: context,
+                                      initialDate: isNewEvent
+                                          ? DateTime.now()
+                                          : DateTime.parse(_endDateText!),
+                                      firstDate: DateTime(2000),
+                                      lastDate: DateTime(2101));
+                                  if (pickedDate != null) {
+                                    String formattedEndDate =
+                                        DateFormat('yyyy-MM-dd')
+                                            .format(pickedDate)
+                                            .toString();
+                                    setState(() {
+                                      endDateInput.text = formattedEndDate;
+                                    });
+                                  }
+                                }
+                              },
+                              onChanged: (String? newValue) {
+                                _endDateText = newValue;
+                              }),
+                          TextFormField(
+                            controller: startTime,
                             decoration: const InputDecoration(
-                              hintText: 'Titel',
+                                icon: Icon(Icons.access_time),
+                                labelText: "Start tijd"),
+                            readOnly: true,
+                            onTap: () async {
+                              if (!isReadOnly) {
+                                TimeOfDay? pickedStartTime =
+                                    await showTimePicker(
+                                  context: context,
+                                  initialTime: _startTimeText == ""
+                                      ? TimeOfDay.now()
+                                      : TimeOfDay(
+                                          hour: int.parse(
+                                              _startTimeText!.split(":")[0]),
+                                          minute: int.parse(_startTimeText!
+                                              .split(":")[1]
+                                              .split(" ")[0])),
+                                );
+                                if (pickedStartTime != null) {
+                                  setState(() {
+                                    startTime.text = pickedStartTime
+                                        .format(context)
+                                        .toString();
+                                  });
+                                }
+                              }
+                            },
+                          ),
+
+                          TextFormField(
+                            controller: endTime,
+                            decoration: const InputDecoration(
+                                icon: Icon(Icons.access_time),
+                                labelText: "Eind tijd"),
+                            readOnly: true,
+                            onTap: () async {
+                              if (!isReadOnly) {
+                                TimeOfDay? pickedEndTime = await showTimePicker(
+                                  context: context,
+                                  initialTime: _endTimeText == ""
+                                      ? TimeOfDay.now()
+                                      : TimeOfDay(
+                                          hour: int.parse(
+                                              _endTimeText!.split(":")[0]),
+                                          minute: int.parse(_endTimeText!
+                                              .split(":")[1]
+                                              .split(" ")[0])),
+                                );
+                                if (pickedEndTime != null) {
+                                  setState(() {
+                                    endTime.text = pickedEndTime
+                                        .format(context)
+                                        .toString();
+                                  });
+                                }
+                              }
+                            },
+                          ),
+                          if (!isReadOnly) ...[
+                            TextFormField(
+                              decoration: const InputDecoration(
+                                hintText: 'Titel',
+                              ),
+                              initialValue: isNewEvent ? "" : _subjectText,
+                              readOnly: isReadOnly,
+                              onChanged: (String? value) {
+                                _subjectText = value;
+                              },
                             ),
-                            initialValue: isNewEvent ? "" : _subjectText,
-                            readOnly: isReadOnly,
-                            onChanged: (String? value) {
-                              _subjectText = value;
-                            },
-                          ),
+                          ],
+                          TextFormField(
+                              decoration: InputDecoration(labelText: "Locatie"),
+                              initialValue: isNewEvent ? "" : _location,
+                              readOnly: isReadOnly,
+                              onChanged: (String? value) {
+                                _location = value;
+                              }),
+                          if (isNewEvent) ...[
+                            InputDropDown(
+                              labelText: "Groep",
+                              value: groups.contains(group) ? group : null,
+                              items: [
+                                for (String item in groups)
+                                  DropdownMenuItem(
+                                    value: item,
+                                    child: InputDropdownItem(
+                                      groupName: item,
+                                    ),
+                                  )
+                              ],
+                              onChange: (newValue) {
+                                group = newValue ?? 'Globaal';
+                              },
+                            ),
+                          ],
+                          TextFormField(
+                              maxLines: 4,
+                              keyboardType: TextInputType.multiline,
+                              decoration:
+                                  InputDecoration(labelText: "Beschrijving"),
+                              initialValue: isNewEvent ? "" : _description,
+                              readOnly: isReadOnly,
+                              onChanged: (String? value) {
+                                _description = value;
+                              }),
                         ],
-                        TextFormField(
-                            decoration: InputDecoration(labelText: "Locatie"),
-                            initialValue: isNewEvent ? "" : _location,
-                            readOnly: isReadOnly,
-                            onChanged: (String? value) {
-                              _location = value;
-                            }),
-                        if (isNewEvent) ...[
-                          InputDropDown(
-                            labelText: "Groep",
-                            value: groups.contains(group) ? group : null,
-                            items: [
-                              for (String item in groups)
-                                DropdownMenuItem(
-                                  value: item,
-                                  child: InputDropdownItem(
-                                    groupName: item,
-                                  ),
-                                )
-                            ],
-                            onChange: (newValue) {
-                              group = newValue ?? 'Globaal';
-                            },
-                          ),
-                        ],
-                        TextFormField(
-                            maxLines: 4,
-                            keyboardType: TextInputType.multiline,
-                            decoration:
-                                InputDecoration(labelText: "Beschrijving"),
-                            initialValue: isNewEvent ? "" : _description,
-                            readOnly: isReadOnly,
-                            onChanged: (String? value) {
-                              _description = value;
-                            }),
-                      ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
             actions: <Widget>[
@@ -756,46 +763,56 @@ class CalendarState extends State<Calendar> {
               if (!isReadOnly) ...[
                 if (isNewEvent) ...[
                   // Create new event.
-                  ElevatedButton(
-                    onPressed: () {
-                      sendCreateRequest(
-                          groups.indexOf(group).toString(),
-                          _eventId,
-                          startTime.text,
-                          endTime.text,
-                          _subjectText,
-                          _description,
-                          _location,
-                          startDateInput.text,
-                          endDateInput.text,
-                          context);
-                    },
-                    child: const Text('Toevoegen'),
+                  SizedBox(
+                    width: 100,
+                    child: Button(
+                      onTap: () {
+                        sendCreateRequest(
+                            groups.indexOf(group).toString(),
+                            _eventId,
+                            startTime.text,
+                            endTime.text,
+                            _subjectText,
+                            _description,
+                            _location,
+                            startDateInput.text,
+                            endDateInput.text,
+                            context);
+                      },
+                      text: 'Toevoegen',
+                    ),
                   ),
                 ] else ...[
                   // Edit existing event.
-                  ElevatedButton(
-                    onPressed: () {
-                      sendEditRequest(
-                          _calendarId.toString(),
-                          _eventId,
-                          startTime.text,
-                          endTime.text,
-                          _subjectText,
-                          _description,
-                          _location,
-                          startDateInput.text,
-                          endDateInput.text,
-                          context);
-                    },
-                    child: const Text('Aanpassen'),
+                  SizedBox(
+                    width: 100,
+                    child: Button(
+                      onTap: () {
+                        sendEditRequest(
+                            _calendarId.toString(),
+                            _eventId,
+                            startTime.text,
+                            endTime.text,
+                            _subjectText,
+                            _description,
+                            _location,
+                            startDateInput.text,
+                            endDateInput.text,
+                            context);
+                      },
+                      text: 'Aanpassen',
+                    ),
                   ),
-                  ElevatedButton(
-                    onPressed: () {
-                      sendDeleteRequest(
-                          _calendarId.toString(), _eventId, context);
-                    },
-                    child: const Text('Verwijderen'),
+                  SizedBox(
+                    width: 100,
+                    child: Button(
+                      onTap: () {
+                        sendDeleteRequest(
+                            _calendarId.toString(), _eventId, context);
+                      },
+                      text: 'Verwijderen',
+                      color: dangerColor,
+                    ),
                   )
                 ],
               ],

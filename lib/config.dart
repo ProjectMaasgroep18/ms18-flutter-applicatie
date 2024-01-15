@@ -119,6 +119,7 @@ const String apiUrl = "https://api.hr.rspn.io/";
 const Map<String, String> apiHeaders = {
   "Content-Type": "application/json",
   "Accept": "application/json",
+  "Connection": "keep-alive",
 };
 
 Future<String?> getToken() async {
