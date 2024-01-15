@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Calendar/calendar.dart';
 import 'package:ms18_applicatie/Dashboard/dashboard.dart';
 import 'package:ms18_applicatie/Dashboard/guestDashboard.dart';
-import 'package:ms18_applicatie/Models/stock.dart';
 import 'package:ms18_applicatie/Orders/orders.dart';
 import 'package:ms18_applicatie/Pictures/listPictures.dart';
-import 'package:ms18_applicatie/Profile/profile.dart';
 import 'package:ms18_applicatie/Shoppingcart/Shoppingcart.dart';
 import 'package:ms18_applicatie/Stock/stockReport.dart';
 import 'package:ms18_applicatie/Users/userList.dart';
@@ -54,7 +52,7 @@ class Menu extends StatelessWidget {
           Roles.ReceiptPay
         ]),
     menuItem.MenuItem(
-        text: 'Orders',
+        text: 'Bestellingen',
         icon: Icons.receipt_long,
         page: MaterialPageRoute(builder: (context) => Orders()),
         roles: [
@@ -62,18 +60,17 @@ class Menu extends StatelessWidget {
           Roles.Admin,
         ]),
     menuItem.MenuItem(
-      text: 'Agenda',
-      icon: Icons.calendar_month,
-      page: MaterialPageRoute(builder: (context) => const Calendar()),
-      roles: Roles.values
-    ),
+        text: 'Agenda',
+        icon: Icons.calendar_month,
+        page: MaterialPageRoute(builder: (context) => const Calendar()),
+        roles: Roles.values),
     menuItem.MenuItem(
-      text: 'Gebruikers',
-      icon: Icons.account_circle,
-      page: MaterialPageRoute(builder: (context) => const UserList()),
-      roles: [Roles.Admin,]
-    ),
-
+        text: 'Gebruikers',
+        icon: Icons.account_circle,
+        page: MaterialPageRoute(builder: (context) => const UserList()),
+        roles: [
+          Roles.Admin,
+        ]),
     menuItem.MenuItem(
       text: 'Bar',
       icon: Icons.local_bar,
@@ -100,14 +97,14 @@ class Menu extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 20),
           child: Image.asset(
-            "",
+            "./assets/logo.jpg",
             height: 60,
             width: 200,
           ),
         ),
       );
       for (menuItem.MenuItem menuitem in menuItems) {
-        if (menuitem.roles.indexWhere((e) => UserData.roles!.contains(e)) >
+        if (menuitem.roles.indexWhere((e) => globalLoggedInUserValues!.roles.contains(e)) >
             -1) {
           items.add(
             MenuItemBase(
@@ -135,9 +132,12 @@ class Menu extends StatelessWidget {
         ),
       );
       for (menuItem.MenuItem menuitem in menuItems) {
-        if (menuitem.roles.indexWhere((e) => UserData.roles!.contains(e)) > -1) {
-          if(menuitem.text == "Home" && globalLoggedInUserValues?.guest == true) {
-            menuitem.page = MaterialPageRoute(builder: (context) => const GuestDashboard());
+        if (menuitem.roles.indexWhere((e) => globalLoggedInUserValues!.roles.contains(e)) >
+            -1) {
+          if (menuitem.text == "Home" &&
+              globalLoggedInUserValues?.guest == true) {
+            menuitem.page =
+                MaterialPageRoute(builder: (context) => ShoppingCart());
           }
 
           items.add(
@@ -165,9 +165,11 @@ class Menu extends StatelessWidget {
     int i = 0;
 
     for (menuItem.MenuItem menuitem in menuItems) {
-      if (menuitem.roles.indexWhere((e) => UserData.roles!.contains(e)) > -1) {
-        if(menuitem.text == "Home" && globalLoggedInUserValues?.guest == true) {
-          menuitem.page = MaterialPageRoute(builder: (context) => const GuestDashboard());
+      if (menuitem.roles.indexWhere((e) => globalLoggedInUserValues!.roles.contains(e)) > -1) {
+        if (menuitem.text == "Home" &&
+            globalLoggedInUserValues?.guest == true) {
+          menuitem.page =
+              MaterialPageRoute(builder: (context) => ShoppingCart());
         }
 
         bool selected = MenuIndex.index == i;
@@ -237,7 +239,7 @@ class Menu extends StatelessWidget {
                   width: MediaQuery.of(context).size.width > tabletWidth
                       ? 250
                       : 60,
-                  color: secondColor,
+                  color: mainColor,
                   child: SingleChildScrollView(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -245,9 +247,9 @@ class Menu extends StatelessWidget {
                     ),
                   ),
                 )
-              : SizedBox(),
+              : const SizedBox(),
           Expanded(
-            child: child!,
+            child: child,
           ),
         ],
       ),
@@ -255,33 +257,29 @@ class Menu extends StatelessWidget {
   }
 }
 
-class UserData {
-  static List<Roles>? roles = globalLoggedInUserValues?.roles ?? [Roles.Order];
-}
-
 class MenuItemDesktop extends StatelessWidget {
   final String? text;
   final IconData? icon;
   final bool? selected;
 
-  MenuItemDesktop({this.text, this.icon, this.selected});
+  const MenuItemDesktop({this.text, this.icon, this.selected});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 25, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
       child: Row(
         children: [
           Icon(
             icon,
             size: 25,
-            color: selected! ? secondColor : textColorOnMainColor,
+            color: selected! ? mainColor : textColorOnMainColor,
           ),
-          SizedBox(width: 20),
+          const SizedBox(width: 20),
           Text(
             text!,
             style: TextStyle(
-                color: selected! ? secondColor : textColorOnMainColor,
+                color: selected! ? mainColor : textColorOnMainColor,
                 fontSize: 12,
                 height: 1.5),
             overflow: TextOverflow.ellipsis,
@@ -303,20 +301,20 @@ class MenuItemtabletWidth extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.all(5),
+      padding: const EdgeInsets.all(5),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Icon(
             icon,
             size: 30,
-            color: selected ? secondColor : textColorOnMainColor,
+            color: selected ? mainColor : textColorOnMainColor,
           ),
-          SizedBox(width: 25),
+          const SizedBox(width: 25),
           Text(
             text,
             style: TextStyle(
-              color: selected ? secondColor : textColorOnMainColor,
+              color: selected ? mainColor : textColorOnMainColor,
               fontSize: 8,
               height: 1.5,
             ),
@@ -342,9 +340,8 @@ class MenuItemBase extends StatelessWidget {
         padding: EdgeInsets.zero,
         elevation: 0,
         alignment: Alignment.center,
-        backgroundColor:
-            index == MenuIndex.index! ? mainColor : Colors.transparent,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+        backgroundColor: index == MenuIndex.index ? textColorOnMainColor : mainColor,
+        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
       ),
       onPressed: () {
         MenuIndex.index = index;
@@ -360,7 +357,7 @@ class MobileWidthMenuItem extends StatelessWidget {
   final String? text;
   final bool? selected;
 
-  MobileWidthMenuItem({this.text, this.icon, this.selected});
+  const MobileWidthMenuItem({this.text, this.icon, this.selected});
 
   @override
   Widget build(BuildContext context) {
@@ -370,12 +367,12 @@ class MobileWidthMenuItem extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Icon(icon, color: selected! ? secondColor : textColorOnMainColor),
+          Icon(icon, color: selected! ? mainColor : textColorOnMainColor),
           Text(
             text!,
             style: TextStyle(
                 fontSize: 8,
-                color: selected! ? secondColor : textColorOnMainColor),
+                color: selected! ? mainColor : textColorOnMainColor),
             overflow: TextOverflow.ellipsis,
           ),
         ],

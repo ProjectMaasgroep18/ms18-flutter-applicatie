@@ -7,27 +7,27 @@ import 'package:ms18_applicatie/Widgets/paddingSpacing.dart';
 import '../config.dart';
 
 const Map<String, IconData> productIcons = {
-  "Lunch Dining": Icons.lunch_dining,
-  "Cake": Icons.cake,
-  "Local Bar": Icons.local_bar,
-  "Local Cafe": Icons.local_cafe,
+  "Hamburger": Icons.lunch_dining,
+  "Taart": Icons.cake,
+  "Koffie": Icons.local_bar,
+  "Cocktail": Icons.local_cafe,
   "Liquor": Icons.liquor,
-  "Local Pizza": Icons.local_pizza,
-  "Icecream": Icons.icecream,
-  "Bakery Dinding": Icons.bakery_dining,
-  "Soup Kitchen": Icons.soup_kitchen,
-  "Set Meal": Icons.set_meal,
-  "Rice Bowl": Icons.rice_bowl,
-  "Dinner Dining": Icons.dinner_dining,
-  "Egg Alt": Icons.egg_alt,
-  "Emoji Food Beverage": Icons.emoji_food_beverage,
-  "Ramen Dining": Icons.ramen_dining,
-  "Breakfast Dining": Icons.breakfast_dining,
+  "Pizza": Icons.local_pizza,
+  "Ijs": Icons.icecream,
+  "Croissant": Icons.bakery_dining,
+  "Soep": Icons.soup_kitchen,
+  "Vis": Icons.set_meal,
+  "Schaaltje": Icons.rice_bowl,
+  "Dinner": Icons.dinner_dining,
+  "Spiegelei": Icons.egg_alt,
+  "Thee": Icons.emoji_food_beverage,
+  "Noodels": Icons.ramen_dining,
+  "Brood": Icons.breakfast_dining,
   "Tapas": Icons.tapas,
-  "Sports Bar": Icons.sports_bar,
-  "Local Drink": Icons.local_drink,
-  "Wine Bar": Icons.wine_bar,
-  "Coffee": Icons.coffee,
+  "Bier": Icons.sports_bar,
+  "Drank": Icons.local_drink,
+  "Wijn": Icons.wine_bar,
+  "Koffie ": Icons.coffee,
 };
 
 Future<void> addItemsDialog(
@@ -71,7 +71,7 @@ Future<void> addItemsDialog(
             ),
             const PaddingSpacing(),
             InputDropDown(
-              labelText: "Icon",
+              labelText: "Icoon",
               value: productIcons.keys.contains(icon) ? icon : null,
               items: [
                 for (String item in productIcons.keys)
@@ -193,7 +193,7 @@ class StockElement extends StatelessWidget {
       subtitle: Text('€${priceFormat.format(stockProduct.product.price)}'),
       contentPadding: EdgeInsets.zero,
       trailing: isReadOnly
-          ? Text(stockProduct.quantity.toString())
+          ? Text(stockProduct.quantity.toString(), style: const TextStyle(fontSize: 15),)
           : SizedBox(
               width: 160,
               child: Row(

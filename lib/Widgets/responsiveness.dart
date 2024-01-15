@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/config.dart';
 
 bool isMobile(BuildContext context) {
-  double screenWidth = MediaQuery.of(context).size.width;
+  final double screenWidth = MediaQuery.of(context).size.width;
   return screenWidth <= mobileWidth;
 }
 

@@ -8,6 +8,7 @@ import 'package:ms18_applicatie/Dashboard/Widgets/statistics_grid.dart';
 import 'package:ms18_applicatie/Dashboard/data/data.dart';
 import 'package:ms18_applicatie/Profile/profile.dart';
 import 'package:ms18_applicatie/Stock/stockReport.dart';
+import 'package:ms18_applicatie/globals.dart';
 import 'package:ms18_applicatie/menu.dart';
 import 'package:rive/rive.dart';
 
@@ -27,7 +28,6 @@ class _OnboardingScreenState extends State<Dashboard> {
     _btnAnimationController = OneShotAnimation("active", autoplay: false);
     super.initState();
   }
-
   @override
   Widget build(BuildContext context) {
     return Menu(
@@ -37,7 +37,7 @@ class _OnboardingScreenState extends State<Dashboard> {
         "Dashboard",
         textAlign: TextAlign.left,
         style: TextStyle(
-            color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+            color: Colors.white, fontSize: 24),
       ),
       actions: [
         // profile picture in appbar
@@ -48,10 +48,9 @@ class _OnboardingScreenState extends State<Dashboard> {
               Navigator.push(context,
                   MaterialPageRoute(builder: ((context) => Profile())));
             },
-            child: const CircleAvatar(
+            child: CircleAvatar(
               radius: 22,
-              backgroundImage: NetworkImage(
-                  "https://avatars.githubusercontent.com/u/55942632?v=4"),
+              backgroundImage: Image.asset('assets/avatars/Avatar Default.jpg').image
             ),
           ),
         ),

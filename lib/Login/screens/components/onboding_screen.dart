@@ -127,7 +127,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           });
                         },
                         child: const Text(
-                          "Gast Login",
+                          "Inloggen als gast",
                           style: TextStyle(
                             color: Colors.lightBlue,
                             fontSize: 16,
