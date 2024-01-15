@@ -1,14 +1,12 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:ms18_applicatie/Api/apiManager.dart';
 import 'package:ms18_applicatie/Dashboard/dashboard.dart';
+import 'package:ms18_applicatie/Dashboard/guestDashboard.dart';
+import 'package:ms18_applicatie/Shoppingcart/Shoppingcart.dart';
 import 'package:ms18_applicatie/Widgets/popups.dart';
 import 'package:ms18_applicatie/config.dart';
 import 'package:ms18_applicatie/globals.dart';
-import 'package:ms18_applicatie/menu.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:ms18_applicatie/Login/screens/components/onboding_screen.dart';
 import 'package:ms18_applicatie/roles.dart';
@@ -118,7 +116,11 @@ class Maasgroep18App extends StatelessWidget {
             } else if (snapshot.hasData) {
               if (snapshot.data == true) {
                 globalLoggedIn = true;
-                return const Dashboard();
+                if (globalLoggedInUserValues!.guest == true) {
+                  return ShoppingCart();
+                } else {
+                  return const Dashboard();
+                }
               } else {
                 return const OnboardingScreen();
               }

@@ -85,7 +85,7 @@ class _SignInFormState extends State<SignInForm> {
                 const PaddingSpacing(),
                 const PaddingSpacing(),
                 InputField(
-                  labelText: "Password",
+                  labelText: "Wachtwoord",
                   isUnderlineBorder: true,
                   isPassword: true,
                   controller: passwordController,
@@ -121,7 +121,7 @@ class _SignInFormState extends State<SignInForm> {
 
                     // signIn(context);
                   },
-                  text: 'Sign in',
+                  text: 'Inloggen',
                   icon: Icons.arrow_forward,
                 ),
               ],
@@ -151,11 +151,11 @@ class _SignInFormState extends State<SignInForm> {
                     confetti =
                         controller.findSMI("Trigger explosion") as SMITrigger;
                     await Future.delayed(const Duration(seconds: 5), () {
-                      Navigator.pushReplacement(
+                      Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(
                           builder: (context) => const Dashboard(),
-                        ),
+                        ), (T)=>false
                       );
                     });
                   },
