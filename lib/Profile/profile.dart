@@ -24,6 +24,8 @@ class Profile extends StatelessWidget {
     };
     await ApiManager.get("api/v1/User/Logout", headers);
     prefs.remove('token');
+    globalLoggedInUserValues = null;
+    globalLoggedIn = false;
   }
 
   final TextEditingController emailController =
