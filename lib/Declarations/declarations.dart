@@ -198,10 +198,10 @@ class _DeclarationsState extends State<Declarations> {
                                               ),
                                             ),
                                             Text(
-                                              costCentre["id"].toString() == ""
+                                              costCentre["name"].toString() == ""
                                                   ? "Geen \n"
                                                       "kostencentrum"
-                                                  : costCentre["id"].toString(),
+                                                  : costCentre["name"].toString(),
                                               style: const TextStyle(
                                                 color: Colors.white,
                                                 fontSize: 15,
@@ -338,6 +338,7 @@ class _DeclarationsState extends State<Declarations> {
             ),
           ),
           actions: <Widget>[
+            if (declInfo['isApprovable'])
             TextButton(
               onPressed: () async {
                 // Update the status
@@ -367,6 +368,7 @@ class _DeclarationsState extends State<Declarations> {
               },
               child: const Text('Goedkeuren'),
             ),
+            if (declInfo['isApprovable'])
             TextButton(
               onPressed: () async {
                 // Update the status
