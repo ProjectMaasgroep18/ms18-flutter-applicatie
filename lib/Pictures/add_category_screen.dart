@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'category.dart';
+import 'package:ms18_applicatie/Pictures/category.dart';
+import 'package:ms18_applicatie/globals.dart';
+import 'package:ms18_applicatie/config.dart';
 
 //Deze pagina voor de knop (Album toevogen )
 
 class AddCategoryScreen extends StatefulWidget {
   final Category? parentCategory;
+
 
   AddCategoryScreen({Key? key, this.parentCategory}) : super(key: key);
 
@@ -23,9 +26,7 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
   Future<http.Response?> _submit() async {
     return http.post(
         Uri.parse('https://localhost:7059/api/albums'),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
+        headers: getHeaders(),
         body: jsonEncode(<String, String>{
           'Name': _titleController.text,
           'Year': (_selectedDate?.year).toString(),

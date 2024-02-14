@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import '../menu.dart';
-import 'category.dart';
-import 'category_list_item.dart';
-import 'photo.dart';
+import 'package:ms18_applicatie/menu.dart';
+import 'package:ms18_applicatie/Pictures/category.dart';
+import 'package:ms18_applicatie/Pictures/category_list_item.dart';
+import 'package:ms18_applicatie/Pictures/photo.dart';
 import 'add_category_screen.dart';
-import 'add_sub_category_screen.dart';
+import 'package:ms18_applicatie/Pictures/add_sub_category_screen.dart';
 
 class ListPictures extends StatefulWidget {
   const ListPictures({Key? key}) : super(key: key);

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'category.dart';
-import 'category_photos_screen.dart';
-import 'add_sub_category_screen.dart';
+import '/Pictures/category.dart';
+import '/Pictures/category_photos_screen.dart';
+import '/Pictures/add_sub_category_screen.dart';
 
 class CategoryListItem extends StatefulWidget {
   final Category category;
