@@ -115,7 +115,7 @@ const Map<RolesNames, int> roles = {
 
 // Base url and headers for the api
 const Set<int> allowedStatusCodes = {200, 204, 201};
-const String apiUrl = "https://localhost:7059/";
+const String apiUrl = "http://10.0.2.2:5032/";
 
 const Map<String, String> apiHeaders = {
   "Content-Type": "application/json",
