@@ -61,7 +61,7 @@ class _AddSubAlbumScreenState extends State<AddSubAlbumScreen> {
                     onPressed: _submit,
                     child: Text('Toevoegen', style: TextStyle(color: Colors.white)),
                     style: ElevatedButton.styleFrom(
-                      primary: Theme.of(context).primaryColor,
+                      backgroundColor: Theme.of(context).primaryColor,
                     ),
                   ),
                 ),
@@ -76,7 +76,7 @@ class _AddSubAlbumScreenState extends State<AddSubAlbumScreen> {
                     },
                     child: Text('Terug', style: TextStyle(color: Colors.white)),
                     style: ElevatedButton.styleFrom(
-                      primary: Colors.grey,
+                      backgroundColor: Colors.grey,
                     ),
                   ),
                 ),

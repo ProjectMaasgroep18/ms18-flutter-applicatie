@@ -44,7 +44,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   intl: ^0.18.1
-  rive: ^0.12.3
+  rive: ^0.13.0
   flutter_svg: ^2.0.9
   flutter_easyloading: ^3.0.5
   image_picker: ^1.0.4

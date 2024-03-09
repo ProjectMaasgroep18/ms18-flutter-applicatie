@@ -90,7 +90,7 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
                 ElevatedButton(
                   onPressed: () => _selectDate(context),
                   child: Text('Kies Datum', style: TextStyle(color: Colors.white)),
-                  style: ElevatedButton.styleFrom(primary: mainColor),
+                  style: ElevatedButton.styleFrom(backgroundColor: mainColor),
                 ),
               ],
             ),
@@ -100,7 +100,7 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
               child: ElevatedButton(
                 onPressed: _submit,
                 style: ElevatedButton.styleFrom(
-                  primary: mainColor,
+                  backgroundColor: mainColor,
                   textStyle: TextStyle(color: Colors.white),
                 ),
                 child:  Text('Opslaan', style: TextStyle(color: Colors.white)),
@@ -114,7 +114,7 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
                   Navigator.of(context).pop();
                 },
                 style: ElevatedButton.styleFrom(
-                  primary: Colors.grey,
+                  backgroundColor: Colors.grey,
                   textStyle: TextStyle(color: Colors.white),
                 ),
                 child: Text('Teurg', style: TextStyle(color: Colors.white)),

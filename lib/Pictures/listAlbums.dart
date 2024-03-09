@@ -3,6 +3,7 @@ import '../Pictures/models/category.dart';
 import '../Api/apiManager.dart';
 import '../globals.dart';
 import '../config.dart';
+import '../menu.dart';
 
 class ListAlbums extends StatefulWidget {
   const ListAlbums({super.key});
@@ -242,51 +243,56 @@ class _ListAlbumsState extends State<ListAlbums> {
 
   @override
   Widget build(BuildContext context) {
-    List<Category> filteredCategories = allCategories.where((album) =>
-    album.parentAlbumId == currentAlbum).toList();
+    List<Category> filteredCategories = allCategories
+        .where((album) => album.parentAlbumId == currentAlbum)
+        .toList();
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('List Albums'),
-        leading: currentAlbum != null ? IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () => goBackToParentAlbum(),
-        ) : null,
-      ),
-      body: isLoading
-          ? Center(child: CircularProgressIndicator())
-          : ListView.builder(
-        itemCount: filteredCategories.length,
-        itemBuilder: (context, index) {
-          final category = filteredCategories[index];
-          return ListTile(
-            leading: category.coverPhotoId != null ? Image.asset(
-                'assets/photos/${category.coverPhotoId}') : Image.asset(
-                'assets/photos/folderIcon.png'),
-            title: Text(category.name),
-            subtitle: Text('Photos: ${category.photoCount ?? 0}'),
-            onTap: () => onAlbumClicked(category),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                  icon: Icon(Icons.edit, color: Colors.blue),
-                  onPressed: () => editAlbum(context, category, index),
-                ),
-                IconButton(
-                  icon: Icon(Icons.delete, color: Colors.red),
-                  onPressed: () => deleteAlbum(category.id, index),
-                ),
-              ],
-            ),
-          );
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: addCategory,
-        child: Icon(Icons.add),
+    return Menu(
+      title: Text('List Albums'),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('List Albums'),
+          leading: currentAlbum != null
+              ? IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: goBackToParentAlbum,
+          )
+              : null,
+        ),
+        body: isLoading
+            ? Center(child: CircularProgressIndicator())
+            : ListView.builder(
+          itemCount: filteredCategories.length,
+          itemBuilder: (context, index) {
+            final category = filteredCategories[index];
+            return ListTile(
+              leading: category.coverPhotoId != null
+                  ? Image.asset('assets/photos/${category.coverPhotoId}')
+                  : Image.asset('assets/photos/folderIcon.png'),
+              title: Text(category.name),
+              subtitle: Text('Photos: ${category.photoCount ?? 0}'),
+              onTap: () => onAlbumClicked(category),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.edit, color: Colors.blue),
+                    onPressed: () => editAlbum(context, category, index),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.delete, color: Colors.red),
+                    onPressed: () => deleteAlbum(category.id, index),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: addCategory,
+          child: Icon(Icons.add),
+        ),
       ),
     );
   }
 }
-

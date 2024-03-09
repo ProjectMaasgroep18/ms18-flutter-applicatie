@@ -90,7 +90,7 @@ class _PhotoDetailScreenState extends State<PhotoDetailScreen> {
                             //Opslaan  button logic here
                           },
                           style: ElevatedButton.styleFrom(
-                            primary: mainColor,
+                            backgroundColor: mainColor,
                           ),
                           child: Text('Opslaan', style: TextStyle(color: Colors.white)),
                         ),
@@ -103,7 +103,7 @@ class _PhotoDetailScreenState extends State<PhotoDetailScreen> {
                             // Verwijderen button logic here
                           },
                           style: ElevatedButton.styleFrom(
-                            primary: Colors.grey,
+                            backgroundColor: Colors.grey,
                           ),
                           child: Text('Verwijderen', style: TextStyle(color: Colors.white)),
                         ),

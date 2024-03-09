@@ -180,8 +180,7 @@ class _AddPhotoScreenState extends State<AddPhotoScreen> {
         ElevatedButton(
           onPressed: _takePhoto,
           style: ElevatedButton.styleFrom(
-            primary: Colors.blue,
-            onPrimary: Colors.white,
+            foregroundColor: Colors.white, backgroundColor: Colors.blue,
             padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(30),
@@ -232,7 +231,7 @@ class _AddPhotoScreenState extends State<AddPhotoScreen> {
                 label: Text('Selecteer bestanden', style: TextStyle(color: Colors.white)),
                 onPressed: _selectFiles,
                 style: ElevatedButton.styleFrom(
-                  primary: mainColor,
+                  backgroundColor: mainColor,
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   textStyle: TextStyle(fontSize: 16),
                 ),
@@ -285,7 +284,7 @@ class _AddPhotoScreenState extends State<AddPhotoScreen> {
                 onPressed: _submit,
                 child: Text('Toevoegen', style: TextStyle(color: Colors.white)),
                 style: ElevatedButton.styleFrom(
-                  primary: mainColor,
+                  backgroundColor: mainColor,
                 ),
               ),
             ),
@@ -298,7 +297,7 @@ class _AddPhotoScreenState extends State<AddPhotoScreen> {
                 },
                 child: Text('Terug', style: TextStyle(color: Colors.white)),
                 style: ElevatedButton.styleFrom(
-                  primary: Colors.grey,
+                  backgroundColor: Colors.grey,
                 ),
               ),
             ),
