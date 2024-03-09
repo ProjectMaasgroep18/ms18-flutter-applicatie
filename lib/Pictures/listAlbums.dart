@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../Pictures/models/category.dart';
 import '../Api/apiManager.dart';
 import '../globals.dart';
@@ -13,6 +14,7 @@ class ListAlbums extends StatefulWidget {
 }
 
 class _ListAlbumsState extends State<ListAlbums> {
+  String displayedTitle = 'List Albums'; // Add this line
   List<Category> allCategories = [];
   bool isLoading = true;
   String? selectedParentAlbumId;
@@ -40,11 +42,91 @@ class _ListAlbumsState extends State<ListAlbums> {
     }
   }
 
-  void deleteAlbum(String albumId, int index) async {
+  // Voeg de aangepaste functie toe
+  String formatTextWithEllipsis(String input, int maxLength) {
+    if (input.isEmpty) {
+      return input;
+    }
+
+    List<String> words = input.split(' ');
+    words.forEach((word) {
+      if (word.isNotEmpty) {
+        words[words.indexOf(word)] =
+            word[0].toUpperCase() + word.substring(1).toLowerCase();
+      }
+    });
+
+    String result = words.join(' ');
+
+    if (result.length > maxLength) {
+      result = result.substring(0, maxLength - 3) + '...';
+    }
+
+    return result;
+  }
+
+
+  Future<void> showDeleteConfirmationDialog(String albumTitle, String albumId,
+      int index) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            'Bevestig Verwijdering',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 18.0,
+            ),
+          ),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                RichText(
+                  text: TextSpan(
+                    style: DefaultTextStyle
+                        .of(context)
+                        .style,
+                    children: <TextSpan>[
+                      TextSpan(text: 'Weet je zeker dat je '),
+                      TextSpan(text: formatTextWithEllipsis(albumTitle, 20),
+                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      TextSpan(text: ' en alle onderliggende onderdelen wilt '),
+                      TextSpan(text: 'verwijderen',
+                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      TextSpan(text: '?'),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Ja'),
+              onPressed: () {
+                deleteAlbum(albumId, index);
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Nee'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
+  void deleteAlbum(String albumId, int index) {
     try {
-      await ApiManager.delete('api/albums/$albumId', getHeaders());
+      ApiManager.delete('api/albums/$albumId', getHeaders());
       setState(() => allCategories.removeAt(index));
-      fetchAlbums();
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Album successfully deleted")));
     } catch (e) {
@@ -53,6 +135,7 @@ class _ListAlbumsState extends State<ListAlbums> {
           SnackBar(content: Text("Error deleting album: $e")));
     }
   }
+
 
   void addCategory() {
     TextEditingController nameController = TextEditingController();
@@ -88,29 +171,48 @@ class _ListAlbumsState extends State<ListAlbums> {
     );
   }
 
+  String formatText(String input) {
+    if (input.isEmpty) {
+      return input;
+    }
+
+    List<String> words = input.split(' ');
+    words.forEach((word) {
+      if (word.isNotEmpty) {
+        words[words.indexOf(word)] =
+            word[0].toUpperCase() + word.substring(1).toLowerCase();
+      }
+    });
+
+    return words.join(' ');
+  }
+
   Future<void> postCategory(String name, String year) async {
     try {
+      String formattedName = formatText(name);
+
       Map<String, dynamic> body = {
-        'name': name,
+        'name': formattedName,
       };
 
       if (year.isNotEmpty) {
         body['year'] = int.tryParse(year);
       }
 
-      // Only add parentAlbumId to the JSON body if it's not null
       if (currentAlbum != null) {
         body['parentAlbumId'] = currentAlbum;
       }
 
       await ApiManager.post('api/albums', body, getHeaders());
-      fetchAlbums(); // Refresh the list of albums/categories
+      fetchAlbums(); // Refresh the albums/categories list
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Category added successfully')));
+        SnackBar(content: Text('Category added successfully')),
+      );
     } catch (e) {
       print('Error adding category: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error adding category: $e')));
+        SnackBar(content: Text('Error adding category: $e')),
+      );
     }
   }
 
@@ -212,6 +314,7 @@ class _ListAlbumsState extends State<ListAlbums> {
     }
   }
 
+
   void goBackToParentAlbum() {
     if (currentAlbum == null) {
       // At the root level, no parent exists
@@ -229,17 +332,34 @@ class _ListAlbumsState extends State<ListAlbums> {
 
     setState(() {
       // If an album is found, set currentAlbum to its parentAlbumId. Otherwise, set currentAlbum to null.
-      currentAlbum = currentCategory?.parentAlbumId;
+      currentAlbum = currentCategory?.parentAlbumId ?? null;
       fetchAlbums(); // Refresh the list based on the new currentAlbum
     });
+
+    // Update the displayed title after the state is updated
+    if (currentAlbum != null) {
+      setState(() {
+        displayedTitle = allCategories
+            .firstWhere((category) => category.id == currentAlbum)
+            .name;
+      });
+    } else {
+      setState(() {
+        displayedTitle = 'List Albums';
+      });
+    }
   }
+
 
   void onAlbumClicked(Category album) {
     setState(() {
-      currentAlbum = album.id; // Navigate into the clicked album
+      displayedTitle = album.name;
+      currentAlbum = album.id;
+      fetchAlbums();
     });
-
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -248,10 +368,18 @@ class _ListAlbumsState extends State<ListAlbums> {
         .toList();
 
     return Menu(
-      title: Text('List Albums'),
+      title: Text(
+        'Albums',
+        style: TextStyle(color: Colors.white),
+      ),
       child: Scaffold(
         appBar: AppBar(
-          title: Text('List Albums'),
+          title: Text(
+            displayedTitle,
+            style: currentAlbum == null
+                ? TextStyle(fontWeight: FontWeight.normal)  // Main screen title style
+                : TextStyle(fontWeight: FontWeight.bold),  // Sub-album title style
+          ),
           leading: currentAlbum != null
               ? IconButton(
             icon: Icon(Icons.arrow_back),
@@ -261,27 +389,91 @@ class _ListAlbumsState extends State<ListAlbums> {
         ),
         body: isLoading
             ? Center(child: CircularProgressIndicator())
-            : ListView.builder(
+            : GridView.builder(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 8.0,
+            mainAxisSpacing: 8.0,
+          ),
           itemCount: filteredCategories.length,
           itemBuilder: (context, index) {
             final category = filteredCategories[index];
-            return ListTile(
-              leading: category.coverPhotoId != null
-                  ? Image.asset('assets/photos/${category.coverPhotoId}')
-                  : Image.asset('assets/photos/folderIcon.png'),
-              title: Text(category.name),
-              subtitle: Text('Photos: ${category.photoCount ?? 0}'),
-              onTap: () => onAlbumClicked(category),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
+            String formattedAlbumName = formatText(category.name);
+
+            final maxLength = 20;
+            if (formattedAlbumName.length > maxLength) {
+              formattedAlbumName =
+                  formattedAlbumName.substring(0, maxLength - 2) + '...';
+            }
+
+            return Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.black),
+              ),
+              child: Stack(
                 children: [
-                  IconButton(
-                    icon: Icon(Icons.edit, color: Colors.blue),
-                    onPressed: () => editAlbum(context, category, index),
+                  GestureDetector(
+                    onTap: () => onAlbumClicked(category),
+                    child: category.coverPhotoId != null
+                        ? Image.asset(
+                      'assets/photos/${category.coverPhotoId}',
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      height: double.infinity,
+                    )
+                        : Image.asset(
+                      'assets/photos/folderIcon.png',
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      height: double.infinity,
+                    ),
                   ),
-                  IconButton(
-                    icon: Icon(Icons.delete, color: Colors.red),
-                    onPressed: () => deleteAlbum(category.id, index),
+                  Positioned(
+                    top: 0,
+                    left: 0,
+                    child: Container(
+                      color: Colors.black.withOpacity(0.7),
+                      padding: EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Text(
+                        formattedAlbumName,
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 0.0,
+                    right: 0.0,
+                    child: Container(
+                      padding: EdgeInsets.all(0.0),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.5),
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(0.0),
+                          bottomRight: Radius.circular(0.0),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            iconSize: 20.0,
+                            icon: Icon(Icons.edit, color: Colors.blue),
+                            onPressed: () =>
+                                editAlbum(context, category, index),
+                          ),
+                          SizedBox(
+                            width: 0.0,
+                          ),
+                          IconButton(
+                            iconSize: 20.0,
+                            icon: Icon(Icons.delete, color: Colors.red),
+                            onPressed: () =>
+                                showDeleteConfirmationDialog(
+                                    category.name, category.id, index),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ],
               ),
