@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'category.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:ms18_applicatie/Pictures/category.dart';
+import 'package:ms18_applicatie/globals.dart';
+import 'package:ms18_applicatie/config.dart';
 
 //Deze pagina voor de knop (Album toevogen )
 
 class AddCategoryScreen extends StatefulWidget {
   final Category? parentCategory;
+
 
   AddCategoryScreen({Key? key, this.parentCategory}) : super(key: key);
 
@@ -17,6 +22,17 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
   final TextEditingController _titleController = TextEditingController();
   DateTime? _selectedDate;
   Color mainColor = Color(0xFF15233d);
+
+  Future<http.Response?> _submit() async {
+    return http.post(
+        Uri.parse('https://localhost:7059/api/albums'),
+        headers: getHeaders(),
+        body: jsonEncode(<String, String>{
+          'Name': _titleController.text,
+          'Year': (_selectedDate?.year).toString(),
+        })
+    );
+  }
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -74,7 +90,7 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
                 ElevatedButton(
                   onPressed: () => _selectDate(context),
                   child: Text('Kies Datum', style: TextStyle(color: Colors.white)),
-                  style: ElevatedButton.styleFrom(primary: mainColor),
+                  style: ElevatedButton.styleFrom( backgroundColor:  mainColor),
                 ),
               ],
             ),
@@ -82,11 +98,9 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
             SizedBox(
               width: 200,
               child: ElevatedButton(
-                onPressed: () {
-                  //Hier moeten we de nieuwe categorie toevogen in database
-                },
+                onPressed: _submit,
                 style: ElevatedButton.styleFrom(
-                  primary: mainColor,
+                  backgroundColor: mainColor,
                   textStyle: TextStyle(color: Colors.white),
                 ),
                 child:  Text('Opslaan', style: TextStyle(color: Colors.white)),
@@ -100,7 +114,7 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
                   Navigator.of(context).pop();
                 },
                 style: ElevatedButton.styleFrom(
-                  primary: Colors.grey,
+                  backgroundColor: Colors.grey,
                   textStyle: TextStyle(color: Colors.white),
                 ),
                 child: Text('Teurg', style: TextStyle(color: Colors.white)),

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'category.dart';
-import 'category_photos_screen.dart';
-import 'add_sub_category_screen.dart';
+import '/Pictures/category.dart';
+import '/Pictures/photo.dart';
+import '/Pictures/category_photos_screen.dart';
+import '/Pictures/add_sub_category_screen.dart';
 
 class CategoryListItem extends StatefulWidget {
   final Category category;
@@ -13,7 +14,7 @@ class CategoryListItem extends StatefulWidget {
     Key? key,
     required this.category,
     required this.onDelete,
-    required this.onAddSubAlbum,
+    required this.onAddSubAlbum, required void Function() onTap,
   }) : super(key: key);
 
   @override
@@ -23,6 +24,8 @@ class CategoryListItem extends StatefulWidget {
 class _CategoryListItemState extends State<CategoryListItem> {
   bool isHovering = false;
   bool isExpanded = false;
+
+  get childAlbumIds => null;
 
 
   void _deleteSubAlbum(int subAlbumIndex) {
@@ -41,7 +44,6 @@ class _CategoryListItemState extends State<CategoryListItem> {
               child: Text('Verwijderen'),
               onPressed: () {
                 setState(() {
-                  widget.category.subAlbums.removeAt(subAlbumIndex);
                 });
                 Navigator.of(context).pop();
               },
@@ -87,14 +89,14 @@ class _CategoryListItemState extends State<CategoryListItem> {
 
   @override
   Widget build(BuildContext context) {
-    final formattedDate = DateFormat('yyyy-MM-dd').format(widget.category.date);
+    final formattedDate = DateFormat('yyyy-MM-dd').format(widget.category.year as DateTime);
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Column(
       children: [
         InkWell(
           onTap: () {
-            if (widget.category.subAlbums.isNotEmpty) {
+            if (widget.category.childAlbumIds!.isNotEmpty) {
               setState(() {
                 isExpanded = !isExpanded;
               });
@@ -123,7 +125,7 @@ class _CategoryListItemState extends State<CategoryListItem> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              widget.category.title,
+                              widget.category.name,
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 24.0,
@@ -162,15 +164,6 @@ class _CategoryListItemState extends State<CategoryListItem> {
                     ],
                   ),
                   SizedBox(height: 8.0),
-                  if (widget.category.photos.isNotEmpty)
-                    Container(
-                      width: screenWidth,
-                      height: 300,
-                      child: Image.network(
-                        widget.category.photos.first.imageUrl,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
                 ],
               ),
             ),
@@ -193,12 +186,12 @@ class _CategoryListItemState extends State<CategoryListItem> {
   }
 
   List<Widget> _buildSubAlbumList() {
-    return widget.category.subAlbums.asMap().entries.map((entry) {
+    return widget.category.childAlbumIds!.asMap().entries.map((entry) {
       int idx = entry.key;
-      Category subAlbum = entry.value;
+      String subAlbum = entry.value;
 
       return ListTile(
-        title: Text(subAlbum.title),
+        title: Text(subAlbum),
         trailing: Tooltip(
           message: "Sub album verwijderen",
           child: IconButton(
@@ -210,7 +203,7 @@ class _CategoryListItemState extends State<CategoryListItem> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => CategoryPhotosScreen(category: subAlbum),
+              builder: (context) => CategoryPhotosScreen(category: childAlbumIds),
             ),
           );
         },

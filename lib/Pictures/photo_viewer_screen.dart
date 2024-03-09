@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'editable_file.dart';
+import 'package:ms18_applicatie/Pictures/editable_file.dart';
 
 class PhotoViewerScreen extends StatefulWidget {
   final List<EditableFile> photos;

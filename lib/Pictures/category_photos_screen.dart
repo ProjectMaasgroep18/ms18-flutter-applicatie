@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'category.dart';
-import 'photo_detail_screen.dart';
+import 'package:ms18_applicatie/Pictures/category.dart';
+import 'package:ms18_applicatie/Pictures/photo_detail_screen.dart';
 import 'package:intl/intl.dart';
-import 'add_photo_screen.dart';
-import 'photo.dart';
+import 'package:ms18_applicatie/Pictures/add_photo_screen.dart';
+import 'package:ms18_applicatie/Pictures/photo.dart';
 
 //Deze pagina is de photos pagina binnen een sub album .
 
@@ -26,11 +26,11 @@ class _CategoryPhotosScreenState extends State<CategoryPhotosScreen> {
   List<Photo> _sortPhotos(List<Photo> photos) {
     switch (_selectedOption) {
       case SortingOption.newest:
-        return photos.toList()..sort((a, b) => b.date.compareTo(a.date));
+        return photos.toList()..sort((a, b) => b.takenOn.compareTo(a.takenOn));
       case SortingOption.oldest:
-        return photos.toList()..sort((a, b) => a.date.compareTo(b.date));
+        return photos.toList()..sort((a, b) => a.takenOn.compareTo(b.takenOn));
       case SortingOption.likes:
-        return photos.toList()..sort((a, b) => b.likeCount.compareTo(a.likeCount));
+        return photos.toList()..sort((a, b) => b.likesCount.compareTo(a.likesCount));
     }
   }
 
@@ -38,7 +38,7 @@ class _CategoryPhotosScreenState extends State<CategoryPhotosScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.category.title),
+        title: Text(widget.category.name),
         actions: [
           Container(
             width: 200.0,
@@ -83,9 +83,9 @@ class _CategoryPhotosScreenState extends State<CategoryPhotosScreen> {
                 crossAxisSpacing: 8.0,
                 mainAxisSpacing: 8.0,
               ),
-              itemCount: widget.category.photos.length,
+              itemCount: widget.category.photoCount,
               itemBuilder: (context, index) {
-                final photos = _sortPhotos(widget.category.photos);
+                final photos = _sortPhotos(widget.category.photoCount as List<Photo>);
                 final photo = photos[index];
                 return InkWell(
                   onTap: () {
@@ -100,7 +100,7 @@ class _CategoryPhotosScreenState extends State<CategoryPhotosScreen> {
                     );
                   },
                   child: GridTile(
-                    child: Image.network(photo.imageUrl, fit: BoxFit.cover),
+                    child: Image.network(photo.imageBase64, fit: BoxFit.cover),
                     footer: GridTileBar(
                       backgroundColor: Colors.black.withOpacity(0.7),
                       title: Row(
@@ -111,9 +111,9 @@ class _CategoryPhotosScreenState extends State<CategoryPhotosScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Text(photo.title, overflow: TextOverflow.ellipsis),
+                                Text(photo.title as String, overflow: TextOverflow.ellipsis),
                                 SizedBox(height: 4),
-                                Text(DateFormat('dd-MM-yyyy').format(photo.date), style: TextStyle(fontSize: 12)),
+                                Text(DateFormat('dd-MM-yyyy').format(photo.takenOn), style: TextStyle(fontSize: 12)),
                               ],
                             ),
                           ),
@@ -122,7 +122,7 @@ class _CategoryPhotosScreenState extends State<CategoryPhotosScreen> {
                               crossAxisAlignment: CrossAxisAlignment.end,
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Text(photo.uploader, style: TextStyle(fontSize: 12)),
+                                Text(photo.uploaderId as String, style: TextStyle(fontSize: 12)),
                                 SizedBox(height: 4),
                                 Row(
                                   mainAxisSize: MainAxisSize.min,
@@ -131,7 +131,7 @@ class _CategoryPhotosScreenState extends State<CategoryPhotosScreen> {
                                     SizedBox(width: 6),
                                     Flexible(
                                       child: Text(
-                                        '${photo.likeCount} likes',
+                                        '${photo.likesCount} likes',
                                         style: TextStyle(fontSize: 12),
                                         overflow: TextOverflow.ellipsis,
                                       ),

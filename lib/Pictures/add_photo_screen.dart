@@ -1,11 +1,18 @@
+import 'dart:async';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_dropzone/flutter_dropzone.dart';
-import 'category.dart';
-import 'photo_viewer_screen.dart';
-import 'editable_file.dart';
+import 'package:ms18_applicatie/Pictures/category.dart';
+import 'package:ms18_applicatie/Pictures/photo_viewer_screen.dart';
+import 'package:ms18_applicatie/Pictures/editable_file.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'dart:convert';
+import 'package:http/http.dart'as http;
+import 'package:exif/exif.dart';
+import 'package:ms18_applicatie/globals.dart';
 
 //Deze pagina voor de knop (Photo toevogen )
 
@@ -38,8 +45,43 @@ class _AddPhotoScreenState extends State<AddPhotoScreen> {
 
   Future<void> _submit() async {
     if (_selectedFiles.isNotEmpty && _areTitlesValid()) {
-      // Submit logic here
+      for (var file in _selectedFiles) {
+          UploadPhoto(file);
+      }
     }
+  }
+
+  Future<String>getExifFromFile(var filebytes) async{
+    var exif = await readExifFromBytes(filebytes);
+    String tag = "";
+    exif.forEach((k,v) {
+      if(k.contains("DateTimeOriginal")){
+        final splitted = "$v".split(" ");
+        String date = splitted[0].replaceAll(":", "-");
+        String time = splitted[1];
+        tag = "$date" + "T" + "$time"+ ".000Z";
+      }
+    });
+    return tag;
+  }
+
+  Future<http.Response?> UploadPhoto(var file) async {
+    Uint8List listimage = file.file.bytes;
+    String preImage = base64Encode(listimage);
+    final tag = await getExifFromFile(listimage);
+    print(tag);
+    return http.post(
+        Uri.parse('https://localhost:7059/api/photos'),
+        headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          'Title': file.editableName,
+          'ImageData': preImage,
+          'ContentType': "image/${file.file.extension}",
+          'TakenOn': tag
+        })
+    );
   }
 
   bool _areTitlesValid() {
@@ -138,8 +180,7 @@ class _AddPhotoScreenState extends State<AddPhotoScreen> {
         ElevatedButton(
           onPressed: _takePhoto,
           style: ElevatedButton.styleFrom(
-            primary: Colors.blue,
-            onPrimary: Colors.white,
+            foregroundColor: Colors.white, backgroundColor: Colors.blue,
             padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(30),
@@ -190,7 +231,7 @@ class _AddPhotoScreenState extends State<AddPhotoScreen> {
                 label: Text('Selecteer bestanden', style: TextStyle(color: Colors.white)),
                 onPressed: _selectFiles,
                 style: ElevatedButton.styleFrom(
-                  primary: mainColor,
+                  backgroundColor: mainColor,
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   textStyle: TextStyle(fontSize: 16),
                 ),
@@ -243,7 +284,7 @@ class _AddPhotoScreenState extends State<AddPhotoScreen> {
                 onPressed: _submit,
                 child: Text('Toevoegen', style: TextStyle(color: Colors.white)),
                 style: ElevatedButton.styleFrom(
-                  primary: mainColor,
+                  backgroundColor: mainColor,
                 ),
               ),
             ),
@@ -256,7 +297,7 @@ class _AddPhotoScreenState extends State<AddPhotoScreen> {
                 },
                 child: Text('Terug', style: TextStyle(color: Colors.white)),
                 style: ElevatedButton.styleFrom(
-                  primary: Colors.grey,
+                  backgroundColor: Colors.grey,
                 ),
               ),
             ),
