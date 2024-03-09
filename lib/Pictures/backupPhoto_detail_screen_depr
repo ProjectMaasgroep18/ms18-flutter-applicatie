@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'photo_depr.dart';
+import 'models/photo.dart';
 //Deze pagina is de photo details pagina , (als jij op een photo klikt)
 Color mainColor = Color(0xFF15233d);
 

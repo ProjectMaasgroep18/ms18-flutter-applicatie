@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Pictures/photo_gallery_screen.dart';
 import '../Pictures/models/category.dart';
-import 'package:ms18_applicatie/Pictures/add_photo_screen.dart';
+import 'package:ms18_applicatie/Pictures/add_picture_screen.dart';
 import '../Api/apiManager.dart';
 import '../globals.dart';
 import '../config.dart';
@@ -642,7 +642,7 @@ class _ListAlbumsState extends State<ListAlbums> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => AddPhotoScreen()),
+                  MaterialPageRoute(builder: (context) => AddPictureScreen()),
                 );
               },
               child: Icon(Icons.photo_camera, color: Colors.white),

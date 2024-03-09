@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Dashboard/data/data.dart';
 import 'package:ms18_applicatie/Dashboard/functions.dart';
-import 'package:ms18_applicatie/Pictures/listPictures_depr.dart';
+import 'package:ms18_applicatie/Pictures/listAlbums.dart';
 import 'package:ms18_applicatie/team-c/Declarations/declarationsMenu.dart';
 
 import '../../menu.dart';
@@ -28,7 +28,7 @@ class StatisticsGrid extends StatelessWidget {
               MenuIndex.index=2;
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => ListPictures()),
+                MaterialPageRoute(builder: (context) => ListAlbums()),
               );
             } else if (statistics[index].link == 'DeclarationsMenu') {
               MenuIndex.index=3;
