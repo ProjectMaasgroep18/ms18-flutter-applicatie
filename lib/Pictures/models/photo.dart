@@ -2,7 +2,7 @@ class Photo {
   final String? id;
   final int? uploaderId;
   final DateTime uploadDate;
-  final String? title;
+  late final String? title;
   final String imageBase64;
   final String contentType;
   final DateTime? takenOn;
@@ -51,6 +51,10 @@ class Photo {
       likesCount: likesCount ?? this.likesCount,
       needsApproval: needsApproval ?? this.needsApproval,
     );
+  }
+
+  void updateTitle(String newTitle) {
+    title = newTitle;
   }
 
   factory Photo.fromJson(Map<String, dynamic> json) {
