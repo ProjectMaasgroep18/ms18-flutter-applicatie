@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:ms18_applicatie/Pictures/photo_gallery_screen.dart';
 import '../Pictures/models/category.dart';
 import 'package:ms18_applicatie/Pictures/add_photo_screen.dart';
 import '../Api/apiManager.dart';
@@ -354,11 +355,17 @@ class _ListAlbumsState extends State<ListAlbums> {
 
 
   void onAlbumClicked(Category album) {
-    setState(() {
-      displayedTitle = album.name;
-      currentAlbum = album.id;
-      fetchAlbums();
-    });
+    if (album.photoCount! > 0) {
+      // Navigate to PhotoGalleryScreen with the album.id
+      Navigator.push(context, MaterialPageRoute(builder: (context) => PhotoGalleryScreen(albumId: album.id)));
+    } else {
+      // If photoCount is 0 or null, do the existing logic
+      setState(() {
+        displayedTitle = album.name;
+        currentAlbum = album.id;
+        fetchAlbums();
+      });
+    }
   }
 
 
