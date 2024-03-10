@@ -6,6 +6,7 @@ import '../Api/apiManager.dart';
 import '../globals.dart';
 import '../config.dart';
 import '../menu.dart';
+import 'add_picture_screen.dart';
 
 class ListAlbums extends StatefulWidget {
   const ListAlbums({super.key});
@@ -493,7 +494,7 @@ class _ListAlbumsState extends State<ListAlbums> {
             Navigator.push(
             context,
               MaterialPageRoute(
-              builder: (context) => AddPhotoScreen(),
+              builder: (context) => AddPictureScreen(),
               ),
             );
             },

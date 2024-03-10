@@ -4,7 +4,6 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_dropzone/flutter_dropzone.dart';
-import 'package:ms18_applicatie/Pictures/category.dart';
 import 'package:ms18_applicatie/Pictures/photo_viewer_screen.dart';
 import 'package:ms18_applicatie/Pictures/editable_file.dart';
 import 'package:image_picker/image_picker.dart';

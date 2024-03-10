@@ -1,5 +1,5 @@
 class Photo {
-  final String id;
+  final String? id;
   final int? uploaderId;
   final DateTime uploadDate;
   final String? title;
@@ -12,7 +12,7 @@ class Photo {
   final bool needsApproval;
 
   Photo({
-    required this.id,
+    this.id,
     this.uploaderId,
     required this.uploadDate,
     this.title,
