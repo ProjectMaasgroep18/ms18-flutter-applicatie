@@ -13,15 +13,17 @@ import 'dart:convert';
 import 'package:http/http.dart'as http;
 import 'package:exif/exif.dart';
 import 'package:ms18_applicatie/globals.dart';
+import '../Api/apiManager.dart';
+import '../config.dart';
 
 //Deze pagina voor de knop (Photo toevogen )
 
-Color mainColor = Color(0xFF15233d);
+Color mainColorPhoto = Color(0xFF15233d);
 
 class AddPhotoScreen extends StatefulWidget {
-  final Category category;
 
-  const AddPhotoScreen({Key? key, required this.category}) : super(key: key);
+  const AddPhotoScreen({super.key});
+
 
   @override
   _AddPhotoScreenState createState() => _AddPhotoScreenState();
@@ -46,7 +48,7 @@ class _AddPhotoScreenState extends State<AddPhotoScreen> {
   Future<void> _submit() async {
     if (_selectedFiles.isNotEmpty && _areTitlesValid()) {
       for (var file in _selectedFiles) {
-          UploadPhoto(file);
+          postPhoto(file);
       }
     }
   }
@@ -65,7 +67,35 @@ class _AddPhotoScreenState extends State<AddPhotoScreen> {
     return tag;
   }
 
-  Future<http.Response?> UploadPhoto(var file) async {
+  Future<void> postPhoto(var file) async {
+    Uint8List listimage = file.file.bytes;
+    String preImage = base64Encode(listimage);
+    final tag = await getExifFromFile(listimage);
+    try {
+      Map<String, dynamic> body = {
+        'name': file.editableName,
+        'imageBase64': preImage,
+        'contentType': "image/${file.file.extension}",
+        'albumLocationId': currentAlbum,
+        'takenOn': tag
+      };
+
+      await ApiManager.post('api/photos', body, getHeaders());
+      //fetchAlbums();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Category added successfully')),
+      );
+    } catch (e) {
+      print('Error adding photo: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error adding photo: $e')),
+      );
+    }
+  }
+
+  /*
+    OUDE FUNCTIE
+    Future<http.Response?> UploadPhoto(var file) async {
     Uint8List listimage = file.file.bytes;
     String preImage = base64Encode(listimage);
     final tag = await getExifFromFile(listimage);
@@ -82,7 +112,7 @@ class _AddPhotoScreenState extends State<AddPhotoScreen> {
           'TakenOn': tag
         })
     );
-  }
+  }*/
 
   bool _areTitlesValid() {
     for (var controller in _titleControllers) {
@@ -133,7 +163,7 @@ class _AddPhotoScreenState extends State<AddPhotoScreen> {
     return Expanded(
       child: Container(
         decoration: BoxDecoration(
-          border: Border.all(color: mainColor, width: 2),
+          border: Border.all(color: mainColorPhoto, width: 2),
           borderRadius: BorderRadius.circular(8),
         ),
         alignment: Alignment.center,
@@ -231,7 +261,7 @@ class _AddPhotoScreenState extends State<AddPhotoScreen> {
                 label: Text('Selecteer bestanden', style: TextStyle(color: Colors.white)),
                 onPressed: _selectFiles,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: mainColor,
+                  backgroundColor: mainColorPhoto,
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   textStyle: TextStyle(fontSize: 16),
                 ),
@@ -284,7 +314,7 @@ class _AddPhotoScreenState extends State<AddPhotoScreen> {
                 onPressed: _submit,
                 child: Text('Toevoegen', style: TextStyle(color: Colors.white)),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: mainColor,
+                  backgroundColor: mainColorPhoto,
                 ),
               ),
             ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../Pictures/models/category.dart';
+import 'package:ms18_applicatie/Pictures/add_photo_screen.dart';
 import '../Api/apiManager.dart';
 import '../globals.dart';
 import '../config.dart';
@@ -480,11 +481,29 @@ class _ListAlbumsState extends State<ListAlbums> {
             );
           },
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: addCategory,
-          child: Icon(Icons.add),
-        ),
+        floatingActionButton: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            FloatingActionButton(
+            onPressed: addCategory,
+            child: Icon(Icons.add),
+            ),
+            FloatingActionButton(
+            onPressed: () {
+            Navigator.push(
+            context,
+              MaterialPageRoute(
+              builder: (context) => AddPhotoScreen(),
+              ),
+            );
+            },
+              child: Icon(Icons.add, color: Colors.white),
+              backgroundColor: mainColor,
+              tooltip: 'Fotos toevoegen',
+            ),
+          ]
       ),
-    );
+    ))
+    ;
   }
 }

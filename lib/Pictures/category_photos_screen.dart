@@ -156,7 +156,7 @@ class _CategoryPhotosScreenState extends State<CategoryPhotosScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => AddPhotoScreen(category: widget.category),
+              builder: (context) => AddPhotoScreen(),
             ),
           );
         },
