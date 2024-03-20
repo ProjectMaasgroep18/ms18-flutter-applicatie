@@ -25,4 +25,22 @@ class Category {
       photoCount: json['photoCount'],
     );
   }
+
+  Category copyWith({
+    String? id,
+    String? name,
+    int? year,
+    String? coverPhotoId,
+    String? parentAlbumId,
+    int? photoCount,
+  }) {
+    return Category(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      year: year ?? this.year,
+      coverPhotoId: coverPhotoId ?? this.coverPhotoId,
+      parentAlbumId: parentAlbumId ?? this.parentAlbumId,
+      photoCount: photoCount ?? this.photoCount,
+    );
+  }
 }

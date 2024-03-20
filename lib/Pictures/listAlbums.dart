@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:ms18_applicatie/Pictures/photo_gallery_screen.dart';
 import '../Pictures/models/category.dart';
 import 'package:ms18_applicatie/Pictures/add_photo_screen.dart';
@@ -7,7 +6,6 @@ import '../Api/apiManager.dart';
 import '../globals.dart';
 import '../config.dart';
 import '../menu.dart';
-import 'add_picture_screen.dart';
 
 class ListAlbums extends StatefulWidget {
   const ListAlbums({super.key});
@@ -17,33 +15,71 @@ class ListAlbums extends StatefulWidget {
 }
 
 class _ListAlbumsState extends State<ListAlbums> {
-  String displayedTitle = 'List Albums'; // Add this line
+  String displayedTitle = 'List Albums';
+  TextEditingController searchController = TextEditingController();
   List<Category> allCategories = [];
+  List<Category> filteredCategories = [];
   bool isLoading = true;
   String? selectedParentAlbumId;
+  int? selectedYear;
+  List<int> years = [];
+  int? selectedSortYear;
+
 
   @override
   void initState() {
     super.initState();
     fetchAlbums();
+    searchController.addListener(onSearchChanged);
   }
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }
+
+  void onSearchChanged() {
+    setState(() {
+      filteredCategories = filterCategories();
+    });
+  }
+
+  List<Category> filterCategories() {
+    String query = searchController.text.toLowerCase();
+    return allCategories.where((category) {
+      bool matchesQuery = category.name.toLowerCase().contains(query);
+      bool matchesYear = selectedSortYear == null || category.year == selectedSortYear;
+      return matchesQuery && matchesYear;
+    }).toList();
+  }
+
 
   void fetchAlbums() async {
     setState(() => isLoading = true);
     try {
-      final response = await ApiManager.get<List<dynamic>>(
-          'api/albums', getHeaders());
-      final albums = response.map((albumJson) => Category.fromJson(albumJson))
+      final response = await ApiManager.get<List<dynamic>>('api/albums', getHeaders());
+      final albums = response.map((albumJson) => Category.fromJson(albumJson)).toList();
+
+      years = albums
+          .map((album) => album.year)
+          .whereType<int>()
+          .toSet()
           .toList();
+      years.sort();
+
       setState(() {
         allCategories = albums;
         isLoading = false;
       });
+      onSearchChanged(); // Update filtered categories after fetching
     } catch (e) {
       print("Error fetching albums: $e");
       setState(() => isLoading = false);
     }
   }
+
+
 
   // Voeg de aangepaste functie toe
   String formatTextWithEllipsis(String input, int maxLength) {
@@ -123,6 +159,7 @@ class _ListAlbumsState extends State<ListAlbums> {
         );
       },
     );
+
   }
 
 
@@ -225,7 +262,6 @@ class _ListAlbumsState extends State<ListAlbums> {
     TextEditingController yearController = TextEditingController(
         text: category.year?.toString() ?? '');
 
-    // Temporary variable to hold the selected value inside the dialog
     String? tempSelectedParentAlbumId = category.parentAlbumId;
 
     showDialog(
@@ -233,7 +269,7 @@ class _ListAlbumsState extends State<ListAlbums> {
       builder: (context) {
         return AlertDialog(
           title: Text('Edit Album'),
-          content: StatefulBuilder( // This widget allows the dialog itself to be stateful
+          content: StatefulBuilder(
             builder: (BuildContext context, StateSetter setStateDialog) {
               return SingleChildScrollView(
                 child: Column(
@@ -250,7 +286,7 @@ class _ListAlbumsState extends State<ListAlbums> {
                       isExpanded: true,
                       hint: Text("Select Parent Album"),
                       onChanged: (value) {
-                        setStateDialog(() { // Use setStateDialog to update the dialog's state
+                        setStateDialog(() {
                           tempSelectedParentAlbumId = value;
                         });
                       },
@@ -282,7 +318,6 @@ class _ListAlbumsState extends State<ListAlbums> {
             ),
             TextButton(
               onPressed: () async {
-                // Update the main state with the new selection after closing the dialog
                 setState(() {
                   selectedParentAlbumId = tempSelectedParentAlbumId;
                 });
@@ -299,15 +334,30 @@ class _ListAlbumsState extends State<ListAlbums> {
     );
   }
 
-  Future<void> updateCategory(String id, String name, String year,
-      String? parentAlbumId) async {
+  Future<void> updateCategory(String id, String name, String year, String? parentAlbumId) async {
     try {
       Map<String, dynamic> body = {'name': name};
       if (year.isNotEmpty) body['year'] = int.tryParse(year);
       if (parentAlbumId != null) body['parentAlbumId'] = parentAlbumId;
 
       await ApiManager.put('api/albums/$id', body, getHeaders());
-      fetchAlbums(); // Refresh the albums/categories list
+      int updatedYear = int.parse(year);
+
+      // Find and update the category in allCategories
+      int indexToUpdate = allCategories.indexWhere((category) => category.id == id);
+      if(indexToUpdate != -1) {
+        Category oldCategory = allCategories[indexToUpdate];
+        allCategories[indexToUpdate] = oldCategory.copyWith(year: updatedYear);
+        setState(() {});
+      }
+
+      // Check if the updated year is new and should be added to years
+      if (!years.contains(updatedYear)) {
+        years.add(updatedYear);
+        years.sort();
+      }
+
+      fetchAlbums();
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Album updated successfully')));
     } catch (e) {
@@ -317,16 +367,14 @@ class _ListAlbumsState extends State<ListAlbums> {
     }
   }
 
-
   void goBackToParentAlbum() {
     if (currentAlbum == null) {
-      // At the root level, no parent exists
       return;
     }
 
     Category? currentCategory;
     try {
-      // Attempt to find the current album in the allCategories list
+      // find the current album in the allCategories list
       currentCategory = allCategories.firstWhere((category) => category.id == currentAlbum);
     } catch (e) {
       // If the album is not found, an exception will be caught, and currentCategory will remain null
@@ -372,146 +420,210 @@ class _ListAlbumsState extends State<ListAlbums> {
 
   @override
   Widget build(BuildContext context) {
-    List<Category> filteredCategories = allCategories
-        .where((album) => album.parentAlbumId == currentAlbum)
-        .toList();
-
     return Menu(
       title: Text(
         'Albums',
         style: TextStyle(color: Colors.white),
       ),
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            displayedTitle,
-            style: currentAlbum == null
-                ? TextStyle(fontWeight: FontWeight.normal)  // Main screen title style
-                : TextStyle(fontWeight: FontWeight.bold),  // Sub-album title style
-          ),
-          leading: currentAlbum != null
-              ? IconButton(
-            icon: Icon(Icons.arrow_back),
-            onPressed: goBackToParentAlbum,
-          )
-              : null,
-        ),
-        body: isLoading
-            ? Center(child: CircularProgressIndicator())
-            : GridView.builder(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            crossAxisSpacing: 8.0,
-            mainAxisSpacing: 8.0,
-          ),
-          itemCount: filteredCategories.length,
-          itemBuilder: (context, index) {
-            final category = filteredCategories[index];
-            String formattedAlbumName = formatText(category.name);
-
-            final maxLength = 20;
-            if (formattedAlbumName.length > maxLength) {
-              formattedAlbumName =
-                  formattedAlbumName.substring(0, maxLength - 2) + '...';
-            }
-
-            return Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.black),
+      appBar: AppBar(
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Expanded(
+              child: Text(
+                displayedTitle,
+                style: currentAlbum == null
+                    ? TextStyle(fontWeight: FontWeight.normal)  // Main screen title style
+                    : TextStyle(fontWeight: FontWeight.bold),    // Sub-album title style
+                overflow: TextOverflow.ellipsis,
               ),
-              child: Stack(
-                children: [
-                  GestureDetector(
-                    onTap: () => onAlbumClicked(category),
-                    child: category.coverPhotoId != null
-                        ? Image.asset(
-                      'assets/photos/${category.coverPhotoId}',
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                      height: double.infinity,
-                    )
-                        : Image.asset(
-                      'assets/photos/folderIcon.png',
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                      height: double.infinity,
-                    ),
-                  ),
-                  Positioned(
-                    top: 0,
-                    left: 0,
-                    child: Container(
-                      color: Colors.black.withOpacity(0.7),
-                      padding: EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Text(
-                        formattedAlbumName,
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 0.0,
-                    right: 0.0,
-                    child: Container(
-                      padding: EdgeInsets.all(0.0),
-                      decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.5),
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(0.0),
-                          bottomRight: Radius.circular(0.0),
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            iconSize: 20.0,
-                            icon: Icon(Icons.edit, color: Colors.blue),
-                            onPressed: () =>
-                                editAlbum(context, category, index),
-                          ),
-                          SizedBox(
-                            width: 0.0,
-                          ),
-                          IconButton(
-                            iconSize: 20.0,
-                            icon: Icon(Icons.delete, color: Colors.red),
-                            onPressed: () =>
-                                showDeleteConfirmationDialog(
-                                    category.name, category.id, index),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            );
-          },
-        ),
-        floatingActionButton: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            FloatingActionButton(
-            onPressed: addCategory,
-            child: Icon(Icons.add),
             ),
-            FloatingActionButton(
-            onPressed: () {
-            Navigator.push(
-            context,
-              MaterialPageRoute(
-              builder: (context) => AddPictureScreen(),
+            if (years.isNotEmpty)
+              DropdownButtonHideUnderline(
+                child: DropdownButton<int>(
+                  value: selectedSortYear,
+                  icon: Icon(Icons.arrow_drop_down, color: Colors.white),
+                  onChanged: (int? newValue) {
+                    setState(() {
+                      selectedSortYear = newValue;
+                      filteredCategories = filterCategories();
+                    });
+                  },
+                  items: years.map<DropdownMenuItem<int>>((int year) {
+                    return DropdownMenuItem<int>(
+                      value: year,
+                      child: Text(year.toString(), style: TextStyle(color: Colors.white)),
+                    );
+                  }).toList(),
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
-            );
-            },
-              child: Icon(Icons.add, color: Colors.white),
-              backgroundColor: mainColor,
-              tooltip: 'Fotos toevoegen',
-            ),
-          ]
+          ],
+        ),
+        leading: currentAlbum != null
+            ? IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: goBackToParentAlbum,
+        )
+            : null,
       ),
-    ))
-    ;
+
+
+        body: Column(
+    children: [
+    Padding(
+    padding: const EdgeInsets.all(8.0),
+    child: TextField(
+    controller: searchController,
+    decoration: InputDecoration(
+    labelText: "Search",
+    hintText: "Search for albums...",
+    prefixIcon: Icon(Icons.search),
+    border: OutlineInputBorder(
+    borderRadius: BorderRadius.all(Radius.circular(25.0)),
+    ),
+    ),
+    ),
+    ),
+    if (years.isNotEmpty) ...[
+    Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+    child: DropdownButton<int>(
+    isExpanded: true,
+    hint: Text("Select Year"),
+    value: selectedSortYear,
+    onChanged: (int? newValue) {
+    setState(() {
+    selectedSortYear = newValue;
+    filteredCategories = filterCategories();
+    });
+    },
+    items: years.map<DropdownMenuItem<int>>((int year) {
+    return DropdownMenuItem<int>(
+    value: year,
+    child: Text(year.toString()),
+    );
+    }).toList(),
+    ),
+    ),
+    ],
+    Expanded(
+    child: isLoading
+    ? Center(child: CircularProgressIndicator())
+        : GridView.builder(
+    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+    crossAxisCount: 2,
+    crossAxisSpacing: 8.0,
+    mainAxisSpacing: 8.0,
+    ),
+    itemCount: filteredCategories.length,
+    itemBuilder: (context, index) {
+    final category = filteredCategories[index];
+    String formattedAlbumName = formatText(category.name);
+
+    final maxLength = 20;
+    if (formattedAlbumName.length > maxLength) {
+    formattedAlbumName = formattedAlbumName.substring(0, maxLength - 2) + '...';
+    }
+
+    return Container(
+    decoration: BoxDecoration(
+    border: Border.all(color: Colors.black),
+    ),
+    child: Stack(
+    children: [
+    GestureDetector(
+    onTap: () => onAlbumClicked(category),
+    child: category.coverPhotoId != null
+    ? Image.asset(
+    'assets/photos/${category.coverPhotoId}',
+    fit: BoxFit.cover,
+    width: double.infinity,
+    height: double.infinity,
+    )
+        : Image.asset(
+    'assets/photos/folderIcon.png',
+    fit: BoxFit.cover,
+    width: double.infinity,
+    height: double.infinity,
+    ),
+    ),
+    Positioned(
+    top: 0,
+    left: 0,
+    child: Container(
+    color: Colors.black.withOpacity(0.7),
+    padding: EdgeInsets.symmetric(horizontal: 8.0),
+    child: Text(
+    formattedAlbumName,
+    style: TextStyle(color: Colors.white),
+    ),
+    ),
+    ),
+    Positioned(
+    bottom: 0.0,
+    right: 0.0,
+    child: Container(
+    padding: EdgeInsets.all(0.0),
+    decoration: BoxDecoration(
+    color: Colors.black.withOpacity(0.5),
+    borderRadius: BorderRadius.only(
+    topLeft: Radius.circular(0.0),
+    bottomRight: Radius.circular(0.0),
+    ),
+    ),
+    child: Row(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+    IconButton(
+    iconSize: 20.0,
+    icon: Icon(Icons.edit, color: Colors.blue),
+    onPressed: () => editAlbum(context, category, index),
+    ),
+    SizedBox(width: 0.0),
+    IconButton(
+    iconSize: 20.0,
+    icon: Icon(Icons.delete, color: Colors.red),
+    onPressed: () => showDeleteConfirmationDialog(category.name, category.id, index),
+    ),
+    ],
+    ),
+    ),
+    ),
+    ],
+    ),
+    );
+    },
+    ),
+    ),
+    ],
+    ),
+
+    floatingActionButton: Row(
+    mainAxisAlignment: MainAxisAlignment.end,
+    children: [
+    FloatingActionButton(
+    onPressed: addCategory,
+    child: Icon(Icons.add),
+    ),
+    SizedBox(width: 8.0),
+    FloatingActionButton(
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => AddPhotoScreen()),
+        );
+      },
+      child: Icon(Icons.photo_camera, color: Colors.white),
+      backgroundColor: mainColor,
+      tooltip: 'Add Photos',
+    ),
+    ],
+    ),
+      ),
+    );
   }
-}
+
+  }
+
