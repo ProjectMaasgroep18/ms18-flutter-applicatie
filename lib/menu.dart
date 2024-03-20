@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Calendar/calendar.dart';
 import 'package:ms18_applicatie/Dashboard/dashboard.dart';
 import 'package:ms18_applicatie/Orders/orders.dart';
+import 'package:ms18_applicatie/Pictures/listAlbums.dart';
 import 'package:ms18_applicatie/Pictures/listPictures.dart';
 import 'package:ms18_applicatie/Shoppingcart/Shoppingcart.dart';
 import 'package:ms18_applicatie/Stock/stockReport.dart';
@@ -38,7 +39,7 @@ class Menu extends StatelessWidget {
     menuItem.MenuItem(
         text: 'Foto\'s',
         icon: Icons.photo,
-        page: MaterialPageRoute(builder: (context) => const ListPictures()),
+        page: MaterialPageRoute(builder: (context) => const ListAlbums()),
         roles: Roles.values),
     menuItem.MenuItem(
         text: 'Declaraties',
