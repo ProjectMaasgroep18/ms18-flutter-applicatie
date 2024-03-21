@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:ms18_applicatie/Pictures/category.dart';
+import 'package:ms18_applicatie/Pictures/category_depr.dart';
 import 'package:ms18_applicatie/globals.dart';
 import 'package:ms18_applicatie/config.dart';
 

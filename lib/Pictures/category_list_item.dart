@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '/Pictures/category.dart';
+import '/Pictures/category_depr.dart';
 import '/Pictures/category_photos_screen.dart';
 import '/Pictures/add_sub_category_screen.dart';
 

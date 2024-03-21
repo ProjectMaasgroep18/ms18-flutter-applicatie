@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Dashboard/data/data.dart';
 import 'package:ms18_applicatie/Dashboard/functions.dart';
-import 'package:ms18_applicatie/Pictures/listPictures.dart';
+import 'package:ms18_applicatie/Pictures/listPictures_depr.dart';
 import 'package:ms18_applicatie/team-c/Declarations/declarationsMenu.dart';
 
 import '../../menu.dart';

@@ -1,4 +1,4 @@
-import 'photo.dart';
+import 'photo_depr.dart';
 //Deze pagina voor category model
 
 class Category {

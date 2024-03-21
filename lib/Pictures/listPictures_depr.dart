@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/menu.dart';
-import 'package:ms18_applicatie/Pictures/category.dart';
+import 'package:ms18_applicatie/Pictures/category_depr.dart';
 import 'package:ms18_applicatie/Pictures/category_list_item.dart';
-import 'package:ms18_applicatie/Pictures/photo.dart';
+import 'package:ms18_applicatie/Pictures/photo_depr.dart';
 import 'add_category_screen.dart';
 import 'package:ms18_applicatie/Pictures/add_sub_category_screen.dart';
 

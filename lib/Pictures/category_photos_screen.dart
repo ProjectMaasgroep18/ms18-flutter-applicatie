@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:ms18_applicatie/Pictures/category.dart';
-import 'package:ms18_applicatie/Pictures/photo_detail_screen.dart';
+import 'package:ms18_applicatie/Pictures/category_depr.dart';
+import 'package:ms18_applicatie/Pictures/photo_detail_screen_depr.dart';
 import 'package:intl/intl.dart';
 import 'package:ms18_applicatie/Pictures/add_photo_screen.dart';
-import 'package:ms18_applicatie/Pictures/photo.dart';
+import 'package:ms18_applicatie/Pictures/photo_depr.dart';
 
 //Deze pagina is de photos pagina binnen een sub album .
 

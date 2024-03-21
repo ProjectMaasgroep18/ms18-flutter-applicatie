@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'category.dart';
+import 'category_depr.dart';
 
 class AddSubAlbumScreen extends StatefulWidget {
   final Category parentCategory;

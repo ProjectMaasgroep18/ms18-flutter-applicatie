@@ -1,11 +1,9 @@
-import 'dart:convert';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Pictures/models/photo.dart';
-
 import '../Api/apiManager.dart';
 import '../config.dart';
+import 'photo_detail_screen.dart';
+import 'dart:convert';
 
 class PhotoGalleryScreen extends StatefulWidget {
   final String albumId;
@@ -29,16 +27,12 @@ class _PhotoGalleryScreenState extends State<PhotoGalleryScreen> {
   void fetchPhotos() async {
     setState(() => isLoading = true);
 
-    // Set reasonable default values for pagination
     const int pageNumber = 1;
-    const int pageSize = 100; // Adjust based on your needs
+    const int pageSize = 100;
     final String fetchUrl = 'api/photos/album/${widget.albumId}?pageNumber=$pageNumber&pageSize=$pageSize';
 
     try {
-      // Fetch the paginated response
-      final dynamic response = await ApiManager.get<dynamic>(fetchUrl, getHeaders());
-
-      // Assuming the response is a Map with expected keys
+      final response = await ApiManager.get<dynamic>(fetchUrl, getHeaders());
       if (response is Map<String, dynamic>) {
         final List<dynamic> items = response['items'] ?? [];
         final List<Photo> photos = items.map((item) => Photo.fromJson(item)).toList();
@@ -56,7 +50,6 @@ class _PhotoGalleryScreenState extends State<PhotoGalleryScreen> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,9 +64,19 @@ class _PhotoGalleryScreenState extends State<PhotoGalleryScreen> {
         ),
         itemCount: photos.length,
         itemBuilder: (context, index) {
-          // Convert base64 string to bytes
           final imageBytes = base64Decode(photos[index].imageBase64);
-          return Image.memory(imageBytes, fit: BoxFit.cover);
+          return InkWell(
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => PhotoDetailScreen(
+                  photos: photos,
+                  currentIndex: index,
+                ),
+              ),
+            ),
+            child: Image.memory(imageBytes, fit: BoxFit.cover),
+          );
         },
       ),
     );

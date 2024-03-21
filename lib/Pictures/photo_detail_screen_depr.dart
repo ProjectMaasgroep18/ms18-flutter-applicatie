@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ms18_applicatie/Pictures/models/photo.dart';
-import 'dart:convert';
+import 'photo_depr.dart';
 //Deze pagina is de photo details pagina , (als jij op een photo klikt)
 Color mainColor = Color(0xFF15233d);
 
@@ -63,7 +62,7 @@ class _PhotoDetailScreenState extends State<PhotoDetailScreen> {
                                 );
                               },
                             ),
-                          Image.memory(base64Decode(photo.imageBase64), fit: BoxFit.cover),
+                          Image.network(photo.imageUrl),
                           if (widget.currentIndex < widget.photos.length - 1)
                             IconButton(
                               icon: Icon(Icons.arrow_forward_ios, size: 40, color: mainColor),
