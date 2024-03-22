@@ -34,30 +34,38 @@ class _PhotoDetailScreenState extends State<PhotoDetailScreen> {
 
   Future<void> _saveTitle(Photo photo, String newTitle) async {
     print('Attempting to save title...');
-    final response = await http.put(
-      Uri.parse('https://localhost:7059/api/photos/${photo.id}'),
-      headers: getHeaders(),
-      body: jsonEncode({
-        'title': newTitle,
-        'albumLocationId': photo.albumLocationId,
-        'needsApproval': photo.needsApproval,
-      }),
-    );
-    print('Status code: ${response.statusCode}');
-    if (response.statusCode == 200) {
-      print("Title updated successfully");
-      setState(() {
-        final photoIndex = widget.photos.indexWhere((p) => p.id == photo.id);
-        if (photoIndex != -1) {
-          widget.photos[photoIndex] = widget.photos[photoIndex].copyWith(title: newTitle);
-        } else {
-          print('Photo with id ${photo.id} not found in the list');
-        }
-      });
-    } else {
-      print("Failed to update title: ${response.body}");
+    try {
+      final response = await http.put(
+        Uri.parse('http://10.0.2.2:5032/api/photos/${photo.id}'),
+        headers: getHeaders(),
+        body: jsonEncode({
+          'title': newTitle,
+          'contentType': 'image/jpeg',
+          'takenOn': photo.takenOn?.toIso8601String(),
+          'location': photo.location,
+          'albumLocationId': photo.albumLocationId,
+          'needsApproval': photo.needsApproval,
+        }),
+      );
+      print('Status code: ${response.statusCode}');
+      if (response.statusCode == 204) {
+        print("Title updated successfully");
+        setState(() {
+          final photoIndex = widget.photos.indexWhere((p) => p.id == photo.id);
+          if (photoIndex != -1) {
+            widget.photos[photoIndex] = widget.photos[photoIndex].copyWith(title: newTitle);
+          } else {
+            print('Photo with id ${photo.id} not found in the list');
+          }
+        });
+      } else {
+        print("Failed to update title: ${response.body}");
+      }
+    } catch (e) {
+      print("Error while saving title: $e");
     }
   }
+
 
   Future<void> _deletePhoto(String photoId) async {
     try {
@@ -67,7 +75,7 @@ class _PhotoDetailScreenState extends State<PhotoDetailScreen> {
 
       );
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 204) {
         print('Photo deleted successfully');
         Navigator.of(context).pop();
       } else {
@@ -145,6 +153,20 @@ class _PhotoDetailScreenState extends State<PhotoDetailScreen> {
                             print('Opslaan button pressed with title: ${_titleController.text}');
                             if (photo.id != null) {
                               await _saveTitle(photo, _titleController.text);
+
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  backgroundColor: Colors.green,
+                                  content: Text(
+                                    'De title is gewijzigd',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                              );
+
+                              Navigator.of(context).pop();
+                              Navigator.of(context).pop();
+
                             } else {
                               print('Error: Photo ID is null');
                             }
@@ -175,7 +197,6 @@ class _PhotoDetailScreenState extends State<PhotoDetailScreen> {
                                 ),
                               );
 
-                              Navigator.of(context).pop();
                               Navigator.of(context).pop();
 
                             }
