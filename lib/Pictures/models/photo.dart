@@ -25,6 +25,34 @@ class Photo {
     required this.needsApproval,
   });
 
+  Photo copyWith({
+    String? id,
+    int? uploaderId,
+    DateTime? uploadDate,
+    String? title,
+    String? imageBase64,
+    String? contentType,
+    DateTime? takenOn,
+    String? location,
+    String? albumLocationId,
+    int? likesCount,
+    bool? needsApproval,
+  }) {
+    return Photo(
+      id: id ?? this.id,
+      uploaderId: uploaderId ?? this.uploaderId,
+      uploadDate: uploadDate ?? this.uploadDate,
+      title: title ?? this.title,
+      imageBase64: imageBase64 ?? this.imageBase64,
+      contentType: contentType ?? this.contentType,
+      takenOn: takenOn ?? this.takenOn,
+      location: location ?? this.location,
+      albumLocationId: albumLocationId ?? this.albumLocationId,
+      likesCount: likesCount ?? this.likesCount,
+      needsApproval: needsApproval ?? this.needsApproval,
+    );
+  }
+
   factory Photo.fromJson(Map<String, dynamic> json) {
     return Photo(
       id: json['id'],
@@ -39,5 +67,21 @@ class Photo {
       likesCount: json['likesCount'],
       needsApproval: json['needsApproval'],
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'uploaderId': uploaderId,
+      'uploadDate': uploadDate.toIso8601String(),
+      'title': title,
+      'imageBase64': imageBase64,
+      'contentType': contentType,
+      'takenOn': takenOn?.toIso8601String(),
+      'location': location,
+      'albumLocationId': albumLocationId,
+      'likesCount': likesCount,
+      'needsApproval': needsApproval,
+    };
   }
 }

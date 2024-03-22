@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Pictures/models/photo.dart';
 import 'dart:convert';
-//Deze pagina is de photo details pagina , (als jij op een photo klikt)
+import 'package:http/http.dart' as http;
+import 'package:ms18_applicatie/config.dart';
+import 'package:flutter/material.dart';
+
 Color mainColor = Color(0xFF15233d);
 
 class PhotoDetailScreen extends StatefulWidget {
   final List<Photo> photos;
-  int currentIndex;
+  final int currentIndex;
 
   PhotoDetailScreen({
     Key? key,
@@ -20,15 +23,64 @@ class PhotoDetailScreen extends StatefulWidget {
 
 class _PhotoDetailScreenState extends State<PhotoDetailScreen> {
   late PageController _controller;
+  late TextEditingController _titleController;
 
   @override
   void initState() {
     super.initState();
     _controller = PageController(initialPage: widget.currentIndex);
+    _titleController = TextEditingController(text: widget.photos[widget.currentIndex].title);
+  }
+
+  Future<void> _saveTitle(Photo photo, String newTitle) async {
+    print('Attempting to save title...');
+    final response = await http.put(
+      Uri.parse('https://localhost:7059/api/photos/${photo.id}'),
+      headers: getHeaders(),
+      body: jsonEncode({
+        'title': newTitle,
+        'albumLocationId': photo.albumLocationId,
+        'needsApproval': photo.needsApproval,
+      }),
+    );
+    print('Status code: ${response.statusCode}');
+    if (response.statusCode == 200) {
+      print("Title updated successfully");
+      setState(() {
+        final photoIndex = widget.photos.indexWhere((p) => p.id == photo.id);
+        if (photoIndex != -1) {
+          widget.photos[photoIndex] = widget.photos[photoIndex].copyWith(title: newTitle);
+        } else {
+          print('Photo with id ${photo.id} not found in the list');
+        }
+      });
+    } else {
+      print("Failed to update title: ${response.body}");
+    }
+  }
+
+  Future<void> _deletePhoto(String photoId) async {
+    try {
+      final response = await http.delete(
+        Uri.parse('http://10.0.2.2:5032/api/photos/$photoId'),
+        headers: getHeaders(),
+
+      );
+
+      if (response.statusCode == 200) {
+        print('Photo deleted successfully');
+        Navigator.of(context).pop();
+      } else {
+        print('Failed to delete photo: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error deleting photo: $e');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    print('Building widget with currentIndex: ${widget.currentIndex}');
     return Scaffold(
       appBar: AppBar(
         title: Text('Foto informatie'),
@@ -40,7 +92,7 @@ class _PhotoDetailScreenState extends State<PhotoDetailScreen> {
             itemCount: widget.photos.length,
             onPageChanged: (int index) {
               setState(() {
-                widget.currentIndex = index;
+                _titleController.text = widget.photos[index].title ?? '';
               });
             },
             itemBuilder: (context, index) {
@@ -53,7 +105,7 @@ class _PhotoDetailScreenState extends State<PhotoDetailScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          if (widget.currentIndex > 0)
+                          if (index > 0)
                             IconButton(
                               icon: Icon(Icons.arrow_back_ios, size: 40, color: mainColor),
                               onPressed: () {
@@ -64,7 +116,7 @@ class _PhotoDetailScreenState extends State<PhotoDetailScreen> {
                               },
                             ),
                           Image.memory(base64Decode(photo.imageBase64), fit: BoxFit.cover),
-                          if (widget.currentIndex < widget.photos.length - 1)
+                          if (index < widget.photos.length - 1)
                             IconButton(
                               icon: Icon(Icons.arrow_forward_ios, size: 40, color: mainColor),
                               onPressed: () {
@@ -78,35 +130,79 @@ class _PhotoDetailScreenState extends State<PhotoDetailScreen> {
                       ),
                       SizedBox(height: 20),
                       TextField(
+                        controller: _titleController,
                         decoration: InputDecoration(
                           labelText: 'Titel',
                           border: OutlineInputBorder(),
                         ),
                       ),
+
                       SizedBox(height: 10),
                       SizedBox(
                         width: 200,
                         child: ElevatedButton(
-                          onPressed: () {
-                            //Opslaan  button logic here
+                          onPressed: () async {
+                            print('Opslaan button pressed with title: ${_titleController.text}');
+                            if (photo.id != null) {
+                              await _saveTitle(photo, _titleController.text);
+                            } else {
+                              print('Error: Photo ID is null');
+                            }
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: mainColor,
                           ),
-                          child: Text('Opslaan', style: TextStyle(color: Colors.white)),
+                          child: Text('Title wijzigen', style: TextStyle(color: Colors.white)),
                         ),
                       ),
+
+                      SizedBox(height: 10),
+                      SizedBox(
+                        width: 200,
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            print('Delete button pressed');
+                            if (photo.id != null) {
+                              await _deletePhoto(photo.id!);
+
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  backgroundColor: Colors.green,
+                                  content: Text(
+                                    'De foto is verwijderd',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                              );
+
+                              Navigator.of(context).pop();
+                              Navigator.of(context).pop();
+
+                            }
+
+                            else {
+                              print('Error: Photo ID is null');
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red,
+                          ),
+                          child: Text('Foto verwijderen', style: TextStyle(color: Colors.white)),
+                        ),
+                      ),
+
                       SizedBox(height: 10),
                       SizedBox(
                         width: 200,
                         child: ElevatedButton(
                           onPressed: () {
-                            // Verwijderen button logic here
+                            print('Terug button pressed');
+                            Navigator.of(context).pop();
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.grey,
                           ),
-                          child: Text('Verwijderen', style: TextStyle(color: Colors.white)),
+                          child: Text('Terug', style: TextStyle(color: Colors.white)),
                         ),
                       ),
                     ],
@@ -123,6 +219,7 @@ class _PhotoDetailScreenState extends State<PhotoDetailScreen> {
   @override
   void dispose() {
     _controller.dispose();
+    _titleController.dispose();
     super.dispose();
   }
 }
