@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:ms18_applicatie/config.dart';
 import 'package:flutter/material.dart';
+import '../menu.dart'; // Importeer de Menu-widget
 
 Color mainColor = Color(0xFF15233d);
 
@@ -89,150 +90,156 @@ class _PhotoDetailScreenState extends State<PhotoDetailScreen> {
   @override
   Widget build(BuildContext context) {
     print('Building widget with currentIndex: ${widget.currentIndex}');
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Foto informatie'),
+    return Menu( // Voeg de Menu-widget toe
+      title: Text(
+        'Foto informatie',
+        style: TextStyle(color: Colors.white),
       ),
-      body: Stack(
-        children: [
-          PageView.builder(
-            controller: _controller,
-            itemCount: widget.photos.length,
-            onPageChanged: (int index) {
-              setState(() {
-                _titleController.text = widget.photos[index].title ?? '';
-              });
-            },
-            itemBuilder: (context, index) {
-              Photo photo = widget.photos[index];
-              return SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          if (index > 0)
-                            IconButton(
-                              icon: Icon(Icons.arrow_back_ios, size: 40, color: mainColor),
-                              onPressed: () {
-                                _controller.previousPage(
-                                  duration: Duration(milliseconds: 300),
-                                  curve: Curves.easeInOut,
-                                );
-                              },
-                            ),
-                          Image.memory(base64Decode(photo.imageBase64), fit: BoxFit.cover),
-                          if (index < widget.photos.length - 1)
-                            IconButton(
-                              icon: Icon(Icons.arrow_forward_ios, size: 40, color: mainColor),
-                              onPressed: () {
-                                _controller.nextPage(
-                                  duration: Duration(milliseconds: 300),
-                                  curve: Curves.easeInOut,
-                                );
-                              },
-                            ),
-                        ],
-                      ),
-                      SizedBox(height: 20),
-                      TextField(
-                        controller: _titleController,
-                        decoration: InputDecoration(
-                          labelText: 'Titel',
-                          border: OutlineInputBorder(),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Foto informatie'),
+        ),
+        body: Stack(
+          children: [
+            PageView.builder(
+              controller: _controller,
+              itemCount: widget.photos.length,
+              onPageChanged: (int index) {
+                setState(() {
+                  _titleController.text = widget.photos[index].title ?? '';
+                });
+              },
+              itemBuilder: (context, index) {
+                Photo photo = widget.photos[index];
+                return SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            if (index > 0)
+                              IconButton(
+                                icon: Icon(Icons.arrow_back_ios, size: 40, color: mainColor),
+                                onPressed: () {
+                                  _controller.previousPage(
+                                    duration: Duration(milliseconds: 300),
+                                    curve: Curves.easeInOut,
+                                  );
+                                },
+                              ),
+                            Image.memory(base64Decode(photo.imageBase64), fit: BoxFit.cover),
+                            if (index < widget.photos.length - 1)
+                              IconButton(
+                                icon: Icon(Icons.arrow_forward_ios, size: 40, color: mainColor),
+                                onPressed: () {
+                                  _controller.nextPage(
+                                    duration: Duration(milliseconds: 300),
+                                    curve: Curves.easeInOut,
+                                  );
+                                },
+                              ),
+                          ],
                         ),
-                      ),
+                        SizedBox(height: 20),
+                        TextField(
+                          controller: _titleController,
+                          decoration: InputDecoration(
+                            labelText: 'Titel',
+                            border: OutlineInputBorder(),
+                          ),
+                        ),
 
-                      SizedBox(height: 10),
-                      SizedBox(
-                        width: 200,
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            print('Opslaan button pressed with title: ${_titleController.text}');
-                            if (photo.id != null) {
-                              await _saveTitle(photo, _titleController.text);
+                        SizedBox(height: 10),
+                        SizedBox(
+                          width: 200,
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              print('Opslaan button pressed with title: ${_titleController.text}');
+                              if (photo.id != null) {
+                                await _saveTitle(photo, _titleController.text);
 
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  backgroundColor: Colors.green,
-                                  content: Text(
-                                    'De title is gewijzigd',
-                                    style: TextStyle(color: Colors.white),
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    backgroundColor: Colors.green,
+                                    content: Text(
+                                      'De title is gewijzigd',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
                                   ),
-                                ),
-                              );
+                                );
 
-                              Navigator.of(context).pop();
-                              Navigator.of(context).pop();
+                                Navigator.of(context).pop();
+                                Navigator.of(context).pop();
 
-                            } else {
-                              print('Error: Photo ID is null');
-                            }
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: mainColor,
+                              } else {
+                                print('Error: Photo ID is null');
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: mainColor,
+                            ),
+                            child: Text('Title wijzigen', style: TextStyle(color: Colors.white)),
                           ),
-                          child: Text('Title wijzigen', style: TextStyle(color: Colors.white)),
                         ),
-                      ),
 
-                      SizedBox(height: 10),
-                      SizedBox(
-                        width: 200,
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            print('Delete button pressed');
-                            if (photo.id != null) {
-                              await _deletePhoto(photo.id!);
+                        SizedBox(height: 10),
+                        SizedBox(
+                          width: 200,
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              print('Delete button pressed');
+                              if (photo.id != null) {
+                                await _deletePhoto(photo.id!);
 
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  backgroundColor: Colors.green,
-                                  content: Text(
-                                    'De foto is verwijderd',
-                                    style: TextStyle(color: Colors.white),
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    backgroundColor: Colors.green,
+                                    content: Text(
+                                      'De foto is verwijderd',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
                                   ),
-                                ),
-                              );
+                                );
 
+                                Navigator.of(context).pop();
+
+                              }
+
+                              else {
+                                print('Error: Photo ID is null');
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red,
+                            ),
+                            child: Text('Foto verwijderen', style: TextStyle(color: Colors.white)),
+                          ),
+                        ),
+
+                        SizedBox(height: 10),
+                        SizedBox(
+                          width: 200,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              print('Terug button pressed');
                               Navigator.of(context).pop();
-
-                            }
-
-                            else {
-                              print('Error: Photo ID is null');
-                            }
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red,
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.grey,
+                            ),
+                            child: Text('Terug', style: TextStyle(color: Colors.white)),
                           ),
-                          child: Text('Foto verwijderen', style: TextStyle(color: Colors.white)),
                         ),
-                      ),
-
-                      SizedBox(height: 10),
-                      SizedBox(
-                        width: 200,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            print('Terug button pressed');
-                            Navigator.of(context).pop();
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.grey,
-                          ),
-                          child: Text('Terug', style: TextStyle(color: Colors.white)),
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              );
-            },
-          ),
-        ],
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

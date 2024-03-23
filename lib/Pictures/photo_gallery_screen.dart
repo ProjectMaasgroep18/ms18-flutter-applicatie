@@ -4,6 +4,7 @@ import '../Api/apiManager.dart';
 import '../config.dart';
 import 'photo_detail_screen.dart';
 import 'dart:convert';
+import '../menu.dart'; // Importeer de Menu-widget
 
 class PhotoGalleryScreen extends StatefulWidget {
   final String albumId;
@@ -52,32 +53,38 @@ class _PhotoGalleryScreenState extends State<PhotoGalleryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Album Photos"),
+    return Menu( // Voeg de Menu-widget toe
+      title: Text(
+        'Album Photos',
+        style: TextStyle(color: Colors.white),
       ),
-      body: isLoading
-          ? Center(child: CircularProgressIndicator())
-          : GridView.builder(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text("Lijst met fotos"),
         ),
-        itemCount: photos.length,
-        itemBuilder: (context, index) {
-          final imageBytes = base64Decode(photos[index].imageBase64);
-          return InkWell(
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => PhotoDetailScreen(
-                  photos: photos,
-                  currentIndex: index,
+        body: isLoading
+            ? Center(child: CircularProgressIndicator())
+            : GridView.builder(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
+          ),
+          itemCount: photos.length,
+          itemBuilder: (context, index) {
+            final imageBytes = base64Decode(photos[index].imageBase64);
+            return InkWell(
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => PhotoDetailScreen(
+                    photos: photos,
+                    currentIndex: index,
+                  ),
                 ),
               ),
-            ),
-            child: Image.memory(imageBytes, fit: BoxFit.cover),
-          );
-        },
+              child: Image.memory(imageBytes, fit: BoxFit.cover),
+            );
+          },
+        ),
       ),
     );
   }
