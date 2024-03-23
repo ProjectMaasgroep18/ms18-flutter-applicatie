@@ -70,6 +70,7 @@ class _ListAlbumsState extends State<ListAlbums> {
 
       setState(() {
         allCategories = albums;
+        filteredCategories = allCategories.where((cat) => cat.parentAlbumId == null).toList();
         isLoading = false;
       });
       onSearchChanged(); // Update filtered categories after fetching
@@ -78,6 +79,8 @@ class _ListAlbumsState extends State<ListAlbums> {
       setState(() => isLoading = false);
     }
   }
+
+
 
 
 
@@ -407,14 +410,40 @@ class _ListAlbumsState extends State<ListAlbums> {
       // Navigate to PhotoGalleryScreen with the album.id
       Navigator.push(context, MaterialPageRoute(builder: (context) => PhotoGalleryScreen(albumId: album.id)));
     } else {
-      // If photoCount is 0 or null, do the existing logic
       setState(() {
         displayedTitle = album.name;
         currentAlbum = album.id;
-        fetchAlbums();
+        filteredCategories = allCategories.where((cat) => cat.parentAlbumId == album.id).toList();
       });
     }
   }
+
+  /*
+  void fetchAlbumsWithParentId(String? parentAlbumId) async {
+    setState(() => isLoading = true);
+    try {
+      final response = await ApiManager.get<List<dynamic>>('api/albums', getHeaders());
+      final albums = response.map((albumJson) => Category.fromJson(albumJson)).toList();
+
+      years = albums
+          .map((album) => album.year)
+          .whereType<int>()
+          .toSet()
+          .toList();
+      years.sort();
+
+      setState(() {
+        // Filter albums with the same parentAlbumId
+        filteredCategories = albums.where((album) => album.parentAlbumId == parentAlbumId).toList();
+        isLoading = false;
+      });
+      onSearchChanged(); // Update filtered categories after fetching
+    } catch (e) {
+      print("Error fetching albums: $e");
+      setState(() => isLoading = false);
+    }
+  }
+*/
 
 
 
@@ -426,24 +455,73 @@ class _ListAlbumsState extends State<ListAlbums> {
         style: TextStyle(color: Colors.white),
       ),
       child: Scaffold(
-      appBar: AppBar(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Expanded(
-              child: Text(
-                displayedTitle,
-                style: currentAlbum == null
-                    ? TextStyle(fontWeight: FontWeight.normal)  // Main screen title style
-                    : TextStyle(fontWeight: FontWeight.bold),    // Sub-album title style
-                overflow: TextOverflow.ellipsis,
+        appBar: AppBar(
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Expanded(
+                child: Text(
+                  displayedTitle,
+                  style: currentAlbum == null
+                      ? TextStyle(fontWeight: FontWeight.normal)  // Main screen title style
+                      : TextStyle(fontWeight: FontWeight.bold),    // Sub-album title style
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              if (years.isNotEmpty)
+                DropdownButtonHideUnderline(
+                  child: DropdownButton<int>(
+                    value: selectedSortYear,
+                    icon: Icon(Icons.arrow_drop_down, color: Colors.white),
+                    onChanged: (int? newValue) {
+                      setState(() {
+                        selectedSortYear = newValue;
+                        filteredCategories = filterCategories();
+                      });
+                    },
+                    items: years.map<DropdownMenuItem<int>>((int year) {
+                      return DropdownMenuItem<int>(
+                        value: year,
+                        child: Text(year.toString(), style: TextStyle(color: Colors.white)),
+                      );
+                    }).toList(),
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+            ],
+          ),
+          leading: currentAlbum != null
+              ? IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: goBackToParentAlbum,
+          )
+              : null,
+        ),
+
+
+        body: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                controller: searchController,
+                decoration: InputDecoration(
+                  labelText: "Search",
+                  hintText: "Search for albums...",
+                  prefixIcon: Icon(Icons.search),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(25.0)),
+                  ),
+                ),
               ),
             ),
-            if (years.isNotEmpty)
-              DropdownButtonHideUnderline(
+            if (years.isNotEmpty) ...[
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: DropdownButton<int>(
+                  isExpanded: true,
+                  hint: Text("Select Year"),
                   value: selectedSortYear,
-                  icon: Icon(Icons.arrow_drop_down, color: Colors.white),
                   onChanged: (int? newValue) {
                     setState(() {
                       selectedSortYear = newValue;
@@ -453,177 +531,127 @@ class _ListAlbumsState extends State<ListAlbums> {
                   items: years.map<DropdownMenuItem<int>>((int year) {
                     return DropdownMenuItem<int>(
                       value: year,
-                      child: Text(year.toString(), style: TextStyle(color: Colors.white)),
+                      child: Text(year.toString()),
                     );
                   }).toList(),
-                  style: TextStyle(color: Colors.white),
                 ),
               ),
+            ],
+            Expanded(
+              child: isLoading
+                  ? Center(child: CircularProgressIndicator())
+                  : GridView.builder(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 8.0,
+                  mainAxisSpacing: 8.0,
+                ),
+                itemCount: filteredCategories.length,
+                itemBuilder: (context, index) {
+                  final category = filteredCategories[index];
+                  String formattedAlbumName = formatText(category.name);
+
+                  final maxLength = 20;
+                  if (formattedAlbumName.length > maxLength) {
+                    formattedAlbumName = formattedAlbumName.substring(0, maxLength - 2) + '...';
+                  }
+
+                  return Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black),
+                    ),
+                    child: Stack(
+                      children: [
+                        GestureDetector(
+                          onTap: () => onAlbumClicked(category),
+                          child: category.coverPhotoId != null
+                              ? Image.asset(
+                            'assets/photos/${category.coverPhotoId}',
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                            height: double.infinity,
+                          )
+                              : Image.asset(
+                            'assets/photos/folderIcon.png',
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                            height: double.infinity,
+                          ),
+                        ),
+                        Positioned(
+                          top: 0,
+                          left: 0,
+                          child: Container(
+                            color: Colors.black.withOpacity(0.7),
+                            padding: EdgeInsets.symmetric(horizontal: 8.0),
+                            child: Text(
+                              formattedAlbumName,
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 0.0,
+                          right: 0.0,
+                          child: Container(
+                            padding: EdgeInsets.all(0.0),
+                            decoration: BoxDecoration(
+                              color: Colors.black.withOpacity(0.5),
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(0.0),
+                                bottomRight: Radius.circular(0.0),
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  iconSize: 20.0,
+                                  icon: Icon(Icons.edit, color: Colors.blue),
+                                  onPressed: () => editAlbum(context, category, index),
+                                ),
+                                SizedBox(width: 0.0),
+                                IconButton(
+                                  iconSize: 20.0,
+                                  icon: Icon(Icons.delete, color: Colors.red),
+                                  onPressed: () => showDeleteConfirmationDialog(category.name, category.id, index),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
           ],
         ),
-        leading: currentAlbum != null
-            ? IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: goBackToParentAlbum,
-        )
-            : null,
-      ),
 
-
-        body: Column(
-    children: [
-    Padding(
-    padding: const EdgeInsets.all(8.0),
-    child: TextField(
-    controller: searchController,
-    decoration: InputDecoration(
-    labelText: "Search",
-    hintText: "Search for albums...",
-    prefixIcon: Icon(Icons.search),
-    border: OutlineInputBorder(
-    borderRadius: BorderRadius.all(Radius.circular(25.0)),
-    ),
-    ),
-    ),
-    ),
-    if (years.isNotEmpty) ...[
-    Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-    child: DropdownButton<int>(
-    isExpanded: true,
-    hint: Text("Select Year"),
-    value: selectedSortYear,
-    onChanged: (int? newValue) {
-    setState(() {
-    selectedSortYear = newValue;
-    filteredCategories = filterCategories();
-    });
-    },
-    items: years.map<DropdownMenuItem<int>>((int year) {
-    return DropdownMenuItem<int>(
-    value: year,
-    child: Text(year.toString()),
-    );
-    }).toList(),
-    ),
-    ),
-    ],
-    Expanded(
-    child: isLoading
-    ? Center(child: CircularProgressIndicator())
-        : GridView.builder(
-    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-    crossAxisCount: 2,
-    crossAxisSpacing: 8.0,
-    mainAxisSpacing: 8.0,
-    ),
-    itemCount: filteredCategories.length,
-    itemBuilder: (context, index) {
-    final category = filteredCategories[index];
-    String formattedAlbumName = formatText(category.name);
-
-    final maxLength = 20;
-    if (formattedAlbumName.length > maxLength) {
-    formattedAlbumName = formattedAlbumName.substring(0, maxLength - 2) + '...';
-    }
-
-    return Container(
-    decoration: BoxDecoration(
-    border: Border.all(color: Colors.black),
-    ),
-    child: Stack(
-    children: [
-    GestureDetector(
-    onTap: () => onAlbumClicked(category),
-    child: category.coverPhotoId != null
-    ? Image.asset(
-    'assets/photos/${category.coverPhotoId}',
-    fit: BoxFit.cover,
-    width: double.infinity,
-    height: double.infinity,
-    )
-        : Image.asset(
-    'assets/photos/folderIcon.png',
-    fit: BoxFit.cover,
-    width: double.infinity,
-    height: double.infinity,
-    ),
-    ),
-    Positioned(
-    top: 0,
-    left: 0,
-    child: Container(
-    color: Colors.black.withOpacity(0.7),
-    padding: EdgeInsets.symmetric(horizontal: 8.0),
-    child: Text(
-    formattedAlbumName,
-    style: TextStyle(color: Colors.white),
-    ),
-    ),
-    ),
-    Positioned(
-    bottom: 0.0,
-    right: 0.0,
-    child: Container(
-    padding: EdgeInsets.all(0.0),
-    decoration: BoxDecoration(
-    color: Colors.black.withOpacity(0.5),
-    borderRadius: BorderRadius.only(
-    topLeft: Radius.circular(0.0),
-    bottomRight: Radius.circular(0.0),
-    ),
-    ),
-    child: Row(
-    mainAxisSize: MainAxisSize.min,
-    children: [
-    IconButton(
-    iconSize: 20.0,
-    icon: Icon(Icons.edit, color: Colors.blue),
-    onPressed: () => editAlbum(context, category, index),
-    ),
-    SizedBox(width: 0.0),
-    IconButton(
-    iconSize: 20.0,
-    icon: Icon(Icons.delete, color: Colors.red),
-    onPressed: () => showDeleteConfirmationDialog(category.name, category.id, index),
-    ),
-    ],
-    ),
-    ),
-    ),
-    ],
-    ),
-    );
-    },
-    ),
-    ),
-    ],
-    ),
-
-    floatingActionButton: Row(
-    mainAxisAlignment: MainAxisAlignment.end,
-    children: [
-    FloatingActionButton(
-    onPressed: addCategory,
-    child: Icon(Icons.add),
-    ),
-    SizedBox(width: 8.0),
-    FloatingActionButton(
-      onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => AddPhotoScreen()),
-        );
-      },
-      child: Icon(Icons.photo_camera, color: Colors.white),
-      backgroundColor: mainColor,
-      tooltip: 'Add Photos',
-    ),
-    ],
-    ),
+        floatingActionButton: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            FloatingActionButton(
+              onPressed: addCategory,
+              child: Icon(Icons.add),
+            ),
+            SizedBox(width: 8.0),
+            FloatingActionButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => AddPhotoScreen()),
+                );
+              },
+              child: Icon(Icons.photo_camera, color: Colors.white),
+              backgroundColor: mainColor,
+              tooltip: 'Add Photos',
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  }
-
+}

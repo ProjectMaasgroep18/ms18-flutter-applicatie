@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ms18_applicatie/Api/apiManager.dart'; // Assuming you have this path
-import 'package:ms18_applicatie/Pictures/models/photo_depr.dart';
+import 'package:ms18_applicatie/Pictures/photo_depr.dart';
 
 import '../config.dart';
 import '../globals.dart'; // Assuming your Photo model is in this file
