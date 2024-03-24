@@ -378,7 +378,7 @@ class _ListAlbumsState extends State<ListAlbums> {
                   selectedParentAlbumId = tempSelectedParentAlbumId;
                 });
                 await updateCategory(category.id, nameController.text,
-                    yearController.text, tempSelectedParentAlbumId);
+                    yearController.text, tempSelectedParentAlbumId, category.coverPhotoId);
                 Navigator.of(context).pop();
               },
               child: const Text('Save'),
@@ -390,11 +390,12 @@ class _ListAlbumsState extends State<ListAlbums> {
   }
 
   Future<void> updateCategory(
-      String id, String name, String year, String? parentAlbumId) async {
+      String id, String name, String year, String? parentAlbumId, String? coverPhotoId) async {
     try {
       Map<String, dynamic> body = {'name': name};
       if (year.isNotEmpty) body['year'] = int.tryParse(year);
       if (parentAlbumId != null) body['parentAlbumId'] = parentAlbumId;
+      if (coverPhotoId != null) body['coverPhotoId'] = coverPhotoId;
 
       await ApiManager.put('api/albums/$id', body, getHeaders());
 
@@ -686,7 +687,7 @@ class _ListAlbumsState extends State<ListAlbums> {
                                     ),
                                   ),
                                 Positioned(
-                                  top: 0,
+                                  bottom: 0,
                                   right: 0,
                                   child: Row(
                                     children: [
