@@ -57,6 +57,7 @@ class _AddPictureScreenState extends State<AddPictureScreen> {
 
   Future<void> _uploadImages() async {
     if (_selectedImages == null) return;
+    var uploadSuccessful = true;
 
     for (var image in _selectedImages!) {
       String imageBase64 = await _imageToBase64(image.path);
@@ -80,15 +81,18 @@ class _AddPictureScreenState extends State<AddPictureScreen> {
       // Here we assume ApiManager has a static method called post that takes the endpoint, the body, and headers
       try {
         await ApiManager.post('api/photos', photoJson, getHeaders());
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Image uploaded successfully')));
       } catch (e) {
+        uploadSuccessful = false;
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Failed to upload image: $e')));
-      } finally {
-        Navigator.of(context).pop();
       }
     }
+
+    if (uploadSuccessful) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('All images uploaded successfully')));
+    }
+    Navigator.of(context).pop();
   }
 
   @override

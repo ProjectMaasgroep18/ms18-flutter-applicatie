@@ -666,9 +666,7 @@ class _ListAlbumsState extends State<ListAlbums> {
                     context,
                     MaterialPageRoute(builder: (context) => const AddPictureScreen()),
                   );
-
-                  // Refresh albums every time we return from AddPictureScreen
-                  fetchAlbums(); // Call fetchAlbums unconditionally
+                  fetchAlbums();
                 },
                 backgroundColor: config.mainColor,
                 tooltip: 'Add Photos',
