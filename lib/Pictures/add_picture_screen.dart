@@ -86,10 +86,7 @@ class _AddPictureScreenState extends State<AddPictureScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Failed to upload image: $e')));
       } finally {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const ListAlbums()),
-        );
+        Navigator.of(context).pop();
       }
     }
   }

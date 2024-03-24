@@ -136,7 +136,7 @@ class _PhotoDetailScreenState extends State<PhotoDetailScreen> {
     icon: Icon(Icons.arrow_back_ios, size: 40, color: mainColor),
     onPressed: () {
     _controller.previousPage(
-    duration: Duration(milliseconds: 300),
+    duration: const Duration(milliseconds: 300),
     curve: Curves.easeInOut,
     );
     },
