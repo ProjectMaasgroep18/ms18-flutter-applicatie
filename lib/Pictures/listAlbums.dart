@@ -34,9 +34,11 @@ class _ListAlbumsState extends State<ListAlbums> {
   @override
   void initState() {
     super.initState();
+    selectedSortYear = -1;
     fetchAlbums();
     searchController.addListener(onSearchChanged);
   }
+
 
   @override
   void dispose() {
@@ -52,66 +54,58 @@ class _ListAlbumsState extends State<ListAlbums> {
 
   List<Category> filterCategories() {
     String query = searchController.text.toLowerCase();
-    if (query.isEmpty && selectedSortYear == null) {
-      return allCategories
-          .where((category) => category.parentAlbumId == currentAlbum?.id)
-          .toList();
-    } else {
-      return allCategories.where((category) {
-        bool matchesQuery = category.name.toLowerCase().contains(query);
-        bool matchesYear =
-            selectedSortYear == null || category.year == selectedSortYear;
-        return matchesQuery && matchesYear;
-      }).toList();
-    }
+    return allCategories.where((category) {
+      bool matchesAlbum = selectedParentAlbumId == null || category.parentAlbumId == selectedParentAlbumId;
+      bool matchesQuery = query.isEmpty || category.name.toLowerCase().contains(query);
+      bool matchesYear = selectedSortYear == -1 || category.year == selectedSortYear;
+      return matchesAlbum && matchesQuery && matchesYear;
+    }).toList();
   }
+
 
   void fetchAlbums() async {
     setState(() => isLoading = true);
     try {
-      final response =
-          await ApiManager.get<List<dynamic>>('api/albums', getHeaders());
-      final albums =
-          response.map((albumJson) => Category.fromJson(albumJson)).toList();
+      final response = await ApiManager.get<List<dynamic>>('api/albums', getHeaders());
+      final albums = response.map((albumJson) => Category.fromJson(albumJson)).toList();
 
       if (currentAlbum?.id != null) {
-        var freshCurrent =
-            albums.firstWhereOrNull((album) => album.id == currentAlbum!.id);
+        var freshCurrent = albums.firstWhereOrNull((album) => album.id == currentAlbum!.id);
         if (freshCurrent != null) {
           currentAlbum = freshCurrent;
         }
       }
 
-      filteredCategories =
-          albums.where((cat) => cat.parentAlbumId == currentAlbum?.id).toList();
+      filteredCategories = albums.where((cat) => cat.parentAlbumId == currentAlbum?.id).toList();
 
       albumPhotos = [];
-      if (currentAlbum != null &&
-          currentAlbum!.photoCount != null &&
-          currentAlbum!.photoCount! > 0) {
+      if (currentAlbum != null && currentAlbum!.photoCount != null && currentAlbum!.photoCount! > 0) {
         fetchAlbumPhotos(currentAlbum!.id);
       }
 
       coverPhotos = [];
-      if (currentAlbum == null ||
-          currentAlbum!.photoCount == null ||
-          currentAlbum!.photoCount == 0) {
+      if (currentAlbum == null || currentAlbum!.photoCount == null || currentAlbum!.photoCount == 0) {
         fetchCoverPhotos();
       }
-      years =
-          albums.map((album) => album.year).whereType<int>().toSet().toList();
+
+      years = albums.map((album) => album.year).whereType<int>().toSet().toList();
       years.sort();
+
+
+      years.insert(0, -1);
 
       setState(() {
         allCategories = albums;
         isLoading = false;
       });
-      onSearchChanged(); // Update filtered categories after fetching
+      onSearchChanged();
     } catch (e) {
       print("Error fetching albums: $e");
       setState(() => isLoading = false);
     }
   }
+
+
 
   String formatTextWithEllipsis(String input, int maxLength) {
     if (input.isEmpty) {
@@ -587,14 +581,21 @@ class _ListAlbumsState extends State<ListAlbums> {
                       filteredCategories = filterCategories();
                     });
                   },
-                  items: years.map<DropdownMenuItem<int>>((int year) {
-                    return DropdownMenuItem<int>(
-                      value: year,
-                      child: Text(year.toString()),
-                    );
-                  }).toList(),
+                  items: [
+                    DropdownMenuItem<int>(
+                      value: -1,
+                      child: const Text("Alle jaren"),
+                    ),
+                    ...years.where((year) => year != -1).map<DropdownMenuItem<int>>((int year) {
+                      return DropdownMenuItem<int>(
+                        value: year,
+                        child: Text(year.toString()),
+                      );
+                    }).toList(),
+                  ],
                 ),
               ),
+
             ],
             Expanded(
               child: isLoading
