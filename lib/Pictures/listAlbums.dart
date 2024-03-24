@@ -28,7 +28,6 @@ class _ListAlbumsState extends State<ListAlbums> {
   List<Photo> coverPhotos = [];
   bool isLoading = true;
   String? selectedParentAlbumId;
-  int? selectedYear;
   List<int> years = [];
   int? selectedSortYear;
 
@@ -53,7 +52,7 @@ class _ListAlbumsState extends State<ListAlbums> {
 
   List<Category> filterCategories() {
     String query = searchController.text.toLowerCase();
-    if (query.isEmpty) {
+    if (query.isEmpty && selectedSortYear == null) {
       return allCategories
           .where((category) => category.parentAlbumId == currentAlbum?.id)
           .toList();
