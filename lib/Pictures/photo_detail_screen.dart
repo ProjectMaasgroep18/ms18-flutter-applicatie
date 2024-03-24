@@ -36,7 +36,7 @@ class _PhotoDetailScreenState extends State<PhotoDetailScreen> {
     print('Attempting to save title...');
     try {
       final response = await http.put(
-        Uri.parse('http://10.0.2.2:5032/api/photos/${photo.id}'),
+        Uri.parse('${apiUrl}api/photos/${photo.id}'),
         headers: getHeaders(),
         body: jsonEncode({
           'title': newTitle,
@@ -69,7 +69,7 @@ class _PhotoDetailScreenState extends State<PhotoDetailScreen> {
   Future<void> _deletePhoto(String photoId) async {
     try {
       final response = await http.delete(
-        Uri.parse('http://10.0.2.2:5032/api/photos/$photoId'),
+        Uri.parse('${apiUrl}api/photos/$photoId'),
         headers: getHeaders(),
       );
 
