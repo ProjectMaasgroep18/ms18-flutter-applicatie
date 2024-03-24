@@ -6,7 +6,8 @@ enum Roles {
   Receipt,
   ReceiptApprove,
   ReceiptPay,
-  CalendarEditor
+  CalendarEditor,
+  PhotoAlbumEdit
 }
 
 const Map<String, Roles> rolesToDB = {
@@ -18,6 +19,7 @@ const Map<String, Roles> rolesToDB = {
   "receipt.approve": Roles.ReceiptApprove,
   "receipt.pay": Roles.ReceiptPay,
   "calendar.editor": Roles.CalendarEditor,
+  "photoAlbum.edit": Roles.PhotoAlbumEdit
 };
 
 const Map<String, Roles> rolesDescription = {
@@ -29,4 +31,5 @@ const Map<String, Roles> rolesDescription = {
   "Declaraties goedkeuren": Roles.ReceiptApprove,
   "Declaraties betalen": Roles.ReceiptPay,
   "Agenda items bewerken": Roles.CalendarEditor,
+  "Photo album beheren" : Roles.PhotoAlbumEdit
 };

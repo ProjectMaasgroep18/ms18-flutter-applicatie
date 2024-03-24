@@ -26,6 +26,7 @@ class Profile extends StatelessWidget {
     prefs.remove('token');
     globalLoggedInUserValues = null;
     globalLoggedIn = false;
+    currentAlbum == null;
   }
 
   final TextEditingController emailController =

@@ -5,6 +5,7 @@ import '../config.dart';
 import 'photo_detail_screen.dart';
 import 'dart:convert';
 import '../menu.dart'; // Importeer de Menu-widget
+import 'package:ms18_applicatie/globals.dart';
 
 class PhotoGalleryScreen extends StatefulWidget {
   final String albumId;
@@ -60,7 +61,8 @@ class _PhotoGalleryScreenState extends State<PhotoGalleryScreen> {
       ),
       child: Scaffold(
         appBar: AppBar(
-          title: Text("Lijst met fotos"),
+          title: Text(currentAlbum!.name),
+          automaticallyImplyLeading: false,
         ),
         body: isLoading
             ? Center(child: CircularProgressIndicator())

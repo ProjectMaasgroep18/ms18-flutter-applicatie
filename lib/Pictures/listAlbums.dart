@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Pictures/photo_gallery_screen.dart';
+import '../Models/roles.dart';
 import '../Pictures/models/category.dart';
 import 'package:ms18_applicatie/Pictures/add_picture_screen.dart';
 import '../Api/apiManager.dart';
 import '../globals.dart';
 import '../config.dart';
 import '../menu.dart';
+import 'package:collection/collection.dart';
 
 class ListAlbums extends StatefulWidget {
   const ListAlbums({super.key});
@@ -48,7 +50,7 @@ class _ListAlbumsState extends State<ListAlbums> {
     String query = searchController.text.toLowerCase();
     if (query.isEmpty) {
       return allCategories
-          .where((category) => category.parentAlbumId == currentAlbum)
+          .where((category) => category.parentAlbumId == currentAlbum?.id)
           .toList();
     } else {
       return allCategories.where((category) {
@@ -68,6 +70,14 @@ class _ListAlbumsState extends State<ListAlbums> {
       final albums =
           response.map((albumJson) => Category.fromJson(albumJson)).toList();
 
+      if (currentAlbum?.id != null) {
+        var freshCurrent =
+            albums.firstWhereOrNull((album) => album.id == currentAlbum!.id);
+        if (freshCurrent != null) {
+          currentAlbum = freshCurrent;
+        }
+      }
+
       years =
           albums.map((album) => album.year).whereType<int>().toSet().toList();
       years.sort();
@@ -75,7 +85,7 @@ class _ListAlbumsState extends State<ListAlbums> {
       setState(() {
         allCategories = albums;
         filteredCategories = allCategories
-            .where((cat) => cat.parentAlbumId == currentAlbum)
+            .where((cat) => cat.parentAlbumId == currentAlbum?.id)
             .toList();
         isLoading = false;
       });
@@ -251,7 +261,7 @@ class _ListAlbumsState extends State<ListAlbums> {
       }
 
       if (currentAlbum != null) {
-        body['parentAlbumId'] = currentAlbum;
+        body['parentAlbumId'] = currentAlbum!.id;
       }
 
       await ApiManager.post('api/albums', body, getHeaders());
@@ -385,19 +395,14 @@ class _ListAlbumsState extends State<ListAlbums> {
       return;
     }
 
-    Category? currentCategory;
-    try {
-      // find the current album in the allCategories list
-      currentCategory =
-          allCategories.firstWhere((category) => category.id == currentAlbum);
-    } catch (e) {
-      // If the album is not found, an exception will be caught, and currentCategory will remain null
-      currentAlbum = null;
-    }
-
     setState(() {
       // If an album is found, set currentAlbum to its parentAlbumId. Otherwise, set currentAlbum to null.
-      currentAlbum = currentCategory?.parentAlbumId;
+      if (currentAlbum!.parentAlbumId == null) {
+        currentAlbum = null;
+      } else {
+        currentAlbum!.id = currentAlbum!.parentAlbumId!;
+      }
+
       fetchAlbums(); // Refresh the list based on the new currentAlbum
     });
 
@@ -405,7 +410,7 @@ class _ListAlbumsState extends State<ListAlbums> {
     if (currentAlbum != null) {
       setState(() {
         displayedTitle = allCategories
-            .firstWhere((category) => category.id == currentAlbum)
+            .firstWhere((category) => category.id == currentAlbum!.id)
             .name;
       });
     } else {
@@ -418,6 +423,11 @@ class _ListAlbumsState extends State<ListAlbums> {
   void onAlbumClicked(Category album) {
     if (album.photoCount! > 0) {
       // Navigate to PhotoGalleryScreen with the album.id
+      currentAlbum = album;
+      filteredCategories = allCategories
+          .where((cat) => cat.parentAlbumId == album.id)
+          .toList();
+
       Navigator.push(
           context,
           MaterialPageRoute(
@@ -425,7 +435,7 @@ class _ListAlbumsState extends State<ListAlbums> {
     } else {
       setState(() {
         displayedTitle = album.name;
-        currentAlbum = album.id;
+        currentAlbum = album;
         filteredCategories = allCategories
             .where((cat) => cat.parentAlbumId == album.id)
             .toList();
@@ -609,6 +619,21 @@ class _ListAlbumsState extends State<ListAlbums> {
                                   ),
                                 ),
                               ),
+                              if (category.year != null)
+                                Positioned(
+                                  bottom: 0,
+                                  left: 0,
+                                  child: Container(
+                                    color: Colors.black.withOpacity(0.7),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8.0, vertical: 4.0),
+                                    child: Text(
+                                      category.year.toString(),
+                                      style:
+                                          const TextStyle(color: Colors.white),
+                                    ),
+                                  ),
+                                ),
                               Positioned(
                                 bottom: 0.0,
                                 right: 0.0,
@@ -624,24 +649,32 @@ class _ListAlbumsState extends State<ListAlbums> {
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      IconButton(
-                                        iconSize: 20.0,
-                                        icon: const Icon(Icons.edit,
-                                            color: Colors.blue),
-                                        onPressed: () =>
-                                            editAlbum(context, category, index),
-                                      ),
+                                      if (globalLoggedInUserValues!.roles
+                                              .contains(Roles.Admin) ||
+                                          globalLoggedInUserValues!.roles
+                                              .contains(Roles.PhotoAlbumEdit))
+                                        IconButton(
+                                          iconSize: 20.0,
+                                          icon: const Icon(Icons.edit,
+                                              color: Colors.blue),
+                                          onPressed: () => editAlbum(
+                                              context, category, index),
+                                        ),
                                       const SizedBox(width: 0.0),
-                                      IconButton(
-                                        iconSize: 20.0,
-                                        icon: const Icon(Icons.delete,
-                                            color: Colors.red),
-                                        onPressed: () =>
-                                            showDeleteConfirmationDialog(
-                                                category.name,
-                                                category.id,
-                                                index),
-                                      ),
+                                      if (globalLoggedInUserValues!.roles
+                                              .contains(Roles.Admin) ||
+                                          globalLoggedInUserValues!.roles
+                                              .contains(Roles.PhotoAlbumEdit))
+                                        IconButton(
+                                          iconSize: 20.0,
+                                          icon: const Icon(Icons.delete,
+                                              color: Colors.red),
+                                          onPressed: () =>
+                                              showDeleteConfirmationDialog(
+                                                  category.name,
+                                                  category.id,
+                                                  index),
+                                        ),
                                     ],
                                   ),
                                 ),
@@ -657,24 +690,30 @@ class _ListAlbumsState extends State<ListAlbums> {
         floatingActionButton: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            FloatingActionButton(
-              onPressed: addCategory,
-              heroTag: 'addCategoryHeroTag',
-              child: const Icon(Icons.add),
-            ),
+            if ((globalLoggedInUserValues!.roles.contains(Roles.Admin) ||
+                globalLoggedInUserValues!.roles.contains(Roles.PhotoAlbumEdit)) && (currentAlbum == null || currentAlbum!.photoCount == 0))
+              FloatingActionButton(
+                onPressed: addCategory,
+                heroTag: 'addCategoryHeroTag',
+                child: const Icon(Icons.add),
+              ),
             const SizedBox(width: 8.0),
-            FloatingActionButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => AddPictureScreen()),
-                );
-              },
-              backgroundColor: mainColor,
-              tooltip: 'Add Photos',
-              heroTag: 'addPhotoHeroTag',
-              child: const Icon(Icons.photo_camera, color: Colors.white),
-            ),
+            if (
+                currentAlbum != null &&
+                !allCategories
+                    .any((cat) => cat.parentAlbumId == currentAlbum!.id))
+              FloatingActionButton(
+                onPressed: () async {
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => AddPictureScreen()),
+                  );
+                },
+                backgroundColor: mainColor,
+                tooltip: 'Add Photos',
+                heroTag: 'addPhotoHeroTag',
+                child: const Icon(Icons.photo_camera, color: Colors.white),
+              ),
           ],
         ),
       ),

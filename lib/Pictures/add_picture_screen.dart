@@ -4,11 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ms18_applicatie/Api/apiManager.dart'; // Assuming you have this path
 
-
 import '../config.dart';
-import '../globals.dart'; // Assuming your Photo model is in this file
+import '../globals.dart';
+import 'listAlbums.dart';
 
 class AddPictureScreen extends StatefulWidget {
+  const AddPictureScreen({super.key});
+
   @override
   _AddPictureScreenState createState() => _AddPictureScreenState();
 }
@@ -25,7 +27,7 @@ class _AddPictureScreenState extends State<AddPictureScreen> {
   }
 
   Future<void> _pickImages() async {
-    final List<XFile>? images = await _picker.pickMultiImage();
+    final List<XFile> images = await _picker.pickMultiImage();
     if (images != null) {
       setState(() {
         _selectedImages = images;
@@ -52,6 +54,7 @@ class _AddPictureScreenState extends State<AddPictureScreen> {
       return '';
     }
   }
+
   Future<void> _uploadImages() async {
     if (_selectedImages == null) return;
 
@@ -71,15 +74,22 @@ class _AddPictureScreenState extends State<AddPictureScreen> {
 
       // Conditionally add albumId if it is not null
       if (currentAlbum != null) {
-        photoJson["albumId"] = currentAlbum;
+        photoJson["albumId"] = currentAlbum!.id;
       }
 
       // Here we assume ApiManager has a static method called post that takes the endpoint, the body, and headers
       try {
         await ApiManager.post('api/photos', photoJson, getHeaders());
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Image uploaded successfully')));
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Image uploaded successfully')));
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to upload image: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Failed to upload image: $e')));
+      } finally {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const ListAlbums()),
+        );
       }
     }
   }
@@ -88,50 +98,52 @@ class _AddPictureScreenState extends State<AddPictureScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add Picture'),
+        title: const Text('Add Picture'),
       ),
-      body: SingleChildScrollView( // Wrap with SingleChildScrollView
+      body: SingleChildScrollView(
+        // Wrap with SingleChildScrollView
         child: Column(
           children: [
             ElevatedButton(
               onPressed: _pickImages,
-              child: Text('Select Images from Gallery'),
+              child: const Text('Select Images from Gallery'),
             ),
             ElevatedButton(
               onPressed: _takePicture,
-              child: Text('Take a Picture'),
+              child: const Text('Take a Picture'),
             ),
             Padding(
               padding: const EdgeInsets.all(8.0), // Add padding for better UI
               child: TextField(
                 controller: _titleController,
-                decoration: InputDecoration(labelText: 'Title'),
+                decoration: const InputDecoration(labelText: 'Title'),
               ),
             ),
             ElevatedButton(
               onPressed: _uploadImages,
-              child: Text('Upload'),
+              child: const Text('Upload'),
             ),
             _selectedImages != null &&
-                _selectedImages!.isNotEmpty // Conditional rendering
-                ? Container(
-              height: 300, // Specify a height for the container
-              child: GridView.builder(
-                shrinkWrap: true,
-                // Add shrinkWrap
-                physics: NeverScrollableScrollPhysics(),
-                // Add physics
-                itemCount: _selectedImages?.length ?? 0,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  crossAxisSpacing: 4,
-                  mainAxisSpacing: 4,
-                ),
-                itemBuilder: (BuildContext context, int index) {
-                  return Image.file(File(_selectedImages![index].path));
-                },
-              ),
-            )
+                    _selectedImages!.isNotEmpty // Conditional rendering
+                ? SizedBox(
+                    height: 300, // Specify a height for the container
+                    child: GridView.builder(
+                      shrinkWrap: true,
+                      // Add shrinkWrap
+                      physics: const NeverScrollableScrollPhysics(),
+                      // Add physics
+                      itemCount: _selectedImages?.length ?? 0,
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        crossAxisSpacing: 4,
+                        mainAxisSpacing: 4,
+                      ),
+                      itemBuilder: (BuildContext context, int index) {
+                        return Image.file(File(_selectedImages![index].path));
+                      },
+                    ),
+                  )
                 : Container(), // Show an empty container if there are no images
           ],
         ),
