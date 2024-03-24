@@ -52,7 +52,7 @@ class Photo {
       needsApproval: needsApproval ?? this.needsApproval,
     );
   }
-
+//Korte update voor push
   void updateTitle(String newTitle) {
     title = newTitle;
   }
