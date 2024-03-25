@@ -66,9 +66,7 @@ class _PhotoDetailScreenState extends State<PhotoDetailScreen> {
       final response = await ApiManager.get<List<dynamic>>('api/likes/photo/$photoId', getHeaders());
       final likes = response.map((likeJson) => Like.fromJson(likeJson)).toList();
 
-
-
-      setState(() {
+           setState(() {
         isLiked = likes.any((like) => like.memberId == globalLoggedInUserValues!.id);
       });
     } catch (e) {
