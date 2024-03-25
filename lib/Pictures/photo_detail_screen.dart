@@ -180,15 +180,30 @@ class _PhotoDetailScreenState extends State<PhotoDetailScreen> {
   }
 
   Future<void> _setCoverPhoto(Category album) async {
-    Map<String, dynamic> body = {
-      'coverPhotoId': widget.photos[widget.currentIndex].id
-    };
-    body['name'] = album.name;
-    body['year'] = album.year;
-    body['parentAlbumId'] = album.parentAlbumId;
+    try {
+      Map<String, dynamic> body = {
+        'coverPhotoId': widget.photos[widget.currentIndex].id
+      };
+      body['name'] = album.name;
+      body['year'] = album.year;
+      body['parentAlbumId'] = album.parentAlbumId;
 
-    String? categoryId = album.id;
-    await ApiManager.put('api/albums/$categoryId', body, getHeaders());
+      String? categoryId = album.id;
+      await ApiManager.put('api/albums/$categoryId', body, getHeaders());
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Coverfoto succesvol ingesteld!')
+        ),
+      );
+    }
+    catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Instellen van coverfoto mislukt.')
+        ),
+      );
+    }
   }
 
   void _toggleVisibility() {
