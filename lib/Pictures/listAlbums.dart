@@ -46,20 +46,27 @@ class _ListAlbumsState extends State<ListAlbums> {
   }
 
   void onSearchChanged() {
-    setState(() {
+    setState(() async {
       filteredCategories = filterCategories();
+      await fetchCoverPhotos();
     });
   }
 
+
   List<Category> filterCategories() {
     String query = searchController.text.toLowerCase();
+    if(query.isEmpty)
+      {
+        return allCategories.where((cat) => cat.parentAlbumId == currentAlbum?.id).toList();
+      }
+
     return allCategories.where((category) {
-      bool hasNoParentAlbum = category.parentAlbumId == null;
+      //bool hasNoParentAlbum = category.parentAlbumId == null;
       bool matchesQuery =
           query.isEmpty || category.name.toLowerCase().contains(query);
       bool matchesYear =
           selectedSortYear == -1 || category.year == selectedSortYear;
-      return hasNoParentAlbum && matchesQuery && matchesYear;
+      return matchesQuery && matchesYear;
     }).toList();
   }
 
