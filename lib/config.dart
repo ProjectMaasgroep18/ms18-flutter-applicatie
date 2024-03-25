@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -115,7 +116,20 @@ const Map<RolesNames, int> roles = {
 
 // Base url and headers for the api
 const Set<int> allowedStatusCodes = {200, 204, 201};
-const String apiUrl = "http://10.0.2.2:5032/";
+final String apiUrl =  getApiUrl();
+
+String getApiUrl() {
+  // Define the API URLs because android emulator is behind a proxy
+  const String androidIosApiUrl = "http://10.0.2.2:5032/";
+  const String otherPlatformApiUrl = "https://localhost:7059/";
+
+  // Check if the app is running on the web
+  if (kIsWeb) {
+    return otherPlatformApiUrl; // Return URL for web
+  } else {
+    return androidIosApiUrl; // Return URL for Android/iOS
+  }
+}
 
 const Map<String, String> apiHeaders = {
   "Content-Type": "application/json",
