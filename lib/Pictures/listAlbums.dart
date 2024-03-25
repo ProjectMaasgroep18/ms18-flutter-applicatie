@@ -39,7 +39,6 @@ class _ListAlbumsState extends State<ListAlbums> {
     searchController.addListener(onSearchChanged);
   }
 
-
   @override
   void dispose() {
     searchController.dispose();
@@ -56,42 +55,50 @@ class _ListAlbumsState extends State<ListAlbums> {
     String query = searchController.text.toLowerCase();
     return allCategories.where((category) {
       bool hasNoParentAlbum = category.parentAlbumId == null;
-      bool matchesQuery = query.isEmpty || category.name.toLowerCase().contains(query);
-      bool matchesYear = selectedSortYear == -1 || category.year == selectedSortYear;
+      bool matchesQuery =
+          query.isEmpty || category.name.toLowerCase().contains(query);
+      bool matchesYear =
+          selectedSortYear == -1 || category.year == selectedSortYear;
       return hasNoParentAlbum && matchesQuery && matchesYear;
     }).toList();
   }
 
-
-
-  void fetchAlbums() async {
+  Future<void> fetchAlbums() async {
     setState(() => isLoading = true);
     try {
-      final response = await ApiManager.get<List<dynamic>>('api/albums', getHeaders());
-      final albums = response.map((albumJson) => Category.fromJson(albumJson)).toList();
+      final response =
+          await ApiManager.get<List<dynamic>>('api/albums', getHeaders());
+      final albums =
+          response.map((albumJson) => Category.fromJson(albumJson)).toList();
 
       if (currentAlbum?.id != null) {
-        var freshCurrent = albums.firstWhereOrNull((album) => album.id == currentAlbum!.id);
+        var freshCurrent =
+            albums.firstWhereOrNull((album) => album.id == currentAlbum!.id);
         if (freshCurrent != null) {
           currentAlbum = freshCurrent;
         }
       }
 
-      filteredCategories = albums.where((cat) => cat.parentAlbumId == currentAlbum?.id).toList();
+      filteredCategories =
+          albums.where((cat) => cat.parentAlbumId == currentAlbum?.id).toList();
 
       albumPhotos = [];
-      if (currentAlbum != null && currentAlbum!.photoCount != null && currentAlbum!.photoCount! > 0) {
+      if (currentAlbum != null &&
+          currentAlbum!.photoCount != null &&
+          currentAlbum!.photoCount! > 0) {
         fetchAlbumPhotos(currentAlbum!.id);
       }
 
       coverPhotos = [];
-      if (currentAlbum == null || currentAlbum!.photoCount == null || currentAlbum!.photoCount == 0) {
+      if (currentAlbum == null ||
+          currentAlbum!.photoCount == null ||
+          currentAlbum!.photoCount == 0) {
         fetchCoverPhotos();
       }
 
-      years = albums.map((album) => album.year).whereType<int>().toSet().toList();
+      years =
+          albums.map((album) => album.year).whereType<int>().toSet().toList();
       years.sort();
-
 
       years.insert(0, -1);
 
@@ -105,8 +112,6 @@ class _ListAlbumsState extends State<ListAlbums> {
       setState(() => isLoading = false);
     }
   }
-
-
 
   String formatTextWithEllipsis(String input, int maxLength) {
     if (input.isEmpty) {
@@ -227,7 +232,6 @@ class _ListAlbumsState extends State<ListAlbums> {
     }
   }
 
-
   void addCategory() {
     TextEditingController nameController = TextEditingController();
     TextEditingController yearController = TextEditingController();
@@ -297,7 +301,7 @@ class _ListAlbumsState extends State<ListAlbums> {
       }
 
       await ApiManager.post('api/albums', body, getHeaders());
-      fetchAlbums(); // Refresh the albums/categories list
+      await fetchAlbums(); // Refresh the albums/categories list
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Category added successfully')),
       );
@@ -311,9 +315,9 @@ class _ListAlbumsState extends State<ListAlbums> {
 
   void editAlbum(BuildContext context, Category category, int index) {
     TextEditingController nameController =
-    TextEditingController(text: category.name);
+        TextEditingController(text: category.name);
     TextEditingController yearController =
-    TextEditingController(text: category.year?.toString() ?? '');
+        TextEditingController(text: category.year?.toString() ?? '');
 
     String? tempSelectedParentAlbumId = category.parentAlbumId;
 
@@ -335,7 +339,7 @@ class _ListAlbumsState extends State<ListAlbums> {
                         controller: yearController,
                         keyboardType: TextInputType.number,
                         decoration:
-                        const InputDecoration(hintText: 'Year (Optional)')),
+                            const InputDecoration(hintText: 'Year (Optional)')),
                     const Padding(
                       padding: EdgeInsets.only(top: 16.0),
                       child: Align(
@@ -365,7 +369,10 @@ class _ListAlbumsState extends State<ListAlbums> {
                         ),
                         ...allCategories
                             .where((c) =>
-                        c.id != category.id && (c.photoCount ?? 0) == 0 && c.parentAlbumId == null) // Alleen parentalbums worden weergegeven
+                                c.id != category.id &&
+                                (c.photoCount ?? 0) == 0 &&
+                                c.parentAlbumId ==
+                                    null) // Alleen parentalbums worden weergegeven
                             .map<DropdownMenuItem<String>>((Category category) {
                           return DropdownMenuItem<String>(
                             value: category.id,
@@ -389,8 +396,12 @@ class _ListAlbumsState extends State<ListAlbums> {
                 setState(() {
                   selectedParentAlbumId = tempSelectedParentAlbumId;
                 });
-                await updateCategory(category.id, nameController.text,
-                    yearController.text, tempSelectedParentAlbumId, category.coverPhotoId);
+                await updateCategory(
+                    category.id,
+                    nameController.text,
+                    yearController.text,
+                    tempSelectedParentAlbumId,
+                    category.coverPhotoId);
                 Navigator.of(context).pop();
               },
               child: const Text('Save'),
@@ -401,8 +412,8 @@ class _ListAlbumsState extends State<ListAlbums> {
     );
   }
 
-  Future<void> updateCategory(
-      String id, String name, String year, String? parentAlbumId, String? coverPhotoId) async {
+  Future<void> updateCategory(String id, String name, String year,
+      String? parentAlbumId, String? coverPhotoId) async {
     try {
       Map<String, dynamic> body = {'name': name};
       if (year.isNotEmpty) body['year'] = int.tryParse(year);
@@ -411,7 +422,7 @@ class _ListAlbumsState extends State<ListAlbums> {
 
       await ApiManager.put('api/albums/$id', body, getHeaders());
 
-      fetchAlbums();
+      await fetchAlbums();
       ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Album updated successfully')));
     } catch (e) {
@@ -421,22 +432,20 @@ class _ListAlbumsState extends State<ListAlbums> {
     }
   }
 
-  void goBackToParentAlbum() {
-    albumPhotos = [];
+  void goBackToParentAlbum() async {
     if (currentAlbum == null) {
       return;
     }
 
-    setState(() {
-      // If an album is found, set currentAlbum to its parentAlbumId. Otherwise, set currentAlbum to null.
-      if (currentAlbum!.parentAlbumId == null) {
-        currentAlbum = null;
-      } else {
-        currentAlbum!.id = currentAlbum!.parentAlbumId!;
-      }
+    // If an album is found, set currentAlbum to its parentAlbumId. Otherwise, set currentAlbum to null.
+    if (currentAlbum!.parentAlbumId == null) {
+      currentAlbum = null;
+    } else {
+      currentAlbum!.id = currentAlbum!.parentAlbumId!;
+    }
 
-      fetchAlbums(); // Refresh the list based on the new currentAlbum
-    });
+    await fetchAlbums();
+    await fetchCoverPhotos();
 
     // Update the displayed title after the state is updated
     if (currentAlbum != null) {
@@ -462,6 +471,7 @@ class _ListAlbumsState extends State<ListAlbums> {
       currentAlbum = album;
       filteredCategories =
           allCategories.where((cat) => cat.parentAlbumId == album.id).toList();
+      fetchCoverPhotos();
     });
   }
 
@@ -601,11 +611,13 @@ class _ListAlbumsState extends State<ListAlbums> {
                     });
                   },
                   items: [
-                    DropdownMenuItem<int>(
+                    const DropdownMenuItem<int>(
                       value: -1,
-                      child: const Text("Alle jaren"),
+                      child: Text("Alle jaren"),
                     ),
-                    ...years.where((year) => year != -1).map<DropdownMenuItem<int>>((int year) {
+                    ...years
+                        .where((year) => year != -1)
+                        .map<DropdownMenuItem<int>>((int year) {
                       return DropdownMenuItem<int>(
                         value: year,
                         child: Text(year.toString()),
@@ -614,7 +626,6 @@ class _ListAlbumsState extends State<ListAlbums> {
                   ],
                 ),
               ),
-
             ],
             Expanded(
               child: isLoading
@@ -662,8 +673,10 @@ class _ListAlbumsState extends State<ListAlbums> {
                                   child: Container(
                                     color: Colors.black45,
                                     child: IconButton(
-                                      icon: const Icon(Icons.delete, color: Colors.red),
-                                      onPressed: () => _deletePhoto(photo.id!, index),
+                                      icon: const Icon(Icons.delete,
+                                          color: Colors.red),
+                                      onPressed: () =>
+                                          _deletePhoto(photo.id!, index),
                                     ),
                                   ),
                                 ),
@@ -679,31 +692,36 @@ class _ListAlbumsState extends State<ListAlbums> {
                             onTap: () => onAlbumClicked(category),
                             child: Stack(
                               children: [
-                                category.coverPhotoId != null && matchingCoverPhoto != null
+                                category.coverPhotoId != null &&
+                                        matchingCoverPhoto != null
                                     ? Image.memory(
-                                  base64Decode(matchingCoverPhoto.imageBase64),
-                                  fit: BoxFit.cover,
-                                  width: double.infinity,
-                                  height: double.infinity,
-                                )
+                                        base64Decode(
+                                            matchingCoverPhoto.imageBase64),
+                                        fit: BoxFit.cover,
+                                        width: double.infinity,
+                                        height: double.infinity,
+                                      )
                                     : Image.asset(
-                                  'assets/photos/folderIcon.png',
-                                  fit: BoxFit.cover,
-                                  width: double.infinity,
-                                  height: double.infinity,
-                                ),
+                                        'assets/photos/folderIcon.png',
+                                        fit: BoxFit.cover,
+                                        width: double.infinity,
+                                        height: double.infinity,
+                                      ),
                                 Positioned(
                                   top: 0,
                                   left: 0,
                                   child: Container(
                                     color: Colors.black.withOpacity(0.7),
-                                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8.0),
                                     child: Text.rich(
                                       TextSpan(
                                         children: [
                                           TextSpan(
-                                            text: formatTextWithEllipsis(category.name, 12),
-                                            style: const TextStyle(color: Colors.white),
+                                            text: formatTextWithEllipsis(
+                                                category.name, 12),
+                                            style: const TextStyle(
+                                                color: Colors.white),
                                           ),
                                         ],
                                       ),
@@ -716,10 +734,12 @@ class _ListAlbumsState extends State<ListAlbums> {
                                     left: 0,
                                     child: Container(
                                       color: Colors.black.withOpacity(0.7),
-                                      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8.0, vertical: 4.0),
                                       child: Text(
                                         category.year.toString(),
-                                        style: const TextStyle(color: Colors.white),
+                                        style: const TextStyle(
+                                            color: Colors.white),
                                       ),
                                     ),
                                   ),
@@ -730,8 +750,10 @@ class _ListAlbumsState extends State<ListAlbums> {
                                     children: [
                                       if (editMode)
                                         IconButton(
-                                          icon: const Icon(Icons.edit, color: Colors.blue),
-                                          onPressed: () => editAlbum(context, category, index),
+                                          icon: const Icon(Icons.edit,
+                                              color: Colors.blue),
+                                          onPressed: () => editAlbum(
+                                              context, category, index),
                                         ),
                                       if (editMode)
                                         IconButton(
@@ -755,8 +777,6 @@ class _ListAlbumsState extends State<ListAlbums> {
             ),
           ],
         ),
-
-
         floatingActionButton: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
@@ -765,17 +785,21 @@ class _ListAlbumsState extends State<ListAlbums> {
                 onPressed: () => setState(() => editMode = !editMode),
                 heroTag: 'changeEditMode',
                 backgroundColor: config.mainColor,
-                child: Icon(editMode ? Icons.edit_off : Icons.edit, color: Colors.white,),
+                child: Icon(
+                  editMode ? Icons.edit_off : Icons.edit,
+                  color: Colors.white,
+                ),
               ),
-
-
             if (editMode &&
                 (currentAlbum == null || currentAlbum!.photoCount == 0))
               FloatingActionButton(
                 onPressed: addCategory,
                 heroTag: 'addCategoryHeroTag',
                 backgroundColor: config.mainColor,
-                child: const Icon(Icons.add, color: Colors.white,),
+                child: const Icon(
+                  Icons.add,
+                  color: Colors.white,
+                ),
               ),
             const SizedBox(width: 8.0),
             if (currentAlbum != null &&
@@ -788,7 +812,7 @@ class _ListAlbumsState extends State<ListAlbums> {
                     MaterialPageRoute(
                         builder: (context) => const AddPictureScreen()),
                   );
-                  fetchAlbums();
+                  await fetchAlbums();
                 },
                 backgroundColor: config.mainColor,
                 tooltip: 'Add Photos',
