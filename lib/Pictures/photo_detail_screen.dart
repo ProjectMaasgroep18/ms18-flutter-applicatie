@@ -1,9 +1,12 @@
 import 'dart:convert';
 import 'dart:typed_data';
+import 'package:collection/collection.dart';
+
 import '../config.dart';
 import '../globals.dart';
 import 'package:flutter/material.dart';
 import '../Api/apiManager.dart';
+import 'models/category.dart';
 import 'models/photo.dart';
 
 Color mainColor = Color(0xFF15233d);
@@ -39,8 +42,8 @@ class _PhotoDetailScreenState extends State<PhotoDetailScreen> {
     }
 
     // Toegevoegd: Voeg een listener toe om de oriëntatieveranderingen te detecteren
-    WidgetsBinding.instance?.addObserver(
-        OrientationChangeObserver(_handleOrientationChange));
+    WidgetsBinding.instance
+        ?.addObserver(OrientationChangeObserver(_handleOrientationChange));
   }
 
   @override
@@ -48,17 +51,15 @@ class _PhotoDetailScreenState extends State<PhotoDetailScreen> {
     _controller.dispose();
     _titleController.dispose();
     // Toegevoegd: Verwijder de oriëntatielissener
-    WidgetsBinding.instance?.removeObserver(
-        OrientationChangeObserver(_handleOrientationChange));
+    WidgetsBinding.instance
+        ?.removeObserver(OrientationChangeObserver(_handleOrientationChange));
     super.dispose();
   }
 
   // Toegevoegd: Functie om te reageren op oriëntatieveranderingen
   void _handleOrientationChange() {
     setState(() {
-      if (MediaQuery
-          .of(context)
-          .orientation == Orientation.landscape) {
+      if (MediaQuery.of(context).orientation == Orientation.landscape) {
         areDetailsAndNavBarVisible = true;
       } else {
         areDetailsAndNavBarVisible = false;
@@ -75,13 +76,90 @@ class _PhotoDetailScreenState extends State<PhotoDetailScreen> {
     });
   }
 
-  Future<void> _setCoverPhoto() async{
-    Map<String, dynamic> body = {'coverPhotoId': widget.photos[widget.currentIndex].id};
-    body['name'] = currentAlbum?.name;
-    body['year'] = currentAlbum?.year;
-    body['parentAlbumId'] = currentAlbum?.parentAlbumId;
-    String? categoryid = currentAlbum?.id;
-    await ApiManager.put('api/albums/$categoryid', body, getHeaders());
+  Future<List<DropdownMenuItem<Category>>> buildDropdownMenuItems() async {
+    final response =
+        await ApiManager.get<List<dynamic>>('api/albums', getHeaders());
+    final albums =
+        response.map((albumJson) => Category.fromJson(albumJson)).toList();
+
+    List<DropdownMenuItem<Category>> items = [];
+
+    // Add the current album to items first
+    if (currentAlbum != null) {
+      items.add(DropdownMenuItem<Category>(
+        value: currentAlbum,
+        child: Text(currentAlbum!.name),
+      ));
+    }
+
+    // Now find and add all parent albums
+    String? currentAlbumParentId = currentAlbum?.parentAlbumId;
+    while (currentAlbumParentId != null) {
+      final Category? parentAlbum =
+          albums.firstWhereOrNull((album) => album.id == currentAlbumParentId);
+      if (parentAlbum != null) {
+        items.add(DropdownMenuItem<Category>(
+          value: parentAlbum,
+          child: Text(parentAlbum.name),
+        ));
+        currentAlbumParentId = parentAlbum.parentAlbumId;
+      } else {
+        break; // No more parent albums
+      }
+    }
+
+    return items;
+  }
+
+  void showCoverPhotoSelectionDialog() async {
+    List<DropdownMenuItem<Category>> dropdownItems = await buildDropdownMenuItems();
+    Category? selectedCategory = currentAlbum; // Start with the current category
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Selecteer Cover Photo Album'),
+          content: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return DropdownButton<Category>(
+                isExpanded: true,
+                items: dropdownItems,
+                onChanged: (Category? newValue) {
+                  setState(() {
+                    selectedCategory = newValue;
+                  });
+                },
+                value: selectedCategory,
+              );
+            },
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                if (selectedCategory != null) {
+                  _setCoverPhoto(selectedCategory!);
+                }
+              },
+              child: const Text('Bevestigen'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _setCoverPhoto(Category album) async {
+    Map<String, dynamic> body = {
+      'coverPhotoId': widget.photos[widget.currentIndex].id
+    };
+    body['name'] = album.name;
+    body['year'] = album.year;
+    body['parentAlbumId'] = album.parentAlbumId;
+
+    String? categoryId = album.id;
+    await ApiManager.put('api/albums/$categoryId', body, getHeaders());
   }
 
   void _toggleVisibility() {
@@ -102,9 +180,8 @@ class _PhotoDetailScreenState extends State<PhotoDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isPortrait = MediaQuery
-        .of(context)
-        .orientation == Orientation.portrait;
+    final isPortrait =
+        MediaQuery.of(context).orientation == Orientation.portrait;
 
     return Scaffold(
       body: GestureDetector(
@@ -138,7 +215,7 @@ class _PhotoDetailScreenState extends State<PhotoDetailScreen> {
                 left: 0,
                 right: 0,
                 child: AppBar(
-                  title: Text(
+                  title: const Text(
                     'Foto informatie',
                     style: TextStyle(color: Colors.white),
                   ),
@@ -234,11 +311,11 @@ class _PhotoDetailScreenState extends State<PhotoDetailScreen> {
           ),
         ),
         ElevatedButton(
-          onPressed: () => _setCoverPhoto(),
+          onPressed: showCoverPhotoSelectionDialog, // Call the dialog function here
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.grey,
           ),
-          child: Text(
+          child: const Text(
             'Stel in als Cover Photo',
             style: TextStyle(color: Colors.white),
           ),
@@ -247,13 +324,15 @@ class _PhotoDetailScreenState extends State<PhotoDetailScreen> {
     );
   }
 
-
   Widget _buildLandscapeLayout() {
     String titleToShow = isEditing
         ? 'Wijzig Titel'
-        : widget.photos != null && widget.photos.isNotEmpty && widget.currentIndex >= 0 && widget.currentIndex < widget.photos.length
-        ? widget.photos[widget.currentIndex]?.title ?? ''
-        : '';
+        : widget.photos != null &&
+                widget.photos.isNotEmpty &&
+                widget.currentIndex >= 0 &&
+                widget.currentIndex < widget.photos.length
+            ? widget.photos[widget.currentIndex]?.title ?? ''
+            : '';
 
     if (titleToShow.length > 43) {
       // Truncate the title if it's longer than 43 characters
