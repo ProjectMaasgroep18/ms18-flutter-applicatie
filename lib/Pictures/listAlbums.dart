@@ -100,9 +100,9 @@ class _ListAlbumsState extends State<ListAlbums> {
       years.sort();
 
       years.insert(0, -1);
+      allCategories = albums;
 
       setState(() {
-        allCategories = albums;
         isLoading = false;
       });
     } catch (e) {
@@ -194,12 +194,12 @@ class _ListAlbumsState extends State<ListAlbums> {
     setState(() => isLoading = true);
     try {
       await ApiManager.delete('api/albums/$albumId', getHeaders());
-      setState(() {
-        allCategories.removeWhere((category) =>
-            category.id == albumId || category.parentAlbumId == albumId);
-        filteredCategories.removeWhere((category) =>
-            category.id == albumId || category.parentAlbumId == albumId);
-      });
+
+      allCategories.removeWhere((category) =>
+          category.id == albumId || category.parentAlbumId == albumId);
+      filteredCategories.removeWhere((category) =>
+          category.id == albumId || category.parentAlbumId == albumId);
+
       ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Album successfully deleted")));
     } catch (e) {
@@ -462,20 +462,18 @@ class _ListAlbumsState extends State<ListAlbums> {
     if (album.photoCount! > 0) {
       fetchAlbumPhotos(album.id);
     }
-    await fetchCoverPhotos();
+    currentAlbum = album;
 
-    setState(() {
-      displayedTitle = album.name;
-      currentAlbum = album;
-      filteredCategories =
-          allCategories.where((cat) => cat.parentAlbumId == album.id).toList();
-      ;
-    });
+    displayedTitle = album.name;
+    filteredCategories =
+        allCategories.where((cat) => cat.parentAlbumId == album.id).toList();
+
+    await fetchCoverPhotos();
 
     setState(() => isLoading = false);
   }
 
-  Future<void>  fetchCoverPhotos() async {
+  Future<void> fetchCoverPhotos() async {
     List<Photo> tempCoverPhotos =
         []; // Temporary list to store fetched cover photos
 
