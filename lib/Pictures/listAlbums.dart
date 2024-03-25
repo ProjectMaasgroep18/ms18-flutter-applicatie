@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Pictures/photo_detail_screen.dart';
-import '../Models/roles.dart';
 import '../Pictures/models/category.dart';
 import 'package:ms18_applicatie/Pictures/add_picture_screen.dart';
 import '../Api/apiManager.dart';
@@ -30,6 +29,7 @@ class _ListAlbumsState extends State<ListAlbums> {
   String? selectedParentAlbumId;
   List<int> years = [];
   int? selectedSortYear;
+  bool editMode = false;
 
   @override
   void initState() {
@@ -207,6 +207,26 @@ class _ListAlbumsState extends State<ListAlbums> {
       setState(() => isLoading = false);
     }
   }
+
+  Future<void> _deletePhoto(String photoId, int index) async {
+    setState(() => isLoading = true);
+    try {
+      await ApiManager.delete('api/photos/$photoId', getHeaders());
+      setState(() {
+        albumPhotos.removeWhere((photo) => photo.id == photoId);
+        coverPhotos.removeWhere((photo) => photo.id == photoId);
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Photo successfully deleted")));
+    } catch (e) {
+      print("Error deleting Photo: $e");
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("Error deleting Photo: $e")));
+    } finally {
+      setState(() => isLoading = false);
+    }
+  }
+
 
   void addCategory() {
     TextEditingController nameController = TextEditingController();
@@ -603,7 +623,6 @@ class _ListAlbumsState extends State<ListAlbums> {
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
-                        // You can adjust this for your layout needs
                         crossAxisSpacing: 8.0,
                         mainAxisSpacing: 8.0,
                       ),
@@ -614,25 +633,43 @@ class _ListAlbumsState extends State<ListAlbums> {
                         if (albumPhotos.isNotEmpty) {
                           // Displaying photos when an album with photos is selected
                           final photo = albumPhotos[index];
-                          return GestureDetector(
-                            onTap: () {
-                              // Action when tapping on a photo
-                              // For example, navigate to a detailed photo view
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => PhotoDetailScreen(
+                          return Stack(
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  // Action when tapping on a photo
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => PhotoDetailScreen(
                                         photos: albumPhotos,
-                                        currentIndex: index)),
-                              );
-                            },
-                            child: Image.memory(
-                              base64Decode(photo.imageBase64),
-                              fit: BoxFit.cover,
-                            ),
+                                        currentIndex: index,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: Image.memory(
+                                  base64Decode(photo.imageBase64),
+                                  fit: BoxFit.cover,
+                                  width: double.infinity,
+                                  height: double.infinity,
+                                ),
+                              ),
+                              if (editMode)
+                                Positioned(
+                                  top: 0,
+                                  right: 0,
+                                  child: Container(
+                                    color: Colors.black45,
+                                    child: IconButton(
+                                      icon: const Icon(Icons.delete, color: Colors.red),
+                                      onPressed: () => _deletePhoto(photo.id!, index),
+                                    ),
+                                  ),
+                                ),
+                            ],
                           );
                         } else {
-                          // Displaying albums when no specific album is selected
                           final category = filteredCategories[index];
                           Photo? matchingCoverPhoto =
                               coverPhotos.firstWhereOrNull(
@@ -691,14 +728,12 @@ class _ListAlbumsState extends State<ListAlbums> {
                                   right: 0,
                                   child: Row(
                                     children: [
-                                      if (globalLoggedInUserValues!.roles.contains(Roles.Admin) ||
-                                          globalLoggedInUserValues!.roles.contains(Roles.PhotoAlbumEdit))
+                                      if (editMode)
                                         IconButton(
                                           icon: const Icon(Icons.edit, color: Colors.blue),
                                           onPressed: () => editAlbum(context, category, index),
                                         ),
-                                      if (globalLoggedInUserValues!.roles.contains(Roles.Admin) ||
-                                          globalLoggedInUserValues!.roles.contains(Roles.PhotoAlbumEdit))
+                                      if (editMode)
                                         IconButton(
                                           icon: const Icon(Icons.delete,
                                               color: Colors.red),
@@ -725,14 +760,22 @@ class _ListAlbumsState extends State<ListAlbums> {
         floatingActionButton: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            if ((globalLoggedInUserValues!.roles.contains(Roles.Admin) ||
-                globalLoggedInUserValues!.roles
-                    .contains(Roles.PhotoAlbumEdit)) &&
+            if (editPermission)
+              FloatingActionButton(
+                onPressed: () => setState(() => editMode = !editMode),
+                heroTag: 'changeEditMode',
+                backgroundColor: config.mainColor,
+                child: Icon(editMode ? Icons.edit_off : Icons.edit, color: Colors.white,),
+              ),
+
+
+            if (editMode &&
                 (currentAlbum == null || currentAlbum!.photoCount == 0))
               FloatingActionButton(
                 onPressed: addCategory,
                 heroTag: 'addCategoryHeroTag',
-                child: const Icon(Icons.add),
+                backgroundColor: config.mainColor,
+                child: const Icon(Icons.add, color: Colors.white,),
               ),
             const SizedBox(width: 8.0),
             if (currentAlbum != null &&

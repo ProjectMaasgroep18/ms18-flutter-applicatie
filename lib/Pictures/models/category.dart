@@ -1,10 +1,10 @@
 class Category {
   String id;
-  final String name;
-  final int? year;
-  final String? coverPhotoId;
-  final String? parentAlbumId;
-  final int? photoCount;
+   String name;
+   int? year;
+   String? coverPhotoId;
+   String? parentAlbumId;
+   int? photoCount;
 
   Category({
     required this.id,

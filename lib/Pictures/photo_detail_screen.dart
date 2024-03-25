@@ -9,17 +9,17 @@ import '../Api/apiManager.dart';
 import 'models/category.dart';
 import 'models/photo.dart';
 
-Color mainColor = Color(0xFF15233d);
+Color mainColor = const Color(0xFF15233d);
 
 class PhotoDetailScreen extends StatefulWidget {
   final List<Photo> photos;
   int currentIndex;
 
   PhotoDetailScreen({
-    Key? key,
+    super.key,
     required this.photos,
     required this.currentIndex,
-  }) : super(key: key);
+  });
 
   @override
   _PhotoDetailScreenState createState() => _PhotoDetailScreenState();
@@ -30,6 +30,7 @@ class _PhotoDetailScreenState extends State<PhotoDetailScreen> {
   bool areDetailsAndNavBarVisible = false;
   bool isEditing = false;
   TextEditingController _titleController = TextEditingController();
+  FocusNode _titleFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -43,7 +44,7 @@ class _PhotoDetailScreenState extends State<PhotoDetailScreen> {
 
     // Toegevoegd: Voeg een listener toe om de oriëntatieveranderingen te detecteren
     WidgetsBinding.instance
-        ?.addObserver(OrientationChangeObserver(_handleOrientationChange));
+        .addObserver(OrientationChangeObserver(_handleOrientationChange));
   }
 
   @override
@@ -52,7 +53,7 @@ class _PhotoDetailScreenState extends State<PhotoDetailScreen> {
     _titleController.dispose();
     // Toegevoegd: Verwijder de oriëntatielissener
     WidgetsBinding.instance
-        ?.removeObserver(OrientationChangeObserver(_handleOrientationChange));
+        .removeObserver(OrientationChangeObserver(_handleOrientationChange));
     super.dispose();
   }
 
@@ -70,10 +71,38 @@ class _PhotoDetailScreenState extends State<PhotoDetailScreen> {
   void _toggleEdit() {
     setState(() {
       isEditing = !isEditing;
-      if (!isEditing) {
+      if (isEditing) {
+        // Request focus when entering editing mode
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _titleFocusNode.requestFocus();
+        });
+      } else {
+        // Optionally, update the photo title here
         widget.photos[widget.currentIndex].updateTitle(_titleController.text);
+        _updatePhoto(widget.photos[widget.currentIndex]);
       }
     });
+  }
+
+  Future<void> _updatePhoto(Photo photo) async {
+    Map<String, dynamic> requestBody = {
+      'AlbumLocationId': photo.albumLocationId.toString(),
+      'ContentType': photo.contentType, // Assuming this is a non-nullable field
+    };
+
+    // Conditionally add other properties if they are not null.
+    if (photo.title != null) requestBody['Title'] = photo.title;
+    final takenOn = photo.takenOn;
+    if (takenOn != null) requestBody['TakenOn'] = takenOn.toIso8601String(); // Format DateTime as ISO 8601 string
+    if (photo.location != null) requestBody['Location'] = photo.location;
+
+    try {
+      await ApiManager.put('api/photos/${photo.id}', requestBody, getHeaders());
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Photo updated successfully')));
+    } catch (e) {
+      print(e); // Log the error for debugging
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Failed to update photo')));
+    }
   }
 
   Future<List<DropdownMenuItem<Category>>> buildDropdownMenuItems() async {
@@ -215,12 +244,14 @@ class _PhotoDetailScreenState extends State<PhotoDetailScreen> {
                 left: 0,
                 right: 0,
                 child: AppBar(
-                  title: const Text(
-                    'Foto informatie',
-                    style: TextStyle(color: Colors.white),
+                  title: Text(
+                    widget.photos[widget.currentIndex].title?.trim().isNotEmpty == true
+                        ? widget.photos[widget.currentIndex].title!
+                        : 'Foto informatie',
+                    style: const TextStyle(color: Colors.white),
                   ),
                   backgroundColor: Colors.black.withOpacity(0.8),
-                  iconTheme: IconThemeData(color: Colors.white),
+                  iconTheme: const IconThemeData(color: Colors.white),
                 ),
               ),
             if (areDetailsAndNavBarVisible)
@@ -262,7 +293,7 @@ class _PhotoDetailScreenState extends State<PhotoDetailScreen> {
           children: [
             Text(
               titleToShow,
-              style: TextStyle(
+              style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: Colors.white),
@@ -273,7 +304,7 @@ class _PhotoDetailScreenState extends State<PhotoDetailScreen> {
                 SizedBox(width: 4),
                 Text(
                   '${widget.photos[widget.currentIndex].likesCount}',
-                  style: TextStyle(fontSize: 16, color: Colors.white),
+                  style: const TextStyle(fontSize: 16, color: Colors.white),
                 ),
               ],
             ),
@@ -290,8 +321,9 @@ class _PhotoDetailScreenState extends State<PhotoDetailScreen> {
               SizedBox(height: 15),
               TextField(
                 controller: _titleController,
+                focusNode: _titleFocusNode,
                 style: TextStyle(color: Colors.white),
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Titel',
                   labelStyle: TextStyle(color: Colors.white),
                   border: OutlineInputBorder(),
@@ -299,7 +331,8 @@ class _PhotoDetailScreenState extends State<PhotoDetailScreen> {
               ),
             ],
           ),
-        SizedBox(height: 5),
+        const SizedBox(height: 5),
+        if (editPermission)
         ElevatedButton(
           onPressed: () => _toggleEdit(),
           style: ElevatedButton.styleFrom(
@@ -307,9 +340,10 @@ class _PhotoDetailScreenState extends State<PhotoDetailScreen> {
           ),
           child: Text(
             isEditing ? 'Opslaan' : 'Wijzig Titel',
-            style: TextStyle(color: Colors.white),
+            style: const TextStyle(color: Colors.white),
           ),
         ),
+        if (editPermission)
         ElevatedButton(
           onPressed: showCoverPhotoSelectionDialog, // Call the dialog function here
           style: ElevatedButton.styleFrom(

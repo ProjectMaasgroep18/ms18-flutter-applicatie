@@ -1,8 +1,8 @@
 class Like {
-  final String id;
-  final int memberId;
-  final String photoId;
-  final DateTime likedOn;
+   String id;
+   int memberId;
+   String photoId;
+   DateTime likedOn;
 
   Like({
     required this.id,

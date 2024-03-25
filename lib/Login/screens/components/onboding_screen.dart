@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:ms18_applicatie/Widgets/buttons.dart';
 import 'package:ms18_applicatie/Widgets/paddingSpacing.dart';
 import 'package:ms18_applicatie/Widgets/responsiveness.dart';
-import 'package:ms18_applicatie/config.dart';
-import 'package:ms18_applicatie/config.dart';
 import 'package:rive/rive.dart';
 import 'components/custom_sign_in.dart';
 

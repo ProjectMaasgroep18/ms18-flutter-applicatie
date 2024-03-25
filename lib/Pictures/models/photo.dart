@@ -1,15 +1,15 @@
 class Photo {
-  final String? id;
-  final int? uploaderId;
-  final DateTime uploadDate;
-  late final String? title;
-  final String imageBase64;
-  final String contentType;
-  final DateTime? takenOn;
-  final String? location;
-  final String? albumLocationId;
-  final int likesCount;
-  final bool needsApproval;
+   String? id;
+   int? uploaderId;
+   DateTime uploadDate;
+    String? title;
+   String imageBase64;
+   String contentType;
+   DateTime? takenOn;
+   String? location;
+   String? albumLocationId;
+   int likesCount;
+   bool needsApproval;
 
   Photo({
     this.id,
