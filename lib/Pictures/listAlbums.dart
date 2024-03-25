@@ -735,7 +735,7 @@ class _ListAlbumsState extends State<ListAlbums> {
             if ((globalLoggedInUserValues!.roles.contains(Roles.Admin) ||
                 globalLoggedInUserValues!.roles
                     .contains(Roles.PhotoAlbumEdit)) &&
-                (currentAlbum == null || currentAlbum!.photoCount == 0) && (currentAlbum?.parentAlbumId == null))
+                (currentAlbum == null || currentAlbum!.photoCount == 0))
               FloatingActionButton(
                 onPressed: addCategory,
                 heroTag: 'addCategoryHeroTag',
