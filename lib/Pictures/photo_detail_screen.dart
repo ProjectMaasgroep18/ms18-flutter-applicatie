@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:collection/collection.dart';
-
+import 'package:ms18_applicatie/Pictures/models/like.dart';
 import '../config.dart';
 import '../globals.dart';
 import 'package:flutter/material.dart';
@@ -31,6 +31,7 @@ class _PhotoDetailScreenState extends State<PhotoDetailScreen> {
   bool isEditing = false;
   TextEditingController _titleController = TextEditingController();
   FocusNode _titleFocusNode = FocusNode();
+  bool isLiked = false;
 
   @override
   void initState() {
@@ -45,6 +46,8 @@ class _PhotoDetailScreenState extends State<PhotoDetailScreen> {
     // Toegevoegd: Voeg een listener toe om de oriëntatieveranderingen te detecteren
     WidgetsBinding.instance
         .addObserver(OrientationChangeObserver(_handleOrientationChange));
+
+    _checkIfPhotoIsLiked();
   }
 
   @override
@@ -55,6 +58,50 @@ class _PhotoDetailScreenState extends State<PhotoDetailScreen> {
     WidgetsBinding.instance
         .removeObserver(OrientationChangeObserver(_handleOrientationChange));
     super.dispose();
+  }
+
+  Future<void> _checkIfPhotoIsLiked() async {
+    try {
+      String photoId = widget.photos[widget.currentIndex].id!;
+      final response = await ApiManager.get<List<dynamic>>('api/likes/photo/$photoId', getHeaders());
+      final likes = response.map((likeJson) => Like.fromJson(likeJson)).toList();
+
+
+
+      setState(() {
+        isLiked = likes.any((like) => like.memberId == globalLoggedInUserValues!.id);
+      });
+    } catch (e) {
+      // Handle error, e.g., unable to fetch the liked status
+      print("Error fetching liked status: $e");
+    }
+  }
+
+  Future<void> _toggleLike() async {
+    final String photoId = widget.photos[widget.currentIndex].id!;
+    final int? userId = globalLoggedInUserValues?.id; // You need to replace this with actual user ID
+    final String urlBase = 'api/likes/$photoId/$userId';
+
+    try {
+      if (isLiked) {
+        // User has already liked the photo; proceed to unlike it
+        await ApiManager.delete(urlBase, getHeaders());
+        setState(() {
+          isLiked = false;
+          widget.photos[widget.currentIndex].likesCount--; // Assuming you want to update the likes count locally
+        });
+      } else {
+        // Photo is not liked yet; proceed to like it
+        await ApiManager.post(urlBase,{}, getHeaders());
+        setState(() {
+          isLiked = true;
+          widget.photos[widget.currentIndex].likesCount++; // Assuming you want to update the likes count locally
+        });
+      }
+    } catch (e) {
+      // Handle error (e.g., show a snackbar with the error message)
+      print("Error toggling like: $e");
+    }
   }
 
   // Toegevoegd: Functie om te reageren op oriëntatieveranderingen
@@ -315,8 +362,14 @@ class _PhotoDetailScreenState extends State<PhotoDetailScreen> {
             ),
             Row(
               children: [
-                Icon(Icons.favorite, color: Colors.red),
-                SizedBox(width: 4),
+                IconButton(
+                  icon: Icon(
+                    isLiked ? Icons.favorite : Icons.favorite_border,
+                    color: Colors.red,
+                  ),
+                  onPressed: _toggleLike,
+                ),
+                const SizedBox(width: 4),
                 Text(
                   '${widget.photos[widget.currentIndex].likesCount}',
                   style: const TextStyle(fontSize: 16, color: Colors.white),
@@ -328,7 +381,7 @@ class _PhotoDetailScreenState extends State<PhotoDetailScreen> {
         SizedBox(height: 10),
         Text(
           'Jaar: ${widget.photos[widget.currentIndex].uploadDate.year}',
-          style: TextStyle(fontSize: 16, color: Colors.white),
+          style: const TextStyle(fontSize: 16, color: Colors.white),
         ),
         if (isEditing)
           Column(
@@ -396,7 +449,7 @@ class _PhotoDetailScreenState extends State<PhotoDetailScreen> {
             Expanded(
               child: Text(
                 titleToShow,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
