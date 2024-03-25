@@ -60,7 +60,7 @@ class _PhotoDetailScreenState extends State<PhotoDetailScreen> {
     super.dispose();
   }
 
-  Future<void> _checkIfPhotoIsLiked() async {
+  void _checkIfPhotoIsLiked() async {
     try {
       String photoId = widget.photos[widget.currentIndex].id!;
       final response = await ApiManager.get<List<dynamic>>('api/likes/photo/$photoId', getHeaders());
@@ -75,7 +75,7 @@ class _PhotoDetailScreenState extends State<PhotoDetailScreen> {
     }
   }
 
-  Future<void> _toggleLike() async {
+  void _toggleLike() async {
     final String photoId = widget.photos[widget.currentIndex].id!;
     final int? userId = globalLoggedInUserValues?.id; // You need to replace this with actual user ID
     final String urlBase = 'api/likes/$photoId/$userId';
@@ -114,7 +114,7 @@ class _PhotoDetailScreenState extends State<PhotoDetailScreen> {
   }
 
   void _toggleEdit() {
-    setState(() {
+    setState(() async {
       isEditing = !isEditing;
       if (isEditing) {
         // Request focus when entering editing mode
@@ -124,7 +124,7 @@ class _PhotoDetailScreenState extends State<PhotoDetailScreen> {
       } else {
         // Optionally, update the photo title here
         widget.photos[widget.currentIndex].updateTitle(_titleController.text);
-        _updatePhoto(widget.photos[widget.currentIndex]);
+        await _updatePhoto(widget.photos[widget.currentIndex]);
       }
     });
   }
@@ -224,7 +224,7 @@ class _PhotoDetailScreenState extends State<PhotoDetailScreen> {
     );
   }
 
-  Future<void> _setCoverPhoto(Category album) async {
+  void _setCoverPhoto(Category album) async {
     try {
       Map<String, dynamic> body = {
         'coverPhotoId': widget.photos[widget.currentIndex].id

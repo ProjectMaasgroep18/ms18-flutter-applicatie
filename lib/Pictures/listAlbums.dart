@@ -63,7 +63,7 @@ class _ListAlbumsState extends State<ListAlbums> {
     }).toList();
   }
 
-  Future<void> fetchAlbums() async {
+  void fetchAlbums() async {
     setState(() => isLoading = true);
     try {
       final response =
@@ -78,7 +78,6 @@ class _ListAlbumsState extends State<ListAlbums> {
           currentAlbum = freshCurrent;
         }
       }
-
       filteredCategories =
           albums.where((cat) => cat.parentAlbumId == currentAlbum?.id).toList();
 
@@ -93,7 +92,7 @@ class _ListAlbumsState extends State<ListAlbums> {
       if (currentAlbum == null ||
           currentAlbum!.photoCount == null ||
           currentAlbum!.photoCount == 0) {
-        fetchCoverPhotos();
+        await fetchCoverPhotos();
       }
 
       years =
@@ -134,7 +133,7 @@ class _ListAlbumsState extends State<ListAlbums> {
     return result;
   }
 
-  Future<void> showDeleteConfirmationDialog(
+  void showDeleteConfirmationDialog(
       String albumTitle, String albumId, int index) async {
     return showDialog<void>(
       context: context,
@@ -191,7 +190,7 @@ class _ListAlbumsState extends State<ListAlbums> {
     );
   }
 
- void deleteAlbum(String albumId, int index) async {
+  void deleteAlbum(String albumId, int index) async {
     setState(() => isLoading = true);
     try {
       await ApiManager.delete('api/albums/$albumId', getHeaders());
@@ -257,7 +256,7 @@ class _ListAlbumsState extends State<ListAlbums> {
               child: Text('Cancel')),
           TextButton(
             onPressed: () async {
-              await postCategory(nameController.text, yearController.text);
+              postCategory(nameController.text, yearController.text);
               Navigator.of(context).pop();
             },
             child: Text('Add'),
@@ -283,7 +282,7 @@ class _ListAlbumsState extends State<ListAlbums> {
     return words.join(' ');
   }
 
-  Future<void> postCategory(String name, String year) async {
+  void postCategory(String name, String year) async {
     try {
       String formattedName = formatText(name);
 
@@ -300,7 +299,7 @@ class _ListAlbumsState extends State<ListAlbums> {
       }
 
       await ApiManager.post('api/albums', body, getHeaders());
-      await fetchAlbums(); // Refresh the albums/categories list
+      fetchAlbums(); // Refresh the albums/categories list
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Category added successfully')),
       );
@@ -395,7 +394,7 @@ class _ListAlbumsState extends State<ListAlbums> {
                 setState(() {
                   selectedParentAlbumId = tempSelectedParentAlbumId;
                 });
-                await updateCategory(
+                updateCategory(
                     category.id,
                     nameController.text,
                     yearController.text,
@@ -411,7 +410,7 @@ class _ListAlbumsState extends State<ListAlbums> {
     );
   }
 
-  Future<void> updateCategory(String id, String name, String year,
+  void updateCategory(String id, String name, String year,
       String? parentAlbumId, String? coverPhotoId) async {
     try {
       Map<String, dynamic> body = {'name': name};
@@ -421,7 +420,7 @@ class _ListAlbumsState extends State<ListAlbums> {
 
       await ApiManager.put('api/albums/$id', body, getHeaders());
 
-      await fetchAlbums();
+      fetchAlbums();
       ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Album updated successfully')));
     } catch (e) {
@@ -442,9 +441,7 @@ class _ListAlbumsState extends State<ListAlbums> {
     } else {
       currentAlbum!.id = currentAlbum!.parentAlbumId!;
     }
-
-    await fetchAlbums();
-    await fetchCoverPhotos();
+    fetchAlbums();
 
     // Update the displayed title after the state is updated
     if (currentAlbum != null) {
@@ -461,20 +458,24 @@ class _ListAlbumsState extends State<ListAlbums> {
   }
 
   void onAlbumClicked(Category album) async {
+    setState(() => isLoading = true);
     if (album.photoCount! > 0) {
-      await fetchAlbumPhotos(album.id);
+      fetchAlbumPhotos(album.id);
     }
+    await fetchCoverPhotos();
 
     setState(() {
       displayedTitle = album.name;
       currentAlbum = album;
       filteredCategories =
           allCategories.where((cat) => cat.parentAlbumId == album.id).toList();
-      fetchCoverPhotos();
+      ;
     });
+
+    setState(() => isLoading = false);
   }
 
-  Future<void> fetchCoverPhotos() async {
+  Future<void>  fetchCoverPhotos() async {
     List<Photo> tempCoverPhotos =
         []; // Temporary list to store fetched cover photos
 
@@ -499,7 +500,7 @@ class _ListAlbumsState extends State<ListAlbums> {
     });
   }
 
-  Future<void> fetchAlbumPhotos(String albumId) async {
+  void fetchAlbumPhotos(String albumId) async {
     const int pageNumber = 1;
     const int pageSize = 100;
     final String fetchUrl =
@@ -811,7 +812,7 @@ class _ListAlbumsState extends State<ListAlbums> {
                     MaterialPageRoute(
                         builder: (context) => const AddPictureScreen()),
                   );
-                  await fetchAlbums();
+                  fetchAlbums();
                 },
                 backgroundColor: config.mainColor,
                 tooltip: 'Add Photos',

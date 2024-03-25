@@ -26,7 +26,7 @@ class _AddPictureScreenState extends State<AddPictureScreen> {
     super.dispose();
   }
 
-  Future<void> _pickImages() async {
+  void _pickImages() async {
     final List<XFile> images = await _picker.pickMultiImage();
     if (images != null) {
       setState(() {
@@ -35,7 +35,7 @@ class _AddPictureScreenState extends State<AddPictureScreen> {
     }
   }
 
-  Future<void> _takePicture() async {
+  void _takePicture() async {
     final XFile? photo = await _picker.pickImage(source: ImageSource.camera);
     if (photo != null) {
       setState(() {
@@ -55,7 +55,7 @@ class _AddPictureScreenState extends State<AddPictureScreen> {
     }
   }
 
-  Future<void> _uploadImages() async {
+  void _uploadImages() async {
     if (_selectedImages == null) return;
     var uploadSuccessful = true;
 
