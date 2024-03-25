@@ -77,7 +77,7 @@ class _PhotoViewerScreenState extends State<PhotoViewerScreen> {
           ),
           TextField(
             controller: _titleController,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               labelText: 'Title',
               border: OutlineInputBorder(),
             ),

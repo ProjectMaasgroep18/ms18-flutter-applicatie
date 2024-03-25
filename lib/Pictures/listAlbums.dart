@@ -665,15 +665,8 @@ class _ListAlbumsState extends State<ListAlbums> {
                                       TextSpan(
                                         children: [
                                           TextSpan(
-                                            text: category.parentAlbumId != null ? 'Sub: ' : 'Parent: ',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold, // Bold text
-                                            ),
-                                          ),
-                                          TextSpan(
-                                            text: '${formatTextWithEllipsis(category.name, 12)}',
-                                            style: TextStyle(color: Colors.white),
+                                            text: formatTextWithEllipsis(category.name, 12),
+                                            style: const TextStyle(color: Colors.white),
                                           ),
                                         ],
                                       ),
