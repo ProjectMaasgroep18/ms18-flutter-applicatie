@@ -45,11 +45,11 @@ class _ListAlbumsState extends State<ListAlbums> {
     super.dispose();
   }
 
-  void onSearchChanged() {
-    setState(() async {
+  void onSearchChanged() async {
+    setState(() => isLoading = true);
       filteredCategories = filterCategories();
       await fetchCoverPhotos();
-    });
+    setState(() => isLoading = false);
   }
 
 
