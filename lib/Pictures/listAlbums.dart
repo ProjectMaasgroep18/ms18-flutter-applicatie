@@ -106,7 +106,6 @@ class _ListAlbumsState extends State<ListAlbums> {
         allCategories = albums;
         isLoading = false;
       });
-      onSearchChanged();
     } catch (e) {
       print("Error fetching albums: $e");
       setState(() => isLoading = false);
@@ -192,7 +191,7 @@ class _ListAlbumsState extends State<ListAlbums> {
     );
   }
 
-  Future<void> deleteAlbum(String albumId, int index) async {
+ void deleteAlbum(String albumId, int index) async {
     setState(() => isLoading = true);
     try {
       await ApiManager.delete('api/albums/$albumId', getHeaders());
@@ -213,7 +212,7 @@ class _ListAlbumsState extends State<ListAlbums> {
     }
   }
 
-  Future<void> _deletePhoto(String photoId, int index) async {
+  void _deletePhoto(String photoId, int index) async {
     setState(() => isLoading = true);
     try {
       await ApiManager.delete('api/photos/$photoId', getHeaders());
@@ -461,7 +460,7 @@ class _ListAlbumsState extends State<ListAlbums> {
     }
   }
 
-  Future<void> onAlbumClicked(Category album) async {
+  void onAlbumClicked(Category album) async {
     if (album.photoCount! > 0) {
       await fetchAlbumPhotos(album.id);
     }
